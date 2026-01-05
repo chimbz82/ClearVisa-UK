@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const WhoItsFor: React.FC = () => {
@@ -38,7 +37,7 @@ const WhoItsFor: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">Who this tool is for</h2>
-          <p className="text-lg text-slate-600">UK Visa Pre-Check is built for real people trying to make serious decisions.</p>
+          <p className="text-lg text-slate-600">ClearVisa UK – Immigration Eligibility Pre-Check Report is built for real people trying to make serious decisions.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

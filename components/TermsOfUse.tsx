@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface TermsOfUseProps {
@@ -22,7 +21,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
           
           <div className="prose prose-slate max-w-none space-y-6 text-slate-600">
             <p className="text-lg font-medium text-slate-900">
-              ClearVisa UK provides an online eligibility pre-check tool for UK visa routes. By using this site, you agree that:
+              ClearVisa UK – Immigration Eligibility Pre-Check Report provides an online eligibility pre-check tool for UK visa routes. By using this site, you agree that:
             </p>
             
             <ul className="space-y-6 list-none pl-0">

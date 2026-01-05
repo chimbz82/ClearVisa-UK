@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 interface HeaderProps {
@@ -31,15 +30,16 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
+      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex-shrink-0">
             <a href="#top" onClick={handleLogoClick} className="text-xl font-bold text-navy flex items-center gap-2">
-              <span className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif">C</span>
-              <span>ClearVisa UK</span>
+              <div className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif flex-shrink-0">C</div>
+              <span className="hidden lg:inline text-base tracking-tight">ClearVisa UK – Immigration Eligibility Pre-Check Report</span>
+              <span className="lg:hidden text-lg">ClearVisa UK</span>
             </a>
           </div>
 
@@ -49,14 +49,14 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-slate-600 hover:text-navy transition-colors"
+                className="text-sm font-semibold text-slate-600 hover:text-navy transition-colors whitespace-nowrap"
               >
                 {link.name}
               </a>
             ))}
             <button 
               onClick={onStartCheck}
-              className="bg-navy text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all shadow-sm"
+              className="bg-navy text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-all shadow-sm whitespace-nowrap"
             >
               Start eligibility check
             </button>
@@ -80,13 +80,13 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-4 space-y-4 shadow-xl">
+        <div className="md:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-4 duration-300">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
               onClick={() => setIsMenuOpen(false)}
-              className="block text-base font-medium text-slate-600 hover:text-navy"
+              className="block text-lg font-bold text-navy hover:text-accent"
             >
               {link.name}
             </a>
@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
               setIsMenuOpen(false);
               onStartCheck();
             }}
-            className="w-full bg-navy text-white px-5 py-3 rounded-lg text-base font-semibold"
+            className="w-full bg-navy text-white px-5 py-4 rounded-xl text-base font-bold shadow-lg"
           >
             Start eligibility check
           </button>

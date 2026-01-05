@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface FooterProps {
@@ -8,45 +7,49 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
   return (
-    <footer className="bg-navy text-white pt-20 pb-10 no-print">
+    <footer className="bg-[#081C2D] text-white pt-24 pb-12 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           <div className="lg:col-span-2">
-            <a href="#top" className="text-2xl font-bold flex items-center gap-2 mb-6">
-              <span className="w-8 h-8 bg-white text-navy rounded flex items-center justify-center font-serif">C</span>
-              <span>ClearVisa UK</span>
+            <a href="#top" className="text-xl font-black flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-white text-navy rounded flex items-center justify-center font-serif flex-shrink-0 shadow-lg shadow-white/5">C</div>
+              <span className="leading-tight tracking-tight uppercase">ClearVisa UK – Immigration Eligibility<br/>Pre-Check Report</span>
             </a>
-            <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
-              Helping applicants understand where they stand before they apply. Get clarity, reduce risk, and save money.
+            <p className="text-slate-400 text-sm max-w-sm leading-relaxed font-medium mb-8">
+              Helping applicants understand their standing before they apply. Get clarity, reduce risk, and save money on professional advice.
             </p>
+            <div className="flex gap-4">
+              <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 text-[10px] font-bold uppercase tracking-widest text-slate-400">Secure Payment</div>
+              <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 text-[10px] font-bold uppercase tracking-widest text-slate-400">GDPR Ready</div>
+            </div>
           </div>
           
           <div>
-            <h4 className="font-bold mb-6">Quick Links</h4>
-            <ul className="space-y-4 text-slate-400 text-sm">
-              <li><a href="#how-it-works" className="hover:text-white transition-colors">How it works</a></li>
-              <li><a href="#who-its-for" className="hover:text-white transition-colors">Who it's for</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Navigation</h4>
+            <ul className="space-y-5 text-slate-300 text-sm font-semibold">
+              <li><a href="#how-it-works" className="hover:text-accent transition-colors">How it works</a></li>
+              <li><a href="#who-its-for" className="hover:text-accent transition-colors">Who it's for</a></li>
+              <li><a href="#pricing" className="hover:text-accent transition-colors">Pricing</a></li>
+              <li><a href="#faq" className="hover:text-accent transition-colors">FAQ</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold mb-6">Support</h4>
-            <ul className="space-y-4 text-slate-400 text-sm">
-              <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors text-left">Privacy Policy</button></li>
-              <li><button onClick={onTermsClick} className="hover:text-white transition-colors text-left">Terms of Use</button></li>
-              <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-white transition-colors">Contact Support</a></li>
+            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Legal & Support</h4>
+            <ul className="space-y-5 text-slate-300 text-sm font-semibold">
+              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors text-left">Privacy Policy</button></li>
+              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors text-left">Terms of Use</button></li>
+              <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-accent transition-colors">Support Contact</a></li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-slate-500 text-xs">
-            © 2024 ClearVisa UK. All rights reserved.
+        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">
+            © 2024 ClearVisa UK – Immigration Eligibility Pre-Check Report.
           </p>
-          <p className="text-slate-600 text-[10px] uppercase tracking-widest font-bold">
-            Not affiliated with the UK government or Home Office.
+          <p className="text-slate-600 text-[9px] uppercase tracking-[0.3em] font-black">
+            Not affiliated with the UK Government or Home Office.
           </p>
         </div>
       </div>

@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ClearVisa UK | UK Visa Eligibility Pre-Check</title>
+    <title>ClearVisa UK – Immigration Eligibility Pre-Check Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,11 +18,14 @@
       [id] {
         scroll-margin-top: 96px;
       }
-      .bg-navy { background-color: #0f172a; }
-      .text-navy { color: #0f172a; }
-      .bg-teal-muted { background-color: #14b8a6; }
-      .text-teal-muted { color: #14b8a6; }
-      .bg-off-white { background-color: #f8fafc; }
+      /* Strict Branding Palette */
+      .bg-navy { background-color: #0B2545; }
+      .text-navy { color: #0B2545; }
+      .bg-accent { background-color: #2FBF71; }
+      .text-accent { color: #2FBF71; }
+      .border-accent { border-color: #2FBF71; }
+      .bg-off-white { background-color: #F7FAFC; }
+      .bg-dark-section { background-color: #081C2D; }
 
       @media print {
         .no-print {
@@ -48,6 +50,19 @@
           box-shadow: initial;
           background: initial;
           page-break-after: always;
+          position: relative;
+        }
+        .watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-45deg);
+          font-size: 80px;
+          color: rgba(0, 0, 0, 0.03);
+          font-weight: 900;
+          white-space: nowrap;
+          pointer-events: none;
+          z-index: 0;
         }
       }
     </style>
@@ -61,7 +76,7 @@
 }
 </script>
 </head>
-  <body>
+  <body class="bg-off-white">
     <div id="root"></div>
   </body>
 </html>

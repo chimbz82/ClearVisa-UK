@@ -1,21 +1,21 @@
-
 import React from 'react';
 
 const Legal: React.FC = () => {
   return (
-    <section className="py-16 bg-slate-50">
+    <section className="py-20 bg-slate-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white p-8 md:p-12 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-2xl font-bold text-navy mb-6">Important information</h3>
-          <div className="space-y-6 text-slate-600 text-base leading-relaxed">
+        <div className="bg-white p-10 md:p-14 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-[#2FBF71]"></div>
+          <h3 className="text-2xl font-black text-navy mb-8 uppercase tracking-tight">Important Disclosure</h3>
+          <div className="space-y-8 text-slate-600 text-base leading-relaxed font-medium">
             <p>
-              ClearVisa UK is not a law firm and does not provide legal advice. Our service is not a replacement for advice from a qualified immigration solicitor or OISC-regulated adviser.
+              <strong className="text-navy">ClearVisa UK – Immigration Eligibility Pre-Check Report</strong> is not a law firm and does not provide legal advice. Our service is not a replacement for advice from a qualified immigration solicitor or OISC-regulated adviser.
             </p>
             <p>
-              Your pre-check result is generated from your answers and publicly available Home Office guidance at the time of use. We strive for accuracy, but immigration rules change frequently and we cannot guarantee any visa outcome.
+              Your pre-check result is generated from your answers and publicly available Home Office caseworker guidance. We strive for absolute accuracy, but immigration rules are subject to change without notice and we cannot guarantee any specific visa outcome.
             </p>
             <p>
-              Final decisions are made only by UK Visas and Immigration (UKVI) caseworkers. For complex situations, including previous refusals, criminal records, or overstays, you should seek professional legal representation.
+              Final decisions are made solely by UK Visas and Immigration (UKVI) caseworkers. For complex situations (previous refusals, criminal records, overstays), you must seek professional legal representation.
             </p>
           </div>
         </div>

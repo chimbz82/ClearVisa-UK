@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface PrivacyPolicyProps {
@@ -22,7 +21,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
           
           <div className="prose prose-slate max-w-none space-y-8 text-slate-600">
             <p className="text-lg font-medium text-slate-900 leading-relaxed">
-              We collect the information you provide during your pre-check in order to generate your result and report. We do not sell your data to third parties.
+              ClearVisa UK – Immigration Eligibility Pre-Check Report collects the information you provide during your pre-check in order to generate your result and report. We do not sell your data to third parties.
             </p>
             
             <section className="space-y-4">

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const WhatYouGet: React.FC = () => {
@@ -6,7 +5,7 @@ const WhatYouGet: React.FC = () => {
     { title: "Eligibility verdict", desc: "Likely, borderline, or unlikely based on your answers." },
     { title: "Risk factor breakdown", desc: "Which areas look strong and which may cause problems." },
     { title: "Plain-English explanation", desc: "What this means for your situation." },
-    { title: "Suggested next steps", desc: "What to fix or prepare before you apply." },
+    { title: "Suggested next steps", desc: "What to fix or prepare before you spend money on applications or professional advice." },
     { title: "Downloadable summary", desc: "A clean PDF-style report you can save or share." }
   ];
 
@@ -49,7 +48,7 @@ const WhatYouGet: React.FC = () => {
                 <div className="p-6 bg-white border-b border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-navy rounded flex items-center justify-center text-[10px] font-bold text-white">C</div>
-                    <span className="text-xs font-bold text-navy tracking-tight uppercase">Eligibility Report</span>
+                    <span className="text-[8px] font-bold text-navy tracking-tight uppercase leading-tight">ClearVisa UK – Immigration<br/>Eligibility Pre-Check Report</span>
                   </div>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Confidential</span>
                 </div>
