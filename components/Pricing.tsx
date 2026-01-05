@@ -9,9 +9,9 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
   const { t } = useLanguage();
 
   return (
-    <section id="pricing" className="pt-4 pb-20 bg-slate-50/50 scroll-mt-[140px]">
+    <section id="pricing" className="pt-14 md:pt-[72px] lg:pt-24 pb-20 bg-slate-50/50 scroll-mt-[80px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-6 md:mb-10">
+        <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-3">{t('pricing.title')}</h2>
           <p className="text-lg text-slate-600 font-medium">{t('pricing.subtitle')}</p>
         </div>
