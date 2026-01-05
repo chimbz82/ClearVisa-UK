@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export type QuestionType = 'singleSelect' | 'multiSelect' | 'boolean' | 'number' | 'currency' | 'date' | 'shortText';
+export type QuestionType = 'singleSelect' | 'multiSelect' | 'boolean' | 'number' | 'currency' | 'date' | 'shortText' | 'longText';
 
 export interface QuestionOption {
   value: string;
@@ -10,17 +10,13 @@ export interface QuestionOption {
 
 export interface QuestionConfig {
   id: string;
-  route: 'shared' | 'spouse' | 'skilledWorker';
   section: string;
   label: string;
   placeholder?: string;
   helpText?: string;
   type: QuestionType;
   options?: QuestionOption[];
-  conditionalOn?: {
-    questionId: string;
-    values: string[];
-  };
+  showIf: (ctx: { tier: string; route: string; answers: Record<string, any> }) => boolean;
 }
 
 export interface AssessmentResult {

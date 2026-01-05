@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -11,8 +12,6 @@ import Legal from './components/Legal';
 import Footer from './components/Footer';
 import PaymentModal from './components/PaymentModal';
 import Questionnaire from './components/Questionnaire';
-import DocumentChecklistStep from './components/DocumentChecklistStep';
-import CaseDetailsStep from './components/CaseDetailsStep';
 import ReportTemplate from './components/ReportTemplate';
 import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -23,7 +22,7 @@ import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 
-export type ViewState = 'landing' | 'questionnaire' | 'documentChecklist' | 'caseDetails' | 'teaser' | 'report' | 'privacy' | 'terms';
+export type ViewState = 'landing' | 'questionnaire' | 'teaser' | 'report' | 'privacy' | 'terms';
 export type PricingTier = 'basic' | 'full' | 'human';
 
 const AppContent: React.FC = () => {
@@ -35,8 +34,6 @@ const AppContent: React.FC = () => {
   const [applicantName, setApplicantName] = useState<string>("Alex Thompson");
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [activeTier, setActiveTier] = useState<PricingTier>('basic');
-  const [checklistAnswers, setChecklistAnswers] = useState<string[]>([]);
-  const [caseDetails, setCaseDetails] = useState<string>("");
 
   const handleStartCheck = (tierPreference: PricingTier = 'basic') => {
     setActiveTier(tierPreference);
@@ -72,31 +69,11 @@ const AppContent: React.FC = () => {
 
   const handleQuestionnaireComplete = (collectedAnswers: Record<string, any>) => {
     setAnswers(collectedAnswers);
-    if (activeTier === 'basic') {
-      finalizeAssessment(collectedAnswers);
-    } else {
-      setViewState('documentChecklist');
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handleChecklistComplete = (selected: string[]) => {
-    setChecklistAnswers(selected);
-    if (activeTier === 'full') {
-      finalizeAssessment(answers);
-    } else {
-      setViewState('caseDetails');
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handleCaseDetailsComplete = (details: string) => {
-    setCaseDetails(details);
-    finalizeAssessment(answers);
-  };
-
-  const finalizeAssessment = (collectedAnswers: Record<string, any>) => {
-    const result = runAssessment(selectedRoute, collectedAnswers);
+    const routeInAnswer = collectedAnswers['visa_route'];
+    const routeLabel = routeInAnswer === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    setSelectedRoute(routeLabel);
+    
+    const result = runAssessment(routeLabel, collectedAnswers);
     setAssessmentResult(result);
     setViewState('teaser');
     window.scrollTo(0, 0);
@@ -110,24 +87,6 @@ const AppContent: React.FC = () => {
             <Header activeTier={activeTier} onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <div className="pt-24">
               <Questionnaire route={selectedRoute} onComplete={handleQuestionnaireComplete} onCancel={() => setViewState('landing')} activeTier={activeTier} />
-            </div>
-          </div>
-        );
-      case 'documentChecklist':
-        return (
-          <div className="bg-white min-h-screen">
-            <Header activeTier={activeTier} onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
-            <div className="pt-24">
-              <DocumentChecklistStep onComplete={handleChecklistComplete} onBack={() => setViewState('questionnaire')} route={selectedRoute} />
-            </div>
-          </div>
-        );
-      case 'caseDetails':
-        return (
-          <div className="bg-white min-h-screen">
-            <Header activeTier={activeTier} onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
-            <div className="pt-24">
-              <CaseDetailsStep onComplete={handleCaseDetailsComplete} onBack={() => setViewState('documentChecklist')} />
             </div>
           </div>
         );
@@ -147,7 +106,7 @@ const AppContent: React.FC = () => {
               </h2>
               <p className="text-slate-600 font-bold mb-10 leading-relaxed text-lg">
                 Your preliminary analysis is ready. Pay {tierPrices[activeTier]} to unlock your professional risk breakdown, 
-                {activeTier !== 'basic' && " personalized document checklist,"} and exact next steps.
+                {activeTier !== 'basic' && " personalized document audit,"} and exact next steps.
               </p>
               
               <div className="space-y-4">

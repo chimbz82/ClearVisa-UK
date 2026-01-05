@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { QuestionConfig, QuestionType } from '../types';
 import { QUESTIONS } from '../data/questions';
 import { useLanguage } from '../context/LanguageContext';
 
 interface QuestionnaireProps {
-  route: string;
+  route: string; // "Spouse Visa" or "Skilled Worker Visa"
   onComplete: (answers: Record<string, any>) => void;
   onCancel: () => void;
-  activeTier: string;
+  activeTier: string; // 'basic', 'full', 'human'
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCancel, activeTier }) => {
   const { t } = useLanguage();
-  const routeKey = route === 'Spouse Visa' ? 'spouse' : 'skilledWorker';
-  const relevantQuestions = QUESTIONS.filter(q => q.route === 'shared' || q.route === routeKey);
   
+  // Normalize route for showIf context
+  const normalizedRoute = route.toLowerCase().includes('spouse') ? 'spouse' : 
+                         route.toLowerCase().includes('skilled') ? 'skilled' : 'other';
+
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
 
-  const activeQuestion = relevantQuestions[currentStep];
+  // We filter dynamically to ensure we only count questions that should actually be shown
+  const getVisibleQuestions = () => {
+    return QUESTIONS.filter(q => q.showIf({ tier: activeTier, route: normalizedRoute, answers }));
+  };
+
+  const visibleQuestions = getVisibleQuestions();
+  const activeQuestion = visibleQuestions[currentStep];
 
   const getSectionTitle = (section: string) => {
     const keyMap: Record<string, string> = {
@@ -29,20 +38,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
       'English & Funds': 'wizard.section.englishAndFunds',
       'Relationship details': 'wizard.section.background',
       'Sponsor’s status': 'wizard.section.background',
-      'Financial requirement': 'wizard.section.salary'
+      'Financial requirement': 'wizard.section.salary',
+      'Relationship': 'wizard.section.background',
+      'Financials': 'wizard.section.salary',
+      'Employment': 'wizard.section.job',
+      'Accommodation': 'wizard.section.background',
+      'Readiness': 'wizard.section.background',
+      'Case Detail': 'wizard.section.history'
     };
     return t(keyMap[section] || 'wizard.section.background');
-  };
-
-  const isVisible = (q: QuestionConfig) => {
-    if (!q.conditionalOn) return true;
-    const parentAnswer = answers[q.conditionalOn.questionId];
-    if (!parentAnswer) return false;
-    
-    if (Array.isArray(parentAnswer)) {
-      return q.conditionalOn.values.some(v => parentAnswer.includes(v));
-    }
-    return q.conditionalOn.values.includes(parentAnswer);
   };
 
   const handleAnswer = (value: any) => {
@@ -50,7 +54,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
   };
 
   const next = () => {
-    if (currentStep < relevantQuestions.length - 1) {
+    if (currentStep < visibleQuestions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       onComplete(answers);
@@ -63,7 +67,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
     }
   };
 
-  const progress = Math.round(((currentStep + 1) / relevantQuestions.length) * 100);
+  const progress = Math.round(((currentStep + 1) / visibleQuestions.length) * 100);
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id] || "";
@@ -152,27 +156,37 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
             className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-navy outline-none font-black text-2xl transition-all shadow-sm focus:shadow-md"
           />
         );
+      case 'longText':
+        return (
+          <textarea 
+            placeholder={q.placeholder}
+            value={val}
+            onChange={(e) => handleAnswer(e.target.value)}
+            className="w-full h-48 p-5 bg-slate-50 border-2 border-slate-100 rounded-[24px] focus:border-navy outline-none font-bold text-lg leading-relaxed transition-all shadow-sm focus:shadow-md"
+          />
+        );
       default:
         return null;
     }
   };
 
-  if (!activeQuestion) return null;
-
-  if (!isVisible(activeQuestion)) {
-    setTimeout(() => next(), 0);
+  if (!activeQuestion) {
+    // If somehow we end up with no question, complete with whatever we have
+    if (Object.keys(answers).length > 0) {
+      onComplete(answers);
+    }
     return null;
   }
 
-  const continueLabel = activeTier === 'basic' ? 'Continue to basic pre-check' : 
-                        activeTier === 'full' ? 'Continue to full checklist' : 'Continue to review setup';
+  const continueLabel = activeTier === 'basic' ? 'Basic Assessment' : 
+                        activeTier === 'full' ? 'Full Assessment' : 'Human Review Assessment';
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 md:py-12 min-h-[600px] flex flex-col">
       <div className="mb-10">
         <div className="flex justify-between items-center mb-4">
           <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
-            {getSectionTitle(activeQuestion.section)} • {t('wizard.question')} {currentStep + 1} of {relevantQuestions.length}
+            {getSectionTitle(activeQuestion.section)} • Question {currentStep + 1} of {visibleQuestions.length}
           </span>
           <span className="text-[11px] font-black text-navy uppercase tracking-widest">{progress}% {t('wizard.progress')}</span>
         </div>
@@ -216,7 +230,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
             disabled={answers[activeQuestion.id] === undefined || answers[activeQuestion.id] === ""}
             className="w-full sm:w-auto bg-navy text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-xl active:scale-95"
           >
-            {currentStep === relevantQuestions.length - 1 ? t('wizard.button.seeResults') : 'Next Question'}
+            {currentStep === visibleQuestions.length - 1 ? t('wizard.button.seeResults') : 'Next Question'}
           </button>
         </div>
       </div>
