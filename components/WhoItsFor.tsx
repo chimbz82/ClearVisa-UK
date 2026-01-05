@@ -33,19 +33,19 @@ const WhoItsFor: React.FC = () => {
   ];
 
   return (
-    <section id="who-its-for" className="pt-8 md:pt-12 lg:pt-16 pb-24 bg-white">
+    <section id="who-its-for" className="pt-6 md:pt-10 lg:pt-12 pb-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">Who this tool is for</h2>
+        <div className="text-center max-w-3xl mx-auto mb-14 md:mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-navy mb-3">Who this tool is for</h2>
           <p className="text-lg text-slate-600">ClearVisa UK – Immigration Eligibility Pre-Check Report is built for real people trying to make serious decisions.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {cards.map((card, idx) => (
-            <div key={idx} className="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:border-teal-200 transition-all group">
-              <div className="mb-6 group-hover:scale-110 transition-transform">{card.icon}</div>
-              <h3 className="text-xl font-bold text-navy mb-3">{card.title}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{card.desc}</p>
+            <div key={idx} className="bg-slate-50 p-7 lg:p-8 rounded-2xl border border-slate-100 hover:border-teal-200 transition-all group">
+              <div className="mb-5 group-hover:scale-110 transition-transform">{card.icon}</div>
+              <h3 className="text-xl font-bold text-navy mb-2.5">{card.title}</h3>
+              <p className="text-slate-600 text-[13px] lg:text-sm leading-relaxed">{card.desc}</p>
             </div>
           ))}
         </div>

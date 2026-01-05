@@ -9,14 +9,14 @@ interface FAQItemProps {
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle }) => (
   <div className="border-b border-slate-100 last:border-0">
-    <button onClick={onToggle} className="w-full flex items-center justify-between py-6 text-left focus:outline-none group">
+    <button onClick={onToggle} className="w-full flex items-center justify-between py-5 lg:py-6 text-left focus:outline-none group">
       <span className="text-lg font-black text-navy group-hover:text-accent transition-colors">{question}</span>
       <span className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
         <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
       </span>
     </button>
-    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-6' : 'max-h-0'}`}>
-      <p className="text-slate-600 leading-relaxed text-sm font-semibold whitespace-pre-line">{answer}</p>
+    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-5 lg:pb-6' : 'max-h-0'}`}>
+      <p className="text-slate-600 leading-relaxed text-[13px] lg:text-sm font-semibold whitespace-pre-line">{answer}</p>
     </div>
   </div>
 );
@@ -48,10 +48,10 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section id="faq" className="py-16 md:py-20 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-5xl font-black text-navy mb-16 text-center uppercase tracking-tight">Frequently asked questions</h2>
-        <div className="space-y-2">
+        <h2 className="text-3xl md:text-5xl font-black text-navy mb-12 lg:mb-16 text-center uppercase tracking-tight">Frequently asked questions</h2>
+        <div className="space-y-1">
           {faqs.map((faq, idx) => (
             <FAQItem
               key={idx}
