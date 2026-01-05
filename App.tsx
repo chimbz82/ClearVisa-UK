@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustStrip from './components/TrustStrip';
@@ -20,22 +20,23 @@ import { triggerReportPdfDownload } from './utils/downloadPdf';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
+import Button from './components/Button';
 
-export type ViewState = 'landing' | 'questionnaire' | 'teaser' | 'report' | 'privacy' | 'terms';
+export type ViewState = 'landing' | 'questionnaire' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms';
 export type PricingTier = 'basic' | 'full' | 'human';
 
 const AppContent: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
-  const [selectedRoute, setSelectedRoute] = useState<string>('Spouse Visa');
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
-  const [applicantName, setApplicantName] = useState<string>("Alex Thompson");
   const [isLoadingReport, setIsLoadingReport] = useState(false);
-  const [activeTier, setActiveTier] = useState<PricingTier>('basic');
+  const [activeTier, setActiveTier] = useState<PricingTier>('full'); // Defaulting to full for the paywall flow
+  const [isPaid, setIsPaid] = useState(false);
 
-  const handleStartCheck = (tierPreference: PricingTier = 'basic') => {
-    setActiveTier(tierPreference);
+  const handleStartCheck = () => {
+    setAnswers({});
+    setIsPaid(false);
     setViewState('questionnaire');
     window.scrollTo(0, 0);
   };
@@ -45,37 +46,38 @@ const AppContent: React.FC = () => {
       setViewState('landing');
       setTimeout(() => {
         const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
       const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const handlePaymentSuccess = (route: string, tier: PricingTier) => {
+  const handlePaymentSuccess = () => {
+    setIsPaid(true);
+    setViewState('questionnaire');
+    window.scrollTo(0, 0);
+  };
+
+  const handleStage1Complete = (collectedAnswers: Record<string, any>) => {
+    setAnswers(collectedAnswers);
+    const routeInAnswer = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    const result = runAssessment(routeInAnswer, collectedAnswers);
+    setAssessmentResult(result);
+    setViewState('quickVerdict');
+    window.scrollTo(0, 0);
+  };
+
+  const handleStage2Complete = (collectedAnswers: Record<string, any>) => {
+    setAnswers(collectedAnswers);
+    const routeInAnswer = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    const result = runAssessment(routeInAnswer, collectedAnswers);
+    setAssessmentResult(result);
     setViewState('report');
     setIsLoadingReport(true);
     window.scrollTo(0, 0);
-    setTimeout(() => {
-      setIsLoadingReport(false);
-    }, 2000);
-  };
-
-  const handleQuestionnaireComplete = (collectedAnswers: Record<string, any>) => {
-    setAnswers(collectedAnswers);
-    const routeInAnswer = collectedAnswers['visa_route'];
-    const routeLabel = routeInAnswer === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-    setSelectedRoute(routeLabel);
-    
-    const result = runAssessment(routeLabel, collectedAnswers);
-    setAssessmentResult(result);
-    setViewState('teaser');
-    window.scrollTo(0, 0);
+    setTimeout(() => setIsLoadingReport(false), 2000);
   };
 
   const renderContent = () => {
@@ -83,45 +85,64 @@ const AppContent: React.FC = () => {
       case 'questionnaire':
         return (
           <div className="bg-white min-h-screen">
-            <Header activeTier={activeTier} onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
-            <div className="pt-24 pb-20">
-              <Questionnaire route={selectedRoute} onComplete={handleQuestionnaireComplete} onCancel={() => setViewState('landing')} activeTier={activeTier} />
+            <Header onStartCheck={handleStartCheck} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
+            <div className="pt-24 max-w-[1040px] mx-auto px-4">
+              <Questionnaire 
+                onComplete={isPaid ? handleStage2Complete : handleStage1Complete} 
+                onCancel={() => setViewState('landing')} 
+                isPaid={isPaid}
+                initialAnswers={answers}
+              />
             </div>
           </div>
         );
-      case 'teaser':
-        const tierPrices = { basic: '£29', full: '£79', human: '£149' };
+      case 'quickVerdict':
         return (
-          <div className="bg-slate-100 min-h-screen py-16 px-4 flex items-center justify-center">
-            <div className="max-w-2xl w-full bg-white rounded-[40px] p-10 md:p-14 shadow-2xl text-center border border-slate-100">
-              <div className={`inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase mb-8 tracking-widest ${
-                assessmentResult?.verdict === 'likely' ? 'bg-accent/10 text-accent' : 
-                assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
-              }`}>
-                Verdict: {assessmentResult?.verdict.toUpperCase()}
+          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
+            <div className="max-w-[640px] w-full bg-white rounded-[32px] p-10 shadow-xl text-center">
+              <div className="mb-6 flex justify-center">
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-inner ${
+                  assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
+                  assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
+                }`}>
+                  {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
+                </div>
               </div>
-              <h2 className="text-3xl md:text-5xl font-black text-navy uppercase tracking-tight mb-6 leading-tight">
-                Unlock your full report
-              </h2>
-              <p className="text-slate-600 font-bold mb-12 leading-relaxed text-lg">
-                Your preliminary analysis is ready. Pay {tierPrices[activeTier]} to unlock your professional risk breakdown, 
-                {activeTier !== 'basic' && " personalized document audit,"} and exact next steps.
+              <h2 className="mb-4">Quick Check Result: {assessmentResult?.verdict.toUpperCase()}</h2>
+              <p className="text-slate-600 mb-10 text-lg">
+                Based on your initial answers, your eligibility status is {assessmentResult?.verdict}. 
+                To see the specific risk factors and get a personalized document checklist, you'll need the full assessment.
               </p>
-              
-              <div className="space-y-4 max-w-sm mx-auto">
-                <button 
-                  onClick={() => setIsPaymentModalOpen(true)}
-                  className="w-full bg-accent text-white py-5 rounded-2xl font-black text-xl hover:bg-[#28a362] transition-all shadow-xl uppercase tracking-widest active:scale-95"
-                >
-                  Pay {tierPrices[activeTier]}
-                </button>
-                <button 
-                  onClick={() => setViewState('landing')}
-                  className="w-full py-4 text-slate-400 font-bold hover:text-navy uppercase tracking-widest text-[11px] transition-colors"
-                >
-                  Return to Home
-                </button>
+              <Button onClick={() => setViewState('paywall')} variant="primary" size="lg" fullWidth>
+                Continue to Full Assessment
+              </Button>
+            </div>
+          </div>
+        );
+      case 'paywall':
+        return (
+          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
+            <div className="max-w-[640px] w-full bg-white rounded-[32px] p-10 shadow-xl text-center">
+              <h2 className="mb-4">Unlock your full assessment</h2>
+              <p className="text-slate-600 mb-8 text-lg">
+                Get the complete professional analysis of your situation. Your payment includes:
+              </p>
+              <ul className="text-left space-y-4 mb-10 text-slate-600 font-medium">
+                <li className="flex gap-3 items-center"><span className="text-accent text-xl">✓</span> Detailed risk factor breakdown</li>
+                <li className="flex gap-3 items-center"><span className="text-accent text-xl">✓</span> Personalized document audit</li>
+                <li className="flex gap-3 items-center"><span className="text-accent text-xl">✓</span> Step-by-step next actions plan</li>
+                <li className="flex gap-3 items-center"><span className="text-accent text-xl">✓</span> Professional downloadable PDF report</li>
+              </ul>
+              <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
+                <p className="text-[14px] uppercase tracking-widest text-slate-400 font-bold mb-1">Total One-Time Fee</p>
+                <p className="text-4xl font-black text-navy">£79</p>
               </div>
+              <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>
+                Pay & Unlock Assessment
+              </Button>
+              <button onClick={() => setViewState('landing')} className="mt-6 text-slate-400 font-bold uppercase text-[12px] tracking-widest hover:text-navy">
+                Cancel and return home
+              </button>
             </div>
           </div>
         );
@@ -129,69 +150,60 @@ const AppContent: React.FC = () => {
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 sm:px-6 relative">
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 bg-white rounded-[32px] shadow-xl border border-slate-100">
-              <div>
-                <h2 className="text-xl font-black text-navy mb-1 uppercase tracking-tight">
-                  {isLoadingReport ? 'Analyzing Evidence…' : 'Report Finalized'}
-                </h2>
-                <p className="text-sm text-slate-500 font-semibold leading-relaxed">
-                  {isLoadingReport ? 'Our engine is calculating thresholds against current UK immigration rules.' : 'Your ClearVisa UK – Eligibility Pre-Check is ready.'}
-                </p>
+              <div className="text-center sm:text-left">
+                <h3 className="mb-1 uppercase tracking-tight">Report Finalized</h3>
+                <p className="text-sm text-slate-500 font-semibold">Your Eligibility Pre-Check is ready for review.</p>
               </div>
               <div className="flex items-center gap-4">
-                <button onClick={() => setViewState('landing')} className="px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-slate-50">Exit</button>
-                <button disabled={isLoadingReport} onClick={triggerReportPdfDownload} className="bg-navy text-white px-8 py-3 rounded-xl font-black shadow-lg hover:bg-slate-800 transition-all uppercase text-xs tracking-widest disabled:opacity-30">Download PDF</button>
+                <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
+                <Button onClick={triggerReportPdfDownload} variant="navy" size="sm">Download PDF</Button>
               </div>
             </div>
             <div id="report-print-root">
               {isLoadingReport ? <ReportSkeleton /> : (
                 <ReportTemplate 
-                  applicantName={applicantName} 
-                  visaRoute={selectedRoute} 
+                  visaRoute={answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa'} 
                   assessmentData={assessmentResult!}
                   answers={answers}
-                  tier={activeTier}
                 />
               )}
             </div>
           </div>
         );
-      case 'privacy':
-        return <PrivacyPolicy onBack={() => setViewState('landing')} />;
-      case 'terms':
-        return <TermsOfUse onBack={() => setViewState('landing')} />;
+      case 'privacy': return <PrivacyPolicy onBack={() => setViewState('landing')} />;
+      case 'terms': return <TermsOfUse onBack={() => setViewState('landing')} />;
       case 'landing':
       default:
         return (
-          <div id="top">
-            <Header onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
-            <main>
-              <Hero onStartCheck={() => handleStartCheck('basic')} onScrollToSection={scrollToSection} />
+          <>
+            <Header onStartCheck={handleStartCheck} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
+            <main className="space-y-20 pb-20">
+              <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
               <TrustStrip />
               <HowItWorks />
               <WhoItsFor />
               <WhatYouGet />
-              <Pricing onStartCheck={handleStartCheck} />
+              <Pricing onStartCheck={(tier) => {
+                setActiveTier(tier as PricingTier);
+                handleStartCheck();
+              }} />
               <FAQ />
-              <div id="affiliate">
-                <PartnerSection />
-              </div>
-              <div id="refund-policy">
-                <Legal />
-              </div>
+              <PartnerSection />
+              <Legal />
             </main>
             <Footer onPrivacyClick={() => setViewState('privacy')} onTermsClick={() => setViewState('terms')} onScrollToSection={scrollToSection} />
-          </div>
+          </>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-off-white selection:bg-accent/20 selection:text-navy">
+    <div className="min-h-screen bg-off-white selection:bg-accent/20">
       {renderContent()}
       <PaymentModal 
         isOpen={isPaymentModalOpen} 
         onClose={() => setIsPaymentModalOpen(false)} 
-        onPaymentComplete={(route, tier) => handlePaymentSuccess(route, tier as PricingTier)}
+        onPaymentComplete={handlePaymentSuccess}
         selectedTier={activeTier}
       />
     </div>
