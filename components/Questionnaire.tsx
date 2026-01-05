@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { QuestionConfig, QuestionType } from '../types';
 import { QUESTIONS } from '../data/questions';
+import { useLanguage } from '../context/LanguageContext';
 
 interface QuestionnaireProps {
   route: string;
@@ -10,6 +10,7 @@ interface QuestionnaireProps {
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCancel }) => {
+  const { t } = useLanguage();
   const routeKey = route === 'Spouse Visa' ? 'spouse' : 'skilledWorker';
   const relevantQuestions = QUESTIONS.filter(q => q.route === 'shared' || q.route === routeKey);
   
@@ -17,6 +18,20 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
   const [answers, setAnswers] = useState<Record<string, any>>({});
 
   const activeQuestion = relevantQuestions[currentStep];
+
+  const getSectionTitle = (section: string) => {
+    const keyMap: Record<string, string> = {
+      'Background': 'wizard.section.background',
+      'History': 'wizard.section.history',
+      'Job & sponsorship': 'wizard.section.job',
+      'Salary & going rate': 'wizard.section.salary',
+      'English & Funds': 'wizard.section.englishAndFunds',
+      'Relationship details': 'wizard.section.background', // Fallback
+      'Sponsor’s status': 'wizard.section.background', // Fallback
+      'Financial requirement': 'wizard.section.salary' // Fallback
+    };
+    return t(keyMap[section] || 'wizard.section.background');
+  };
 
   const isVisible = (q: QuestionConfig) => {
     if (!q.conditionalOn) return true;
@@ -151,9 +166,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
       <div className="mb-6">
         <div className="flex justify-between items-center mb-3">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            {activeQuestion.section} • Question {currentStep + 1} of {relevantQuestions.length}
+            {getSectionTitle(activeQuestion.section)} • {t('wizard.question')} {currentStep + 1} of {relevantQuestions.length}
           </span>
-          <span className="text-[10px] font-black text-navy uppercase tracking-widest">{progress}% Complete</span>
+          <span className="text-[10px] font-black text-navy uppercase tracking-widest">{progress}% {t('wizard.progress')}</span>
         </div>
         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
           <div className="h-full bg-navy transition-all duration-500" style={{ width: `${progress}%` }}></div>
@@ -181,27 +196,27 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ route, onComplete, onCanc
           disabled={currentStep === 0}
           className="px-4 py-2 text-slate-400 font-bold hover:text-navy disabled:opacity-0 transition-all uppercase tracking-widest text-[10px]"
         >
-          Back
+          {t('wizard.button.back')}
         </button>
         <div className="flex gap-3">
           <button 
             onClick={onCancel}
             className="px-4 py-2 text-slate-400 font-bold hover:text-red-500 transition-all uppercase tracking-widest text-[10px]"
           >
-            Cancel
+            {t('wizard.button.cancel')}
           </button>
           <button 
             onClick={next}
             disabled={answers[activeQuestion.id] === undefined || answers[activeQuestion.id] === ""}
             className="bg-navy text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg"
           >
-            {currentStep === relevantQuestions.length - 1 ? 'See Results' : 'Continue'}
+            {currentStep === relevantQuestions.length - 1 ? t('wizard.button.seeResults') : t('wizard.button.continue')}
           </button>
         </div>
       </div>
       
       <p className="mt-6 text-center text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-        ClearVisa UK Pre-Check • Information Only • Secure
+        {t('wizard.footer')}
       </p>
     </div>
   );

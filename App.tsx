@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -19,10 +18,12 @@ import TermsOfUse from './components/TermsOfUse';
 import { triggerReportPdfDownload } from './utils/downloadPdf';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 type ViewState = 'landing' | 'questionnaire' | 'report' | 'privacy' | 'terms';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { t, language } = useLanguage();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
   const [selectedRoute, setSelectedRoute] = useState<string>('Spouse Visa');
@@ -189,6 +190,11 @@ const App: React.FC = () => {
               onScrollToSection={scrollToSection}
             />
             <main>
+              {language !== 'en' && (
+                <div className="bg-navy/5 text-navy py-2 text-center text-[10px] font-bold uppercase tracking-widest">
+                  {t('common.legalConvenience')}
+                </div>
+              )}
               <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
               <TrustStrip />
               <HowItWorks />
@@ -219,5 +225,11 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
+);
 
 export default App;

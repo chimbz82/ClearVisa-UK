@@ -1,5 +1,6 @@
 import React from 'react';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeroProps {
   onStartCheck: () => void;
@@ -7,24 +8,26 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
+  const { t } = useLanguage();
+
   return (
     <section className="relative flex lg:items-center pt-20 pb-12 lg:pt-16 lg:pb-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
           <div className="mb-10 lg:mb-0 max-w-2xl">
             <h1 className="text-3xl sm:text-4xl lg:text-4xl xl:text-5xl font-black text-navy leading-[1.15] mb-4 lg:mb-5">
-              Check your UK visa eligibility before you spend money on <span className="text-accent">applications or professional advice.</span>
+              {t('hero.heading')} <span className="text-accent">{t('hero.headingAccent')}</span>
             </h1>
             <p className="text-base sm:text-lg lg:text-lg text-slate-600 mb-6 lg:mb-7 leading-relaxed font-semibold max-w-lg">
-              Get an instant ClearVisa UK – Immigration Eligibility Pre-Check Report for spouse or skilled worker routes – with a clear verdict, risk flags, and next steps.
+              {t('hero.subheading')}
             </p>
             
             <ul className="space-y-2.5 lg:space-y-3 mb-8 lg:mb-9">
               {[
-                "No appointments or long forms required",
-                "Instant result with a professional PDF summary",
-                "Built around latest public Home Office rules",
-                "Clear disclaimer: not legal advice"
+                t('hero.bullet1'),
+                t('hero.bullet2'),
+                t('hero.bullet3'),
+                t('hero.bullet4')
               ].map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-slate-700">
                   <div className="w-5 h-5 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -40,17 +43,17 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 onClick={onStartCheck}
                 className="w-full sm:w-auto bg-navy text-white px-8 py-3.5 lg:px-9 lg:py-4 rounded-xl text-base lg:text-[17px] font-black hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-1 active:scale-95 uppercase tracking-widest"
               >
-                Start eligibility check
+                {t('hero.ctaPrimary')}
               </button>
               <button 
                 onClick={() => onScrollToSection('how-it-works')} 
                 className="text-navy font-black hover:text-accent flex items-center gap-2 group text-base lg:text-[17px] focus:outline-none"
               >
-                See how it works
+                {t('hero.ctaSecondary')}
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </div>
-            <p className="text-[10px] lg:text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-6 lg:mt-7">Takes 2–3 minutes • Secure Assessment Engine</p>
+            <p className="text-[10px] lg:text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-6 lg:mt-7">{t('hero.footerText')}</p>
           </div>
 
           <div className="relative">
