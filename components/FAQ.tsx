@@ -48,7 +48,7 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="py-16 md:py-20 bg-white">
+    <section id="faq" className="py-16 md:py-20 bg-white scroll-mt-[120px]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-5xl font-black text-navy mb-12 lg:mb-16 text-center uppercase tracking-tight">Frequently asked questions</h2>
         <div className="space-y-1">

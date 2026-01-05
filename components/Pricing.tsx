@@ -6,7 +6,7 @@ interface PricingProps {
 
 const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
   return (
-    <section id="pricing" className="pt-6 md:pt-10 lg:pt-12 pb-20 bg-slate-50/50">
+    <section id="pricing" className="pt-6 md:pt-10 lg:pt-12 pb-20 bg-slate-50/50 scroll-mt-[120px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-14 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-3">Simple, one-time pricing</h2>
