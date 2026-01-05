@@ -10,7 +10,7 @@ interface PaymentModalProps {
 type CheckoutStep = 'select-route' | 'payment';
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete, selectedTier = 'basic' }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete, selectedTier = 'full' }) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -18,7 +18,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const pricing = {
     basic: { name: 'Basic Pre-Check', price: '£29' },
     full: { name: 'Full Pre-Check + Checklist', price: '£79' },
-    human: { name: 'Human Review Add-On', price: '£149' }
+    pro: { name: 'Pro Assessment Add-On', price: '£149' }
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
     onClose();
   };
 
-  const activePrice = pricing[selectedTier as keyof typeof pricing];
+  const activePrice = pricing[selectedTier as keyof typeof pricing] || pricing.full;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
@@ -97,8 +97,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
             <form onSubmit={handleMockPayment} className="space-y-6">
               <div className="bg-slate-50 p-6 rounded-2xl flex justify-between items-center border border-slate-100">
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{activePrice.name}</p>
-                  <p className="text-sm font-bold text-navy">{selectedRoute} Assessment</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{activePrice.name}</p>
+                  <p className="text-sm font-bold text-navy mt-1">{selectedRoute} Assessment</p>
                 </div>
                 <p className="text-2xl font-black text-navy">{activePrice.price}</p>
               </div>
@@ -109,7 +109,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                   <input required type="text" placeholder="CVC" className="w-1/2 p-4 bg-white border border-slate-200 rounded-xl text-sm outline-none font-bold" />
                 </div>
               </div>
-              <button type="submit" className="w-full bg-navy text-white py-4 rounded-xl font-black text-lg shadow-xl uppercase tracking-widest hover:bg-slate-800">Complete Payment</button>
+              <button type="submit" className="w-full bg-navy text-white py-4 rounded-xl font-black text-lg shadow-xl uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-95">Complete Secure Payment</button>
             </form>
           )}
           {(status === 'processing' || status === 'success') && (
@@ -117,15 +117,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               <div className="relative w-20 h-20 mx-auto mb-10">
                 <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
                 <div className={`absolute inset-0 border-4 border-accent rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {status === 'processing' ? '...' : '✓'}
+                <div className="absolute inset-0 flex items-center justify-center text-accent text-2xl font-bold">
+                  {status === 'processing' ? '' : '✓'}
                 </div>
               </div>
-              <h4 className="text-2xl font-black text-navy uppercase mb-3 tracking-tight">
-                {status === 'processing' ? 'Processing Payment' : 'Payment Successful'}
+              <h4 className="text-2xl font-black text-navy uppercase mb-3 tracking-tight leading-none">
+                {status === 'processing' ? 'Processing' : 'Success'}
               </h4>
               <p className="text-slate-600 font-bold">
-                {status === 'processing' ? 'Connecting to Stripe...' : 'Generating your full report…'}
+                {status === 'processing' ? 'Finalising secure transaction...' : 'Unlocking your Pro assessment tools...'}
               </p>
             </div>
           )}

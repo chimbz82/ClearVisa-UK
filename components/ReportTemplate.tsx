@@ -96,8 +96,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           <h3 className="text-caption text-navy mb-4 border-b pb-2">Risk Factors</h3>
           <ul className="space-y-3">
             {assessmentData.riskFlags.length > 0 ? assessmentData.riskFlags.map((flag, i) => (
-              <li key={i} className="flex items-start gap-3 p-4 bg-rose-50 rounded-xl text-body-sm font-bold text-rose-700">
-                <span className="mt-0.5">⚠️</span>
+              <li key={i} className="flex items-start gap-3 p-4 bg-rose-50 rounded-xl text-body-sm font-bold text-rose-700 leading-snug">
+                <span className="mt-0.5 flex-shrink-0">⚠️</span>
                 {flag}
               </li>
             )) : (
@@ -110,7 +110,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           <h3 className="text-caption text-navy mb-4 border-b pb-2">Strategic Steps</h3>
           <ul className="space-y-3">
             {assessmentData.nextSteps.map((step, i) => (
-              <li key={i} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl text-body-sm font-bold text-slate-700">
+              <li key={i} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl text-body-sm font-bold text-slate-700 leading-snug">
                 <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center flex-shrink-0 text-navy text-[10px]">{i + 1}</span>
                 {step}
               </li>
@@ -119,31 +119,37 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       </div>
 
-      {/* Upsell */}
+      {/* Upsell to Pro Assessment */}
       {tier === 'full' && (
         <section className="no-print bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 mb-10 shadow-lg">
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <div className="flex-grow">
-              <h4 className="text-h3 text-amber-900 mb-1">Expert Case Verification</h4>
-              <p className="text-body-sm font-bold text-amber-800">
-                Need these risks verified by a pro? Get a manual audit and follow-up consultation.
+              <h4 className="text-h3 text-amber-900 mb-1">Add Pro Assessment Add-On</h4>
+              <p className="text-body-sm font-bold text-amber-800 leading-snug">
+                Unlock deeper rule-based risk analysis, automated evidence gap verification, and smart case improvements.
               </p>
             </div>
-            <Button onClick={onUpgrade} variant="primary" className="bg-amber-600 hover:bg-amber-700 whitespace-nowrap">
-              Upgrade to Human Review
-            </Button>
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-center">
+                <span className="text-[10px] font-black uppercase text-amber-600 tracking-widest">Upgrade Fee</span>
+                <p className="text-2xl font-black text-amber-900 leading-none mt-1">£149</p>
+              </div>
+              <Button onClick={onUpgrade} variant="primary" className="bg-amber-600 hover:bg-amber-700 whitespace-nowrap">
+                Add Pro Review
+              </Button>
+            </div>
           </div>
         </section>
       )}
 
       {/* Footer */}
       <footer className="mt-auto pt-8 border-t border-slate-100">
-        <p className="text-caption text-slate-400 mb-4">
-          This document is an informational tool based on publicly available guidance. It is NOT legal advice.
+        <p className="text-caption text-slate-400 mb-4 font-medium leading-relaxed">
+          This report is an automated assessment tool based on publicly available UK Home Office guidance. It is for informational purposes only and is NOT legal advice. Technical support is available for dashboard access issues only.
         </p>
         <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
           <span>© 2026 ClearVisa UK</span>
-          <span>Officialcaseworker logic applied</span>
+          <span>Rule-based engine audit</span>
         </div>
       </footer>
     </div>

@@ -23,7 +23,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
 
 export type ViewState = 'landing' | 'questionnaire' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms';
-export type PricingTier = 'full' | 'human';
+export type PricingTier = 'basic' | 'full' | 'pro';
 
 const AppContent: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -59,11 +59,9 @@ const AppContent: React.FC = () => {
   const handlePaymentSuccess = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
-    // If buying from paywall, return to questionnaire to finish full assessment
     if (viewState === 'paywall') {
       setViewState('questionnaire');
     } else if (viewState === 'report') {
-      // If buying Human Review upsell from report page
       setViewState('report');
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
@@ -124,7 +122,7 @@ const AppContent: React.FC = () => {
                 Your initial profile has been screened. To see the specific risk factors, personalized document checklist, and professional report, unlock the full assessment.
               </p>
               <Button onClick={() => setViewState('paywall')} variant="primary" size="lg" fullWidth>
-                Continue to Full Assessment
+                Unlock Full Pre-Check + Checklist
               </Button>
             </div>
           </div>
@@ -133,7 +131,7 @@ const AppContent: React.FC = () => {
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
             <div className="max-w-[700px] w-full app-card border border-slate-200">
-              <h2 className="text-h2 mb-4 text-center">Unlock your professional audit</h2>
+              <h2 className="text-h2 mb-4 text-center">Unlock your full assessment</h2>
               <p className="text-body text-secondary mb-8 text-center">
                 Get the complete breakdown and document checklist used by immigration professionals.
               </p>
@@ -142,17 +140,17 @@ const AppContent: React.FC = () => {
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                   <h3 className="text-caption mb-4 text-slate-500">Includes</h3>
                   <ul className="space-y-3 text-body-sm font-semibold text-slate-700">
-                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> 30-Question Assessment</li>
-                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Document Checklist</li>
-                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Risk Heatmap</li>
+                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Complete 30-Question Audit</li>
+                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Personalized Document Checklist</li>
+                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Route-Specific Compliance Audit</li>
                   </ul>
                 </div>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                   <h3 className="text-caption mb-4 text-slate-500">Deliverables</h3>
                   <ul className="space-y-3 text-body-sm font-semibold text-slate-700">
-                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Professional PDF Report</li>
+                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Detailed Risk Breakdown</li>
                     <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Step-by-Step Next Actions</li>
-                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Expert Gaps Identification</li>
+                    <li className="flex gap-2 items-start"><span className="text-accent">✓</span> Downloadable PDF Report</li>
                   </ul>
                 </div>
               </div>
@@ -167,17 +165,23 @@ const AppContent: React.FC = () => {
               </div>
 
               <div className="text-center mb-8">
-                <p className="text-caption text-slate-400 mb-1">One-Time Access Fee</p>
+                <p className="text-caption text-slate-400 mb-1 leading-none uppercase font-bold tracking-widest">Access Fee</p>
                 <p className="text-display text-navy">£79</p>
               </div>
 
               <Button onClick={() => { setActiveTier('full'); setIsPaymentModalOpen(true); }} variant="primary" size="lg" fullWidth>
-                Pay £79 & Finish Assessment
+                Pay £79 & Continue
               </Button>
-              
-              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-caption text-slate-400 hover:text-navy">
-                Cancel and return to home
-              </button>
+
+              <div className="mt-8 pt-8 border-t border-slate-100">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center mb-4">Refund Policy Exclusions</p>
+                <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-[9px] text-slate-400 font-bold uppercase tracking-tight list-disc pl-4">
+                  <li>No refund for change of mind</li>
+                  <li>No refund after report delivery</li>
+                  <li>No refund if outcome differs from user hope</li>
+                  <li>No refund for future rule changes</li>
+                </ul>
+              </div>
             </div>
           </div>
         );
@@ -201,7 +205,7 @@ const AppContent: React.FC = () => {
                   assessmentData={assessmentResult!}
                   answers={answers}
                   tier={activeTier}
-                  onUpgrade={() => { setActiveTier('human'); setIsPaymentModalOpen(true); }}
+                  onUpgrade={() => { setActiveTier('pro'); setIsPaymentModalOpen(true); }}
                 />
               )}
             </div>
