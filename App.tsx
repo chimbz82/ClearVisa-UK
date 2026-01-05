@@ -155,7 +155,7 @@ const App: React.FC = () => {
       <PaymentModal 
         isOpen={isPaymentModalOpen} 
         onClose={() => setIsPaymentModalOpen(false)} 
-        onSuccess={handlePaymentSuccess}
+        onPaymentComplete={handlePaymentSuccess}
       />
     </div>
   );

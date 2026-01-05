@@ -1,16 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (route: string) => void;
+  onPaymentComplete: (route: string) => void;
 }
 
-type CheckoutStep = 'select-route' | 'payment' | 'processing';
+type CheckoutStep = 'select-route' | 'payment';
+type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete }) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
+  const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === 'success') {
+      const timer = setTimeout(() => {
+        // 1) Notify parent that payment is complete with the selected route
+        const routeName = selectedRoute === 'Spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+        onPaymentComplete?.(routeName);
+
+        // 2) Close the payment modal overlay
+        onClose?.();
+        
+        // Reset local state for next time
+        setStatus('idle');
+        setStep('select-route');
+        setSelectedRoute(null);
+      }, 1200); // short delay for the success state to be visible
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, onPaymentComplete, onClose, selectedRoute]);
 
   if (!isOpen) return null;
 
@@ -21,16 +43,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
 
   const handleMockPayment = (e: React.FormEvent) => {
     e.preventDefault();
-    setStep('processing');
+    setStatus('processing');
     
     // Simulate successful payment and processing
     setTimeout(() => {
-      onSuccess(selectedRoute === 'Spouse' ? 'Spouse Visa' : 'Skilled Worker Visa');
-      // No manual reset needed, onSuccess will trigger app view change
+      setStatus('success');
     }, 1800);
   };
 
   const resetAndClose = () => {
+    if (status === 'processing') return; // Prevent closing while processing
+    setStatus('idle');
     setStep('select-route');
     setSelectedRoute(null);
     onClose();
@@ -41,14 +64,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-[#0B2545]/60 backdrop-blur-sm transition-opacity"
-        onClick={step !== 'processing' ? resetAndClose : undefined}
+        onClick={status === 'idle' ? resetAndClose : undefined}
       />
 
       {/* Modal Card */}
       <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         
-        {/* Header - Hidden during processing */}
-        {step !== 'processing' && (
+        {/* Header - Hidden during processing/success */}
+        {status === 'idle' && (
           <div className="px-8 pt-8 pb-4 flex justify-between items-center">
             <h3 className="text-xl font-bold text-navy uppercase tracking-tight">
               {step === 'select-route' && 'Select Assessment Route'}
@@ -64,10 +87,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
         )}
 
         {/* Content */}
-        <div className="px-8 pb-8">
+        <div className={`px-8 ${status === 'idle' ? 'pb-8' : 'py-16'}`}>
           
           {/* Step 1: Select Route */}
-          {step === 'select-route' && (
+          {status === 'idle' && step === 'select-route' && (
             <div className="space-y-4">
               <p className="text-slate-600 text-sm mb-6 font-semibold">Choose the visa type for your ClearVisa UK assessment.</p>
               
@@ -100,7 +123,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
           )}
 
           {/* Step 2: Payment */}
-          {step === 'payment' && (
+          {status === 'idle' && step === 'payment' && (
             <form onSubmit={handleMockPayment} className="space-y-6">
               <div className="bg-slate-50 p-6 rounded-2xl flex justify-between items-center mb-6 border border-slate-100">
                 <div>
@@ -152,18 +175,26 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
             </form>
           )}
 
-          {/* Step 3: Processing */}
-          {step === 'processing' && (
-            <div className="text-center py-16 animate-in fade-in duration-500">
+          {/* Processing / Success State */}
+          {(status === 'processing' || status === 'success') && (
+            <div className="text-center animate-in fade-in duration-500">
               <div className="relative w-20 h-20 mx-auto mb-10">
                 <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-accent rounded-full border-t-transparent animate-spin"></div>
+                <div className={`absolute inset-0 border-4 border-accent rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
+                  {status === 'processing' ? (
+                    <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M12 8v4l3 3" /></svg>
+                  ) : (
+                    <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
+                  )}
                 </div>
               </div>
-              <h4 className="text-2xl font-black text-navy mb-3 uppercase tracking-tight">Payment Successful</h4>
-              <p className="text-slate-600 font-bold">Generating your confidential report...</p>
+              <h4 className="text-2xl font-black text-navy mb-3 uppercase tracking-tight">
+                {status === 'processing' ? 'Processing Payment' : 'Payment Successful'}
+              </h4>
+              <p className="text-slate-600 font-bold">
+                {status === 'processing' ? 'Securely connecting to Stripe...' : 'Generating your confidential assessment report…'}
+              </p>
             </div>
           )}
         </div>
