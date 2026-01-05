@@ -15,15 +15,16 @@ import ReportTemplate from './components/ReportTemplate';
 import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
+import PartnerSection from './components/PartnerSection';
 import { triggerReportPdfDownload } from './utils/downloadPdf';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { LanguageProvider } from './context/LanguageContext';
 
-type ViewState = 'landing' | 'questionnaire' | 'report' | 'privacy' | 'terms';
+type ViewState = 'landing' | 'questionnaire' | 'teaser' | 'report' | 'privacy' | 'terms';
+type PricingTier = 'basic' | 'full' | 'human';
 
 const AppContent: React.FC = () => {
-  const { t, language } = useLanguage();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
   const [selectedRoute, setSelectedRoute] = useState<string>('Spouse Visa');
@@ -32,6 +33,8 @@ const AppContent: React.FC = () => {
   const [applicantName, setApplicantName] = useState<string>("Alex Thompson");
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [activeTier, setActiveTier] = useState<PricingTier>('basic');
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
     if (showToast) {
@@ -40,8 +43,10 @@ const AppContent: React.FC = () => {
     }
   }, [showToast]);
 
-  const handleStartCheck = () => {
-    setIsPaymentModalOpen(true);
+  const handleStartFreeCheck = (tierPreference?: PricingTier) => {
+    if (tierPreference) setActiveTier(tierPreference);
+    setViewState('questionnaire');
+    window.scrollTo(0, 0);
   };
 
   const scrollToSection = (id: string) => {
@@ -61,25 +66,24 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handlePaymentSuccess = (route: string) => {
-    setSelectedRoute(route);
-    setViewState('questionnaire');
+  const handlePaymentSuccess = (route: string, tier: PricingTier) => {
+    setActiveTier(tier);
+    setIsUnlocked(true);
+    setViewState('report');
+    setIsLoadingReport(true);
     window.scrollTo(0, 0);
+
+    setTimeout(() => {
+      setIsLoadingReport(false);
+    }, 2000);
   };
 
   const handleQuestionnaireComplete = (collectedAnswers: Record<string, any>) => {
     setAnswers(collectedAnswers);
-    setViewState('report');
-    setIsLoadingReport(true);
-    setShowToast(true);
-    window.scrollTo(0, 0);
-
     const result = runAssessment(selectedRoute, collectedAnswers);
     setAssessmentResult(result);
-
-    setTimeout(() => {
-      setIsLoadingReport(false);
-    }, 2800);
+    setViewState('teaser');
+    window.scrollTo(0, 0);
   };
 
   const renderContent = () => {
@@ -88,7 +92,7 @@ const AppContent: React.FC = () => {
         return (
           <div className="bg-white min-h-screen">
             <Header 
-              onStartCheck={() => {}} 
+              onStartCheck={handleStartFreeCheck} 
               onNavigateHome={() => setViewState('landing')} 
               onScrollToSection={() => {}}
             />
@@ -101,76 +105,77 @@ const AppContent: React.FC = () => {
             </div>
           </div>
         );
+      case 'teaser':
+        return (
+          <div className="bg-slate-100 min-h-screen py-16 px-4">
+            <div className="max-w-2xl mx-auto bg-white rounded-3xl p-10 shadow-2xl text-center">
+              <div className={`inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase mb-6 ${
+                assessmentResult?.verdict === 'likely' ? 'bg-accent/10 text-accent' : 
+                assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
+              }`}>
+                Verdict: {assessmentResult?.verdict.toUpperCase()}
+              </div>
+              <h2 className="text-3xl font-black text-navy uppercase tracking-tight mb-4">
+                Unlock your full report
+              </h2>
+              <p className="text-slate-600 font-bold mb-10 leading-relaxed">
+                See your detailed risk breakdown, personalized document checklist, and exact next steps to strengthen your case.
+              </p>
+              
+              <div className="space-y-4">
+                <button 
+                  onClick={() => setIsPaymentModalOpen(true)}
+                  className="w-full bg-accent text-white py-4 rounded-xl font-black text-lg hover:bg-[#28a362] transition-all shadow-xl uppercase tracking-widest"
+                >
+                  Unlock Full Report (£29)
+                </button>
+                <button 
+                  onClick={() => setViewState('landing')}
+                  className="w-full py-4 text-slate-400 font-bold hover:text-navy uppercase tracking-widest text-xs"
+                >
+                  Return to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        );
       case 'report':
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 sm:px-6 relative">
-            {showToast && (
-              <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-4 duration-500">
-                <div className="bg-navy text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-slate-700">
-                  <div className="w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm uppercase tracking-tight">Assessment Engine Active</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Mapping Appendix Compliance...</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 bg-white rounded-2xl shadow-xl border border-slate-100">
               <div>
                 <h2 className="text-xl font-black text-navy mb-1 uppercase tracking-tight">
                   {isLoadingReport ? 'Analyzing Evidence…' : 'Report Finalized'}
                 </h2>
                 <p className="text-sm text-slate-500 font-semibold leading-relaxed">
-                  {isLoadingReport ? 'Our engine is calculating thresholds against current UK immigration appendices.' : 'Your ClearVisa UK – Eligibility Pre-Check is ready for review.'}
+                  {isLoadingReport ? 'Our engine is calculating thresholds against current UK immigration appendices.' : 'Your ClearVisa UK – Eligibility Pre-Check is ready.'}
                 </p>
               </div>
-              <div className="flex items-center gap-4 w-full sm:w-auto">
-                <button 
-                  onClick={() => setViewState('landing')}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-all uppercase text-xs tracking-widest"
-                >
-                  Exit
-                </button>
-                <button 
-                  type="button"
-                  disabled={isLoadingReport}
-                  onClick={triggerReportPdfDownload}
-                  className="flex-1 sm:flex-none bg-navy text-white px-8 py-3 rounded-xl font-black shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 uppercase text-xs tracking-widest"
-                >
-                  Download PDF
-                </button>
+              <div className="flex items-center gap-4">
+                <button onClick={() => setViewState('landing')} className="px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold uppercase text-xs tracking-widest">Exit</button>
+                <button disabled={isLoadingReport} onClick={triggerReportPdfDownload} className="bg-navy text-white px-8 py-3 rounded-xl font-black shadow-lg hover:bg-slate-800 transition-all uppercase text-xs tracking-widest">Download PDF</button>
               </div>
             </div>
             
             <div id="report-print-root">
-              {isLoadingReport ? (
-                <ReportSkeleton />
-              ) : (
+              {isLoadingReport ? <ReportSkeleton /> : (
                 <ReportTemplate 
                   applicantName={applicantName} 
                   visaRoute={selectedRoute} 
-                  onDownload={triggerReportPdfDownload}
                   assessmentData={assessmentResult!}
                   answers={answers}
+                  tier={activeTier}
                 />
               )}
             </div>
-            
-            {!isLoadingReport && (
-              <div className="max-w-[210mm] mx-auto mt-12 p-8 bg-navy rounded-2xl text-white no-print shadow-2xl overflow-hidden relative">
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                  <div className="max-w-md">
-                    <h3 className="text-2xl font-black mb-3 uppercase tracking-tight text-accent">Professional Review</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed font-semibold">
-                      Your pre-check identified specific risks. Present this report to an OISC-regulated adviser to fast-track your formal legal review.
-                    </p>
-                  </div>
-                  <button className="whitespace-nowrap bg-white text-navy px-8 py-4 rounded-xl font-black transition-all shadow-xl uppercase tracking-widest text-sm hover:bg-accent hover:text-white">
-                    Find OISC Solicitor
-                  </button>
+
+            {!isLoadingReport && activeTier === 'basic' && (
+              <div className="max-w-[210mm] mx-auto mt-12 p-8 bg-white rounded-2xl border-2 border-accent shadow-xl no-print text-center">
+                <h3 className="text-2xl font-black text-navy mb-2 uppercase tracking-tight">Want a stronger case?</h3>
+                <p className="text-slate-600 font-bold mb-6">Upgrade to Full Pre-Check for a personalized document checklist and detailed risk breakdown.</p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button onClick={() => setIsPaymentModalOpen(true)} className="bg-accent text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm shadow-lg hover:bg-[#28a362]">Upgrade to Full (£50)</button>
+                  <button onClick={() => setViewState('landing')} className="px-8 py-4 text-slate-400 font-bold uppercase tracking-widest text-xs">Continue without upgrading</button>
                 </div>
               </div>
             )}
@@ -184,31 +189,19 @@ const AppContent: React.FC = () => {
       default:
         return (
           <>
-            <Header 
-              onStartCheck={handleStartCheck} 
-              onNavigateHome={() => setViewState('landing')} 
-              onScrollToSection={scrollToSection}
-            />
+            <Header onStartCheck={handleStartFreeCheck} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <main>
-              {language !== 'en' && (
-                <div className="bg-navy/5 text-navy py-2 text-center text-[10px] font-bold uppercase tracking-widest">
-                  {t('common.legalConvenience')}
-                </div>
-              )}
-              <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
+              <Hero onStartCheck={handleStartFreeCheck} onScrollToSection={scrollToSection} />
               <TrustStrip />
               <HowItWorks />
               <WhoItsFor />
               <WhatYouGet />
-              <Pricing onStartCheck={handleStartCheck} />
+              <Pricing onStartCheck={handleStartFreeCheck} />
               <FAQ />
+              <PartnerSection />
               <Legal />
             </main>
-            <Footer 
-              onPrivacyClick={() => { setViewState('privacy'); window.scrollTo(0, 0); }} 
-              onTermsClick={() => { setViewState('terms'); window.scrollTo(0, 0); }} 
-              onScrollToSection={scrollToSection}
-            />
+            <Footer onPrivacyClick={() => setViewState('privacy')} onTermsClick={() => setViewState('terms')} onScrollToSection={scrollToSection} />
           </>
         );
     }
@@ -220,7 +213,8 @@ const AppContent: React.FC = () => {
       <PaymentModal 
         isOpen={isPaymentModalOpen} 
         onClose={() => setIsPaymentModalOpen(false)} 
-        onPaymentComplete={handlePaymentSuccess}
+        onPaymentComplete={(route, tier) => handlePaymentSuccess(route, tier as PricingTier)}
+        selectedTier={activeTier}
       />
     </div>
   );

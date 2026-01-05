@@ -22,6 +22,10 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
             <p className="text-slate-400 text-sm max-w-sm leading-relaxed font-bold mb-8">
               {t('footer.mission')}
             </p>
+            <div className="mt-8 border-t border-white/10 pt-8">
+              <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Agencies or law firms?</p>
+              <a href="mailto:b2b@clearvisa.co.uk" className="text-accent hover:text-white transition-colors text-sm font-bold underline">Contact us for bulk pricing or white-label options.</a>
+            </div>
           </div>
           
           <div>
