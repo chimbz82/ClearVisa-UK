@@ -6,6 +6,7 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
+  // TODO: Once available, add company registration number and any required legal details here.
   return (
     <footer className="bg-[#081C2D] text-white pt-24 pb-12 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,9 +41,9 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
           </div>
         </div>
         
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="pt-12 border-t border-white/5 flex flex-col items-center gap-4 text-center">
           <p className="text-slate-500 text-[11px] font-black uppercase tracking-widest">
-            © 2024 ClearVisa UK – Immigration Eligibility Pre-Check Report.
+            © 2026 ClearVisa UK – Immigration Eligibility Pre-Check Report. All rights reserved.
           </p>
           <p className="text-slate-600 text-[9px] uppercase tracking-[0.3em] font-black">
             Not affiliated with the UK Government or Home Office.

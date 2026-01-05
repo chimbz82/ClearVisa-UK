@@ -235,15 +235,14 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
 
         <div className="print-footer-info">
-          <span>© 2024 ClearVisa UK</span>
-          <span className="font-black">CONFIDENTIAL REPORT • {reportId}</span>
-          <span>Page 1 of 1</span>
+          <span>© 2026 ClearVisa UK – Immigration Eligibility Pre-Check Report. All rights reserved.</span>
+          <span className="font-black">ID: {reportId}</span>
+          <span>Not affiliated with the UK Government or Home Office.</span>
         </div>
 
-        <div className="flex justify-between items-center text-[9px] text-slate-400 font-black tracking-[0.3em] uppercase pt-4 border-t no-print">
-          <span>© 2024 ClearVisa UK</span>
-          <span>Confidential Assessment</span>
-          <span>{reportId}</span>
+        <div className="flex flex-col items-center gap-2 text-[9px] text-slate-400 font-black tracking-[0.3em] uppercase pt-4 border-t no-print">
+          <span>© 2026 ClearVisa UK – Immigration Eligibility Pre-Check Report. All rights reserved.</span>
+          <span className="tracking-widest">Not affiliated with the UK Government or Home Office. • {reportId}</span>
         </div>
       </footer>
     </div>

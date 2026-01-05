@@ -45,7 +45,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
             </div>
             
             <p className="text-xs text-slate-400 pt-10 border-t border-slate-100 uppercase font-bold tracking-widest">
-              Last updated: October 2024
+              Last updated: January 2026
             </p>
           </div>
         </div>
