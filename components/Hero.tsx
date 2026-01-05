@@ -45,9 +45,11 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck }) => {
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </a>
             </div>
+            <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mt-8">Takes 2–3 minutes • Secure Assessment Engine</p>
           </div>
 
           <div className="relative">
+            {/* Main App Preview Card */}
             <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
               <div className="p-6 border-b border-slate-100 bg-slate-50/30 flex justify-between items-center">
                 <div className="flex gap-2">
@@ -71,12 +73,17 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck }) => {
                 </div>
               </div>
             </div>
+
+            {/* Float-over Result Preview */}
             <div className="absolute -bottom-8 -left-8 md:-left-12 w-64 md:w-80 bg-white rounded-2xl shadow-2xl border border-accent/20 p-6 transform hover:rotate-1 transition-transform">
               <div className="flex items-center justify-between mb-4">
                 <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-[11px] font-black uppercase tracking-wider">Likely Eligible</span>
               </div>
               <p className="text-xs text-slate-600 mb-4 font-bold">ClearVisa UK Analysis: Parameters meet Appendix FM thresholds.</p>
-              <div onClick={onStartCheck} className="text-navy text-xs font-black uppercase tracking-widest border-t pt-4 cursor-pointer hover:text-accent">DOWNLOAD PDF REPORT</div>
+              <div onClick={onStartCheck} className="text-navy text-xs font-black uppercase tracking-widest border-t pt-4 cursor-pointer hover:text-accent flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                DOWNLOAD PDF REPORT
+              </div>
             </div>
           </div>
         </div>

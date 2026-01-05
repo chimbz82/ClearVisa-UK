@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -44,7 +43,7 @@ const App: React.FC = () => {
     setShowToast(true);
     window.scrollTo(0, 0);
 
-    // Simulate real report generation time
+    // Simulate report generation time
     setTimeout(() => {
       setIsLoadingReport(false);
     }, 2500);
@@ -59,7 +58,7 @@ const App: React.FC = () => {
             {showToast && (
               <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-4 duration-500">
                 <div className="bg-navy text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-slate-700">
-                  <div className="w-10 h-10 bg-teal-500 text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   </div>
                   <div>
@@ -73,10 +72,10 @@ const App: React.FC = () => {
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 bg-white rounded-2xl shadow-xl border border-slate-100">
               <div>
                 <h2 className="text-xl font-bold text-navy mb-1">
-                  {isLoadingReport ? 'Generating Assessment...' : 'Your Report is Ready'}
+                  {isLoadingReport ? 'Generating Assessment...' : 'ClearVisa UK – Assessment Ready'}
                 </h2>
                 <p className="text-sm text-slate-500">
-                  {isLoadingReport ? 'Our engine is checking Home Office rules against your data.' : 'Preview and download your confidential assessment below.'}
+                  {isLoadingReport ? 'Our engine is checking Home Office rules against your data.' : 'Download your ClearVisa UK – Immigration Eligibility Pre-Check Report below.'}
                 </p>
               </div>
               <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -110,16 +109,15 @@ const App: React.FC = () => {
             <div className={`max-w-[210mm] mx-auto mt-12 p-8 bg-navy rounded-2xl text-white no-print shadow-2xl overflow-hidden relative transition-opacity duration-500 ${isLoadingReport ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="max-w-md">
-                  <h3 className="text-2xl font-bold mb-3">Need Professional Help?</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Take this report to a qualified immigration solicitor to fast-track your consultation. It covers all the core details they'll need to know.
+                  <h3 className="text-2xl font-bold mb-3 uppercase tracking-tight">Professional Guidance</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed font-semibold">
+                    Present your ClearVisa UK – Immigration Eligibility Pre-Check Report to an OISC-regulated adviser to fast-track your legal consultation.
                   </p>
                 </div>
-                <button className="whitespace-nowrap bg-teal-500 hover:bg-teal-400 text-navy px-8 py-4 rounded-xl font-bold transition-all shadow-xl">
+                <button className="whitespace-nowrap bg-accent hover:bg-emerald-400 text-navy px-8 py-4 rounded-xl font-black transition-all shadow-xl uppercase tracking-widest text-sm">
                   Find an OISC Adviser
                 </button>
               </div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
             </div>
           </div>
         );
@@ -152,7 +150,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div id="top" className="min-h-screen bg-off-white selection:bg-teal-100 selection:text-teal-900">
+    <div id="top" className="min-h-screen bg-off-white selection:bg-accent/20 selection:text-navy">
       {renderContent()}
       <PaymentModal 
         isOpen={isPaymentModalOpen} 

@@ -7,12 +7,12 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
   return (
-    <footer className="bg-dark-section text-white pt-24 pb-12 no-print">
+    <footer className="bg-[#081C2D] text-white pt-24 pb-12 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           <div className="lg:col-span-2">
             <div className="text-xl font-black flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 bg-white text-navy rounded flex items-center justify-center font-serif flex-shrink-0 shadow-lg shadow-white/5">C</div>
+              <div className="w-10 h-10 bg-white text-navy rounded flex items-center justify-center font-serif flex-shrink-0 shadow-lg">C</div>
               <span className="leading-tight tracking-tight uppercase">ClearVisa UK – Immigration Eligibility<br/>Pre-Check Report</span>
             </div>
             <p className="text-slate-400 text-sm max-w-sm leading-relaxed font-bold mb-8">
@@ -33,8 +33,8 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
           <div>
             <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Support</h4>
             <ul className="space-y-5 text-slate-300 text-sm font-bold">
-              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors">Privacy Policy</button></li>
-              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors">Terms of Use</button></li>
+              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors text-left">Privacy Policy</button></li>
+              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors text-left">Terms of Use</button></li>
               <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-accent transition-colors">Support Contact</a></li>
             </ul>
           </div>

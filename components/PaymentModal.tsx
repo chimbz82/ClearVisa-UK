@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 interface PaymentModalProps {
@@ -27,7 +26,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
     // Simulate successful payment and processing
     setTimeout(() => {
       onSuccess(selectedRoute === 'Spouse' ? 'Spouse Visa' : 'Skilled Worker Visa');
-      resetAndClose();
+      // No manual reset needed, onSuccess will trigger app view change
     }, 1800);
   };
 
@@ -41,7 +40,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-navy/60 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-[#0B2545]/60 backdrop-blur-sm transition-opacity"
         onClick={step !== 'processing' ? resetAndClose : undefined}
       />
 
@@ -51,8 +50,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
         {/* Header - Hidden during processing */}
         {step !== 'processing' && (
           <div className="px-8 pt-8 pb-4 flex justify-between items-center">
-            <h3 className="text-xl font-bold text-navy">
-              {step === 'select-route' && 'Select your visa route'}
+            <h3 className="text-xl font-bold text-navy uppercase tracking-tight">
+              {step === 'select-route' && 'Select Assessment Route'}
               {step === 'payment' && 'Secure Checkout'}
             </h3>
             <button 
@@ -70,32 +69,32 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
           {/* Step 1: Select Route */}
           {step === 'select-route' && (
             <div className="space-y-4">
-              <p className="text-slate-600 text-sm mb-6">Choose the visa type you want to check eligibility for.</p>
+              <p className="text-slate-600 text-sm mb-6 font-semibold">Choose the visa type for your ClearVisa UK assessment.</p>
               
               <button 
                 onClick={() => handleRouteSelect('Spouse')}
-                className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
+                className="w-full flex items-center justify-between p-6 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
-                  <h4 className="font-bold text-navy group-hover:text-navy">Spouse & Partner Visa</h4>
-                  <p className="text-xs text-slate-500">Based on relationship and financial rules.</p>
+                  <h4 className="font-black text-navy uppercase tracking-tight">Spouse & Partner Visa</h4>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Appendix FM Compliance</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-5 h-5 text-slate-300 group-hover:text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
               </button>
 
               <button 
                 onClick={() => handleRouteSelect('Skilled Worker')}
-                className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
+                className="w-full flex items-center justify-between p-6 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
-                  <h4 className="font-bold text-navy">Skilled Worker Visa</h4>
-                  <p className="text-xs text-slate-500">Based on salary, job code, and sponsorship.</p>
+                  <h4 className="font-black text-navy uppercase tracking-tight">Skilled Worker Visa</h4>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Salary & Sponsorship Check</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-5 h-5 text-slate-300 group-hover:text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
               </button>
 
-              <p className="text-[10px] text-slate-400 text-center mt-6 uppercase tracking-widest font-bold">
-                Secure Assessment • GDPR Compliant
+              <p className="text-[10px] text-slate-400 text-center mt-8 uppercase tracking-widest font-black">
+                Secure Assessment • GDPR Compliant • Confidential
               </p>
             </div>
           )}
@@ -103,74 +102,68 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
           {/* Step 2: Payment */}
           {step === 'payment' && (
             <form onSubmit={handleMockPayment} className="space-y-6">
-              <div className="bg-slate-50 p-4 rounded-xl flex justify-between items-center mb-6">
+              <div className="bg-slate-50 p-6 rounded-2xl flex justify-between items-center mb-6 border border-slate-100">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assessment</p>
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest">ClearVisa UK Assessment</p>
                   <p className="text-sm font-bold text-navy">{selectedRoute === 'Spouse' ? 'Spouse Pre-Check' : 'Skilled Worker Pre-Check'}</p>
                 </div>
-                <p className="text-lg font-bold text-navy">£19.00</p>
+                <p className="text-xl font-black text-navy">£19.00</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Card Information</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Card Information</label>
                   <div className="space-y-px">
-                    <div className="relative">
-                      <input 
-                        required
-                        type="text" 
-                        placeholder="Card number"
-                        className="w-full p-4 bg-white border border-slate-200 rounded-t-xl text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none"
-                      />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-                        <div className="w-8 h-5 bg-slate-100 rounded"></div>
-                        <div className="w-8 h-5 bg-slate-100 rounded"></div>
-                      </div>
-                    </div>
+                    <input 
+                      required
+                      type="text" 
+                      placeholder="Card number"
+                      className="w-full p-4 bg-white border border-slate-200 rounded-t-xl text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none font-bold"
+                    />
                     <div className="flex">
                       <input 
                         required
                         type="text" 
                         placeholder="MM / YY"
-                        className="w-1/2 p-4 bg-white border border-slate-200 rounded-bl-xl border-t-0 border-r-0 text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none"
+                        className="w-1/2 p-4 bg-white border border-slate-200 rounded-bl-xl border-t-0 border-r-0 text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none font-bold"
                       />
                       <input 
                         required
                         type="text" 
                         placeholder="CVC"
-                        className="w-1/2 p-4 bg-white border border-slate-200 rounded-br-xl border-t-0 text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none"
+                        className="w-1/2 p-4 bg-white border border-slate-200 rounded-br-xl border-t-0 text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none font-bold"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-[10px] text-slate-400 justify-center">
+              <div className="flex items-center gap-2 text-[10px] text-slate-400 justify-center font-bold">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-                Secure payment powered by Stripe.
+                Secure payment via Stripe.
               </div>
 
               <button 
                 type="submit"
-                className="w-full bg-navy text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
+                className="w-full bg-navy text-white py-4 rounded-xl font-black text-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-xl"
               >
-                Pay £19.00
+                Complete Payment
               </button>
             </form>
           )}
 
           {/* Step 3: Processing */}
           {step === 'processing' && (
-            <div className="text-center py-12 animate-in fade-in duration-500">
-              <div className="relative w-20 h-20 mx-auto mb-8">
+            <div className="text-center py-16 animate-in fade-in duration-500">
+              <div className="relative w-20 h-20 mx-auto mb-10">
                 <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 border-4 border-accent rounded-full border-t-transparent animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
                 </div>
               </div>
-              <h4 className="text-2xl font-bold text-navy mb-2">Payment Successful</h4>
-              <p className="text-slate-600 font-medium">Generating your report, please wait...</p>
+              <h4 className="text-2xl font-black text-navy mb-3 uppercase tracking-tight">Payment Successful</h4>
+              <p className="text-slate-600 font-bold">Generating your confidential report...</p>
             </div>
           )}
         </div>
