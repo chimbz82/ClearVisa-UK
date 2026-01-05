@@ -14,6 +14,7 @@
       }
       body {
         font-family: 'Inter', sans-serif;
+        background-color: #F7FAFC;
       }
       [id] {
         scroll-margin-top: 96px;
@@ -34,13 +35,6 @@
         body {
           background-color: white !important;
         }
-        .print-only {
-          display: block !important;
-        }
-        @page {
-          size: A4;
-          margin: 0;
-        }
         .a4-page {
           margin: 0;
           border: initial;
@@ -58,7 +52,7 @@
           left: 50%;
           transform: translate(-50%, -50%) rotate(-45deg);
           font-size: 80px;
-          color: rgba(0, 0, 0, 0.03);
+          color: rgba(0, 0, 0, 0.03) !important;
           font-weight: 900;
           white-space: nowrap;
           pointer-events: none;
