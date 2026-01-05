@@ -29,31 +29,37 @@
       .bg-dark-section { background-color: #081C2D; }
 
       @media print {
-        @page {
-          size: A4 portrait;
-          margin: 0;
-        }
-        .no-print {
+        header, 
+        nav, 
+        footer.no-print, 
+        .no-print,
+        section:not(#report-print-root),
+        main > *:not(#report-print-root) {
           display: none !important;
         }
+
         body {
           background-color: white !important;
-          margin: 0;
-          padding: 0;
+          margin: 0 !important;
+          padding: 0 !important;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
+
         #root {
           background-color: white !important;
         }
-        /* Ensure the report container is the only thing shown */
-        #report-root {
+
+        #report-print-root {
+          display: block !important;
           width: 100% !important;
-          max-width: none !important;
+          max-width: 100% !important;
+          box-shadow: none !important;
           margin: 0 !important;
           padding: 0 !important;
           background: white !important;
         }
+
         .a4-page {
           margin: 0 !important;
           border: none !important;
@@ -66,6 +72,7 @@
           position: relative;
           page-break-after: always;
         }
+
         .watermark {
           position: fixed;
           top: 50%;
@@ -79,7 +86,7 @@
           z-index: 0;
           display: block !important;
         }
-        /* Page numbering and footer details */
+
         .print-footer-info {
           display: flex !important;
           position: absolute;
@@ -93,7 +100,7 @@
           padding-top: 4mm;
         }
       }
-      /* Hidden by default, only shown in print if needed */
+
       .print-footer-info {
         display: none;
       }

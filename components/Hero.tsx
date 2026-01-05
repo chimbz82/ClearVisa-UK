@@ -1,4 +1,5 @@
 import React from 'react';
+import { triggerReportPdfDownload } from '../utils/downloadPdf';
 
 interface HeroProps {
   onStartCheck: () => void;
@@ -84,10 +85,14 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 <span className="px-2 py-0.5 lg:px-2.5 lg:py-0.5 bg-accent/10 text-accent rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-wider">Likely Eligible</span>
               </div>
               <p className="text-[10px] lg:text-[11px] text-slate-600 mb-2.5 lg:mb-3 font-bold">ClearVisa UK Analysis: Parameters meet Appendix FM thresholds.</p>
-              <div onClick={onStartCheck} className="text-navy text-[10px] lg:text-[11px] font-black uppercase tracking-widest border-t pt-3 lg:pt-3.5 cursor-pointer hover:text-accent flex items-center gap-2">
+              <button 
+                type="button"
+                onClick={triggerReportPdfDownload} 
+                className="w-full text-navy text-[10px] lg:text-[11px] font-black uppercase tracking-widest border-t pt-3 lg:pt-3.5 cursor-pointer hover:text-accent flex items-center gap-2 focus:outline-none"
+              >
                 <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 DOWNLOAD PDF REPORT
-              </div>
+              </button>
             </div>
           </div>
         </div>

@@ -109,6 +109,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Formal Report Preview</span>
           {onDownload && (
             <button 
+              type="button"
               onClick={onDownload}
               className="bg-navy text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-slate-800 transition-all shadow-md"
             >
