@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -85,7 +84,7 @@ const AppContent: React.FC = () => {
         return (
           <div className="bg-white min-h-screen">
             <Header activeTier={activeTier} onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
-            <div className="pt-24">
+            <div className="pt-24 pb-20">
               <Questionnaire route={selectedRoute} onComplete={handleQuestionnaireComplete} onCancel={() => setViewState('landing')} activeTier={activeTier} />
             </div>
           </div>
@@ -94,31 +93,31 @@ const AppContent: React.FC = () => {
         const tierPrices = { basic: '£29', full: '£79', human: '£149' };
         return (
           <div className="bg-slate-100 min-h-screen py-16 px-4 flex items-center justify-center">
-            <div className="max-w-2xl w-full bg-white rounded-[32px] p-10 md:p-12 shadow-2xl text-center">
-              <div className={`inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase mb-6 ${
+            <div className="max-w-2xl w-full bg-white rounded-[40px] p-10 md:p-14 shadow-2xl text-center border border-slate-100">
+              <div className={`inline-block px-4 py-1.5 rounded-full text-[11px] font-black uppercase mb-8 tracking-widest ${
                 assessmentResult?.verdict === 'likely' ? 'bg-accent/10 text-accent' : 
                 assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
               }`}>
                 Verdict: {assessmentResult?.verdict.toUpperCase()}
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-navy uppercase tracking-tight mb-4">
+              <h2 className="text-3xl md:text-5xl font-black text-navy uppercase tracking-tight mb-6 leading-tight">
                 Unlock your full report
               </h2>
-              <p className="text-slate-600 font-bold mb-10 leading-relaxed text-lg">
+              <p className="text-slate-600 font-bold mb-12 leading-relaxed text-lg">
                 Your preliminary analysis is ready. Pay {tierPrices[activeTier]} to unlock your professional risk breakdown, 
                 {activeTier !== 'basic' && " personalized document audit,"} and exact next steps.
               </p>
               
-              <div className="space-y-4">
+              <div className="space-y-4 max-w-sm mx-auto">
                 <button 
                   onClick={() => setIsPaymentModalOpen(true)}
-                  className="w-full bg-accent text-white py-5 rounded-2xl font-black text-xl hover:bg-[#28a362] transition-all shadow-xl uppercase tracking-widest"
+                  className="w-full bg-accent text-white py-5 rounded-2xl font-black text-xl hover:bg-[#28a362] transition-all shadow-xl uppercase tracking-widest active:scale-95"
                 >
-                  Pay {tierPrices[activeTier]} & Generate Report
+                  Pay {tierPrices[activeTier]}
                 </button>
                 <button 
                   onClick={() => setViewState('landing')}
-                  className="w-full py-4 text-slate-400 font-bold hover:text-navy uppercase tracking-widest text-xs"
+                  className="w-full py-4 text-slate-400 font-bold hover:text-navy uppercase tracking-widest text-[11px] transition-colors"
                 >
                   Return to Home
                 </button>
@@ -163,7 +162,7 @@ const AppContent: React.FC = () => {
       case 'landing':
       default:
         return (
-          <>
+          <div id="top">
             <Header onStartCheck={() => handleStartCheck('basic')} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <main>
               <Hero onStartCheck={() => handleStartCheck('basic')} onScrollToSection={scrollToSection} />
@@ -173,17 +172,21 @@ const AppContent: React.FC = () => {
               <WhatYouGet />
               <Pricing onStartCheck={handleStartCheck} />
               <FAQ />
-              <PartnerSection />
-              <Legal />
+              <div id="affiliate">
+                <PartnerSection />
+              </div>
+              <div id="refund-policy">
+                <Legal />
+              </div>
             </main>
             <Footer onPrivacyClick={() => setViewState('privacy')} onTermsClick={() => setViewState('terms')} onScrollToSection={scrollToSection} />
-          </>
+          </div>
         );
     }
   };
 
   return (
-    <div id="top" className="min-h-screen bg-off-white selection:bg-accent/20 selection:text-navy">
+    <div className="min-h-screen bg-off-white selection:bg-accent/20 selection:text-navy">
       {renderContent()}
       <PaymentModal 
         isOpen={isPaymentModalOpen} 

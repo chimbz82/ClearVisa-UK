@@ -42,28 +42,32 @@ const Header: React.FC<HeaderProps> = ({ activeTier, onStartCheck, onNavigateHom
         <div className="flex justify-between items-center">
           <div className="flex-shrink-0 flex items-center gap-4">
             <button 
-              onClick={(e) => { e.preventDefault(); onNavigateHome(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              onClick={(e) => { 
+                e.preventDefault(); 
+                onNavigateHome(); 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+              }} 
               className="text-xl font-bold text-navy flex items-center gap-2 focus:outline-none cursor-pointer group"
               aria-label="Home"
             >
               <div className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif flex-shrink-0 group-hover:bg-slate-800 transition-colors">C</div>
-              <span className="hidden lg:inline text-sm tracking-tight">ClearVisa UK</span>
-              <span className="lg:hidden text-lg">ClearVisa UK</span>
+              <span className="hidden lg:inline text-sm tracking-tight font-black uppercase">ClearVisa UK</span>
+              <span className="lg:hidden text-lg font-black uppercase">ClearVisa UK</span>
             </button>
             {activeTier && (
               <div className="hidden sm:flex items-center bg-accent/10 border border-accent/20 px-3 py-1 rounded-full">
-                <span className="text-[10px] font-black text-accent uppercase tracking-widest">{planLabels[activeTier] || activeTier}</span>
+                <span className="text-[10px] font-black text-accent uppercase tracking-widest leading-none">{planLabels[activeTier] || activeTier}</span>
               </div>
             )}
           </div>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <div className="flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
               {navLinks.map((link) => (
                 <button
                   key={link.id}
                   onClick={() => onScrollToSection(link.id)}
-                  className="text-sm font-bold text-slate-600 hover:text-navy transition-colors whitespace-nowrap focus:outline-none cursor-pointer px-2 py-1"
+                  className="text-[13px] font-black text-slate-600 hover:text-accent transition-colors uppercase tracking-widest cursor-pointer px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent/20 rounded"
                 >
                   {link.name}
                 </button>
@@ -72,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ activeTier, onStartCheck, onNavigateHom
 
             <button 
               onClick={onStartCheck}
-              className="bg-navy text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-all shadow-sm whitespace-nowrap cursor-pointer"
+              className="bg-navy text-white px-6 py-2.5 rounded-xl text-xs font-black hover:bg-slate-800 transition-all shadow-lg active:scale-95 uppercase tracking-widest cursor-pointer"
             >
               {t('nav.startCheck')}
             </button>
@@ -96,12 +100,12 @@ const Header: React.FC<HeaderProps> = ({ activeTier, onStartCheck, onNavigateHom
             <button 
               key={link.id} 
               onClick={() => { setIsMenuOpen(false); onScrollToSection(link.id); }} 
-              className="block w-full text-left text-lg font-bold text-navy focus:outline-none cursor-pointer"
+              className="block w-full text-left text-lg font-black text-navy focus:outline-none cursor-pointer uppercase tracking-tight"
             >
               {link.name}
             </button>
           ))}
-          <button onClick={() => { setIsMenuOpen(false); onStartCheck(); }} className="w-full bg-navy text-white px-5 py-4 rounded-xl text-base font-bold cursor-pointer">
+          <button onClick={() => { setIsMenuOpen(false); onStartCheck(); }} className="w-full bg-navy text-white px-5 py-4 rounded-xl text-base font-black uppercase tracking-widest shadow-xl">
             {t('nav.startCheck')}
           </button>
         </div>

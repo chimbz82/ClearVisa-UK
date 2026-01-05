@@ -30,13 +30,13 @@ const translations: Translations = {
     // Pricing
     'pricing.title': 'Simple, one-time pricing',
     'pricing.subtitle': 'No subscriptions. No hidden fees. Pay once per pre-check.',
-    'pricing.card.priceSuffix': '/ report',
+    'pricing.card.priceSuffix': 'per report',
     'pricing.tier.basic.label': 'BASIC PRE-CHECK',
     'pricing.tier.basic.price': '£29',
     'pricing.tier.basic.desc': 'Quick automated eligibility pre-check.',
     'pricing.tier.basic.note': 'Best for people starting out or just checking eligibility.',
     'pricing.tier.full.label': 'RECOMMENDED',
-    'pricing.tier.full.name': 'Full Pre-Check + Document Checklist',
+    'pricing.tier.full.name': 'Full Pre-Check + Checklist',
     'pricing.tier.full.price': '£79',
     'pricing.tier.full.desc': 'Most popular option for serious applicants.',
     'pricing.tier.human.label': 'HUMAN REVIEW ADD-ON',
@@ -166,13 +166,11 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageProviderInternal value={{ language: 'en', t }}>
+    <LanguageContext.Provider value={{ language: 'en', t }}>
       {children}
-    </LanguageProviderInternal>
+    </LanguageContext.Provider>
   );
 };
-
-const LanguageProviderInternal = LanguageContext.Provider;
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
