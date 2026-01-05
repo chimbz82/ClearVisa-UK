@@ -10,10 +10,10 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'Where are you currently located?',
     type: 'singleSelect',
     options: [
+      { value: 'in_uk_valid', label: 'In the UK with a valid visa' },
       { value: 'outside_uk', label: 'Outside the UK' },
-      { value: 'in_uk_valid', label: 'In the UK (valid visa)' },
-      { value: 'in_uk_no_visa', label: 'In the UK (no valid visa)' },
-      { value: 'in_uk_visitor', label: 'In the UK (as a visitor)' }
+      { value: 'in_uk_no_visa', label: 'In the UK without a valid visa / overstayed' },
+      { value: 'other', label: 'Other / not sure' }
     ]
   },
   {
@@ -52,9 +52,9 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'Do you have any criminal history?',
     type: 'singleSelect',
     options: [
-      { value: 'no', label: 'No' },
-      { value: 'yes_minor', label: 'Yes - minor / spent conviction' },
-      { value: 'yes_serious', label: 'Yes - serious / unspent / prison' }
+      { value: 'none', label: 'No criminal convictions or cautions' },
+      { value: 'minor_spent', label: 'Only spent / minor convictions or fixed penalties' },
+      { value: 'serious_unspent', label: 'Unspent or serious criminal conviction (e.g. prison, violence)' }
     ]
   },
   {
@@ -62,7 +62,12 @@ export const QUESTIONS: QuestionConfig[] = [
     route: 'shared',
     section: 'History',
     label: 'Have you ever been subject to an immigration or security ban?',
-    type: 'boolean'
+    type: 'singleSelect',
+    options: [
+      { value: 'no', label: 'No, I have never been banned' },
+      { value: 'yes', label: 'Yes, I have had an immigration or entry ban before' },
+      { value: 'unsure', label: 'I’m not sure / I was told not to apply for a period' }
+    ]
   },
 
   // --- SPOUSE / PARTNER ROUTE ---
@@ -147,9 +152,9 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'Do you already have a job offer?',
     type: 'singleSelect',
     options: [
-      { value: 'yes', label: 'Yes, confirmed' },
-      { value: 'discussion', label: 'In discussion' },
-      { value: 'no', label: 'No' }
+      { value: 'confirmed_offer', label: 'Yes, I have a confirmed job offer with a UK sponsor' },
+      { value: 'in_process', label: 'I am interviewing / in discussions but nothing confirmed' },
+      { value: 'no_offer', label: 'No, I do not have any job offer yet' }
     ]
   },
   {
@@ -187,10 +192,11 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'How will you meet the English language requirement?',
     type: 'singleSelect',
     options: [
-      { value: 'test', label: 'Approved SELT test' },
-      { value: 'degree', label: 'Degree taught in English' },
-      { value: 'country', label: 'Majority English speaking country' },
-      { value: 'not_sure', label: 'Not sure' }
+      { value: 'test', label: 'Approved English test (e.g. SELT / IELTS)' },
+      { value: 'degree', label: 'UK degree or recognised English-taught degree' },
+      { value: 'country_exempt', label: 'Country exemption (majority English-speaking country)' },
+      { value: 'other_exempt', label: 'I am exempt for another reason' },
+      { value: 'not_met', label: 'I am not sure / do not meet this yet' }
     ]
   }
 ];

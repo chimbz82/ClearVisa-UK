@@ -73,11 +73,9 @@ const App: React.FC = () => {
     setShowToast(true);
     window.scrollTo(0, 0);
 
-    // Calculate result using engine
     const result = runAssessment(selectedRoute, collectedAnswers);
     setAssessmentResult(result);
 
-    // Simulate analysis time
     setTimeout(() => {
       setIsLoadingReport(false);
     }, 2800);
@@ -93,7 +91,7 @@ const App: React.FC = () => {
               onNavigateHome={() => setViewState('landing')} 
               onScrollToSection={() => {}}
             />
-            <div className="pt-24">
+            <div className="pt-16 md:pt-20">
               <Questionnaire 
                 route={selectedRoute} 
                 onComplete={handleQuestionnaireComplete}
@@ -105,7 +103,6 @@ const App: React.FC = () => {
       case 'report':
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 sm:px-6 relative">
-            {/* Success Toast */}
             {showToast && (
               <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-4 duration-500">
                 <div className="bg-navy text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-slate-700">
