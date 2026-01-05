@@ -164,7 +164,7 @@ const App: React.FC = () => {
               onScrollToSection={scrollToSection}
             />
             <main>
-              <Hero onStartCheck={handleStartCheck} />
+              <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
               <TrustStrip />
               <HowItWorks />
               <WhoItsFor />

@@ -2,9 +2,10 @@ import React from 'react';
 
 interface HeroProps {
   onStartCheck: () => void;
+  onScrollToSection: (id: string) => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onStartCheck }) => {
+const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
   return (
     <section className="relative flex lg:items-center pt-20 pb-12 lg:pt-16 lg:pb-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -40,10 +41,13 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck }) => {
               >
                 Start eligibility check
               </button>
-              <a href="#how-it-works" className="text-navy font-black hover:text-accent flex items-center gap-2 group text-base lg:text-[17px]">
+              <button 
+                onClick={() => onScrollToSection('how-it-works')} 
+                className="text-navy font-black hover:text-accent flex items-center gap-2 group text-base lg:text-[17px] focus:outline-none"
+              >
                 See how it works
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </a>
+              </button>
             </div>
             <p className="text-[10px] lg:text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-6 lg:mt-7">Takes 2–3 minutes • Secure Assessment Engine</p>
           </div>
