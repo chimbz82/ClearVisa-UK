@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface PricingProps {
@@ -7,9 +6,9 @@ interface PricingProps {
 
 const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
   return (
-    <section id="pricing" className="pt-8 md:pt-10 lg:pt-12 pb-20 bg-slate-50/50 scroll-mt-[96px]">
+    <section id="pricing" className="pt-6 md:pt-8 lg:pt-10 pb-20 bg-slate-50/50 scroll-mt-[120px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
+        <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-3">Simple, one-time pricing</h2>
           <p className="text-lg text-slate-600">No subscriptions. No hidden fees. Pay once per pre-check.</p>
         </div>
@@ -19,7 +18,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
             <div className="p-8 lg:p-10 text-center bg-slate-50 border-b border-slate-100">
               <h3 className="text-sm font-bold text-teal-600 uppercase tracking-widest mb-3 lg:mb-4">Full Eligibility Pre-Check</h3>
               <div className="flex items-center justify-center gap-1 mb-3 lg:mb-4">
-                <span className="text-4xl font-bold text-navy">£19</span>
+                <span className="text-4xl font-bold text-navy">£29</span>
                 <span className="text-slate-400 font-medium">/ check</span>
               </div>
               <p className="text-slate-600 text-[13px] lg:text-sm font-bold">Comprehensive assessment for Spouse/Partner or Skilled Worker routes</p>

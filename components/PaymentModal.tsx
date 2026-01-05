@@ -130,7 +130,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                   <p className="text-xs font-black text-slate-400 uppercase tracking-widest">ClearVisa UK Assessment</p>
                   <p className="text-sm font-bold text-navy">{selectedRoute === 'Spouse' ? 'Spouse Pre-Check' : 'Skilled Worker Pre-Check'}</p>
                 </div>
-                <p className="text-xl font-black text-navy">£19.00</p>
+                <p className="text-xl font-black text-navy">£29.00</p>
               </div>
 
               <div className="space-y-4">
