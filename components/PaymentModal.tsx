@@ -72,7 +72,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               <p className="text-slate-600 text-sm mb-6">Choose the visa type you want to check eligibility for.</p>
               
               <button 
-                onClick={() => handleRouteSelect('Spouse Visa')}
+                onClick={() => handleRouteSelect('Spouse')}
                 className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
@@ -83,7 +83,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               </button>
 
               <button 
-                onClick={() => handleRouteSelect('Skilled Worker Visa')}
+                onClick={() => handleRouteSelect('Skilled Worker')}
                 className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
@@ -184,7 +184,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               </div>
               <h4 className="text-2xl font-bold text-navy mb-2">Payment Confirmed</h4>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Thank you! Your access to the <strong>{selectedRoute} Pre-Check</strong> is now active. You can start the assessment immediately.
+                Thank you. Your access to the <strong>{selectedRoute} Pre-Check</strong> is now active. You can start the assessment immediately.
               </p>
               
               <div className="space-y-3">
@@ -192,7 +192,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
                   onClick={() => onSuccess(selectedRoute || 'Spouse Visa')}
                   className="w-full bg-navy text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition-all shadow-lg"
                 >
-                  View My Report
+                  Start My Pre-Check
                 </button>
                 <p className="text-xs text-slate-400">A receipt has been sent to your email.</p>
               </div>

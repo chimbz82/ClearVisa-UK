@@ -9,13 +9,13 @@ const Legal: React.FC = () => {
           <h3 className="text-xl font-bold text-navy mb-4">Important information</h3>
           <div className="space-y-4 text-slate-500 text-sm leading-relaxed">
             <p>
-              UK Visa Pre-Check is not a law firm and does not provide legal advice. Our services are not a replacement for advice from a qualified immigration solicitor or OISC-regulated advisor.
+              ClearVisa UK is not a law firm and does not provide legal advice. Our service is not a replacement for advice from a qualified immigration solicitor or OISC-regulated adviser.
             </p>
             <p>
-              The tool is designed as a preliminary pre-check based solely on the information you provide and publicly available UK Home Office rules at the time of use. We strive for accuracy but immigration rules change frequently.
+              Your pre-check result is generated from your answers and publicly available Home Office guidance at the time of use. We strive for accuracy, but immigration rules change frequently and we cannot guarantee any visa outcome.
             </p>
             <p>
-              This tool cannot guarantee any visa outcome. Final decisions are made by UK Visas and Immigration (UKVI) caseworkers. For complex situations, including previous refusals, criminal records, or overstays, we strongly advise you to seek professional legal representation.
+              Final decisions are made only by UK Visas and Immigration (UKVI) caseworkers. For complex situations, including previous refusals, criminal records, or overstays, you should seek professional legal representation.
             </p>
           </div>
         </div>

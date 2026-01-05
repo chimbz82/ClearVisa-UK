@@ -5,9 +5,42 @@ interface ReportTemplateProps {
   visaRoute: string;
 }
 
+type VerdictType = 'likely' | 'borderline' | 'unlikely';
+
 const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
+  const [verdict, setVerdict] = React.useState<VerdictType>('borderline');
+  
   const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   const uniqueId = `CV-${Math.floor(100000 + Math.random() * 900000)}`;
+
+  const verdictContent = {
+    likely: {
+      title: "Likely eligible",
+      text: "Based on your answers, you appear to meet the key published requirements for this visa route. Review your full report and evidence carefully before applying.",
+      bgColor: "bg-teal-50",
+      borderColor: "border-teal-100",
+      textColor: "text-teal-700",
+      subTextColor: "text-teal-600/80"
+    },
+    borderline: {
+      title: "Borderline – risk factors present",
+      text: "Some of your answers suggest you may not clearly meet all requirements. Read your report carefully and consider addressing risk areas before submitting an application.",
+      bgColor: "bg-amber-50",
+      borderColor: "border-amber-100",
+      textColor: "text-amber-700",
+      subTextColor: "text-amber-600/80"
+    },
+    unlikely: {
+      title: "Unlikely eligible based on your answers",
+      text: "Your answers suggest one or more core requirements are not currently met. Check the risk sections in your report and consider seeking advice from a qualified immigration solicitor.",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-100",
+      textColor: "text-red-700",
+      subTextColor: "text-red-600/80"
+    }
+  };
+
+  const content = verdictContent[verdict];
 
   const riskFactors = [
     { category: "Relationship / sponsorship status", status: "green", explanation: "Relationship declared meets the requirement for long-term partnership." },
@@ -39,6 +72,19 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
 
   return (
     <div className="a4-page bg-white shadow-2xl mx-auto p-12 text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col">
+      {/* Dev Toggle for demoing verdicts */}
+      <div className="no-print mb-4 flex gap-2">
+        {(['likely', 'borderline', 'unlikely'] as VerdictType[]).map(v => (
+          <button 
+            key={v}
+            onClick={() => setVerdict(v)}
+            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${verdict === v ? 'bg-navy text-white' : 'bg-slate-100 text-slate-500'}`}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="flex justify-between items-start mb-10">
         <div>
@@ -66,9 +112,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
       <div className="h-px bg-slate-100 w-full mb-10"></div>
 
       {/* Verdict Box */}
-      <div className="bg-teal-50 border-2 border-teal-100 rounded-2xl p-8 text-center mb-10">
-        <h2 className="text-3xl font-black text-teal-700 uppercase tracking-wide mb-3">Borderline – Risk Factors Present</h2>
-        <p className="text-sm text-teal-600/80 leading-relaxed max-w-lg mx-auto italic">
+      <div className={`${content.bgColor} border-2 ${content.borderColor} rounded-2xl p-8 text-center mb-10`}>
+        <h2 className={`text-2xl font-black ${content.textColor} uppercase tracking-wide mb-3`}>{content.title}</h2>
+        <p className={`text-sm ${content.subTextColor} leading-relaxed max-w-xl mx-auto italic`}>
+          {content.text}
+        </p>
+        <p className="text-[10px] mt-4 text-slate-400 uppercase tracking-widest font-semibold">
           This verdict is based only on your answers and publicly available Home Office guidance at the time of assessment. It is not a guarantee of visa approval.
         </p>
       </div>

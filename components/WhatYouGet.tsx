@@ -3,11 +3,11 @@ import React from 'react';
 
 const WhatYouGet: React.FC = () => {
   const deliverables = [
-    { title: "Eligibility verdict", desc: "Likely eligible, borderline, or unlikely eligible based on your inputs." },
-    { title: "Risk factor breakdown", desc: "Which key areas are strong, and which may cause problems (income, status, documents, etc.)." },
-    { title: "Plain-English explanation", desc: "What this means for your specific situation in simple terms." },
-    { title: "Suggested next steps", desc: "What to fix or prepare before you spend money on professional advice." },
-    { title: "Downloadable summary", desc: "A clean PDF-style summary you can save or share with a solicitor." }
+    { title: "Eligibility verdict", desc: "Likely, borderline, or unlikely based on your answers." },
+    { title: "Risk factor breakdown", desc: "Which areas look strong and which may cause problems." },
+    { title: "Plain-English explanation", desc: "What this means for your situation." },
+    { title: "Suggested next steps", desc: "What to fix or prepare before you apply." },
+    { title: "Downloadable summary", desc: "A clean PDF-style report you can save or share." }
   ];
 
   return (
@@ -48,8 +48,8 @@ const WhatYouGet: React.FC = () => {
               <div className="border border-slate-100 rounded-xl overflow-hidden bg-slate-50">
                 <div className="p-6 bg-white border-b border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-navy rounded flex items-center justify-center text-[10px] font-bold text-white">UK</div>
-                    <span className="text-xs font-bold text-navy">Eligibility Report</span>
+                    <div className="w-6 h-6 bg-navy rounded flex items-center justify-center text-[10px] font-bold text-white">C</div>
+                    <span className="text-xs font-bold text-navy tracking-tight">Eligibility Report</span>
                   </div>
                   <span className="text-[10px] text-slate-400">Date: Oct 2024</span>
                 </div>
