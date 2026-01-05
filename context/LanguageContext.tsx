@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 
 export type Language = 'en';
 
@@ -17,7 +17,7 @@ const translations: Translations = {
     'nav.faq': 'FAQ',
     'nav.startCheck': 'Start free pre-check',
     // Hero
-    'hero.heading': 'Check your UK visa eligibility before you spend money on applications or professional advice.',
+    'hero.heading': 'Check your UK visa eligibility before you spend money on',
     'hero.headingAccent': 'applications or professional advice.',
     'hero.subheading': 'Start a free eligibility pre-check for spouse or skilled worker routes – see your verdict instantly, then unlock your full professional report.',
     'hero.bullet1': 'Free initial eligibility verdict',
@@ -30,6 +30,7 @@ const translations: Translations = {
     // Pricing
     'pricing.title': 'Simple, one-time pricing',
     'pricing.subtitle': 'No subscriptions. No hidden fees. Pay once per pre-check.',
+    'pricing.card.priceSuffix': '/ report',
     'pricing.tier.basic.label': 'BASIC PRE-CHECK',
     'pricing.tier.basic.price': '£29',
     'pricing.tier.basic.desc': 'Quick automated eligibility pre-check.',
@@ -41,7 +42,7 @@ const translations: Translations = {
     'pricing.tier.human.label': 'HUMAN REVIEW ADD-ON',
     'pricing.tier.human.price': '£149',
     'pricing.tier.human.desc': 'Expert review without full solicitor fees.',
-    'pricing.tier.human.disclaimer': 'Not legal advice. Not a law firm. Informational review based on public guidance.',
+    'pricing.tier.human.disclaimer': 'Not legal advice. Not a law firm. Informational review service based on public guidance.',
     'pricing.currency.note': 'Currency automatically converted at checkout.',
     'pricing.b2b': 'Agencies or law firms? Contact us for bulk pricing.',
     'pricing.guarantee.title': 'Clear Outcome Guarantee',
@@ -91,15 +92,15 @@ const translations: Translations = {
     'section.howItWorks.step3Body': 'Unlock your professional report with a document checklist, risk breakdown, and heatmap visualization.',
     // Who Its For
     'section.whoFor.title': 'Who this tool is for',
-    'section.whoFor.subtitle': 'ClearVisa UK – Immigration Eligibility Pre-Check Report is built for real people trying to make serious decisions.',
+    'section.whoFor.subtitle': 'ClearVisa UK is built for real people trying to make serious decisions.',
     'section.whoFor.spouseTitle': 'Spouse & partner applicants',
     'section.whoFor.spouseBody': 'For people planning to apply for a UK spouse or partner visa and want to know if their income, relationship evidence, and status are on the right track.',
     'section.whoFor.skilledTitle': 'Skilled worker applicants',
-    'section.whoFor.skilledBody': 'For workers and employers who want a quick sense of whether a job, salary, and sponsorship arrangement meet key skilled worker requirements.',
+    'section.whoFor.skilledBody': 'For workers and employers who want a quick sense of whether a job, salary, and sponsorship arrangement meet requirements.',
     'section.whoFor.reapplyTitle': 'People re-applying after refusal',
-    'section.whoFor.reapplyBody': 'For applicants who have been refused before and want to avoid repeating the same mistakes by understanding which areas are most sensitive.',
+    'section.whoFor.reapplyBody': 'For applicants who have been refused before and want to avoid repeating mistakes by understanding sensitive areas.',
     'section.whoFor.plannersTitle': 'Early-stage planners',
-    'section.whoFor.plannersBody': 'For people still saving, planning, or collecting documents who want to know what needs to be fixed before they apply.',
+    'section.whoFor.plannersBody': 'For people still saving or collecting documents who want to know what needs to be fixed before they apply.',
     // What You Get
     'section.whatYouGet.title': 'What you get from your pre-check',
     'section.whatYouGet.subtitle': 'Not just a score – a structured summary you can actually use.',
@@ -110,32 +111,32 @@ const translations: Translations = {
     'section.whatYouGet.itemPlainTitle': 'Plain-English explanation',
     'section.whatYouGet.itemPlainBody': 'What this means for your situation.',
     'section.whatYouGet.itemNextStepsTitle': 'Suggested next steps',
-    'section.whatYouGet.itemNextStepsBody': 'What to fix or prepare before you spend money on applications or professional advice.',
+    'section.whatYouGet.itemNextStepsBody': 'What to fix or prepare before you spend money on applications.',
     'section.whatYouGet.itemDownloadTitle': 'Downloadable summary',
     'section.whatYouGet.itemDownloadBody': 'A clean PDF-style report you can save or share.',
     'section.whatYouGet.footerNote': 'You can take this summary to a solicitor, advisor, or keep it for your own planning.',
     // FAQ
     'section.faq.title': 'Frequently asked questions',
     'faq.q1': 'Is this legal advice?',
-    'faq.a1': 'No. ClearVisa UK – Immigration Eligibility Pre-Check Report is for informational purposes only. We are not a law firm. Our report is based on publicly available Home Office guidance to help you understand your standing before you potentially spend thousands on legal fees or application costs.',
+    'faq.a1': 'No. ClearVisa UK is for informational purposes only. We are not a law firm. Our report is based on publicly available Home Office guidance to help you understand your standing before you potentially spend thousands.',
     'faq.q2': 'Where do you get your rules from?',
-    'faq.a2': 'Our engine uses latest public Home Office caseworker guidance, policy documents, and immigration rules. We model these into structured flows to provide a highly accurate eligibility pre-check.',
+    'faq.a2': 'Our engine uses latest public Home Office caseworker guidance, policy documents, and immigration rules. We model these into structured flows.',
     'faq.q3': 'Can this guarantee my visa will be approved?',
-    'faq.a3': 'No. Final decisions are made solely by UK Visas and Immigration (UKVI). Our tool identifies potential risk areas and eligibility markers, but cannot guarantee an outcome.',
+    'faq.a3': 'No. Final decisions are made solely by UK Visas and Immigration (UKVI). Our tool identifies potential risk areas but cannot guarantee an outcome.',
     'faq.q4': 'What happens after I pay?',
-    'faq.a4': 'Your full result appears instantly. You will receive a detailed verdict, risk factor breakdown, and suggested next steps. A downloadable ClearVisa UK – Immigration Eligibility Pre-Check Report (PDF) will also be provided.',
+    'faq.a4': 'Your full result appears instantly. You will receive a detailed verdict, risk factor breakdown, and suggested next steps. A downloadable PDF report will also be provided.',
     'faq.q5': 'Do you store my data?',
-    'faq.a5': 'We take privacy seriously. All data is processed securely and encrypted. We do not sell your personal data to third parties. We are fully compliant with GDPR and modern data protection standards.',
+    'faq.a5': 'We take privacy seriously. All data is processed securely and encrypted. We do not sell your personal data to third parties. We are fully compliant with GDPR.',
     // Legal & Footer
     'legal.title': 'Legal Disclosure',
-    'legal.p1': 'ClearVisa UK – Immigration Eligibility Pre-Check Report is not a law firm and does not provide legal advice. This service does not replace advice from a qualified immigration solicitor or OISC-regulated adviser.',
+    'legal.p1': 'ClearVisa UK is not a law firm and does not provide legal advice. This service does not replace advice from a qualified immigration solicitor or OISC-regulated adviser.',
     'legal.p2': 'Your pre-check assessment is generated from the information you provide and publicly available UK Home Office guidance. Immigration rules can change without notice and no specific outcome is guaranteed.',
-    'legal.p3': 'Final decisions are made solely by UK Visas and Immigration (UKVI) caseworkers. For complex cases, consult a qualified immigration solicitor or OISC-regulated adviser.',
+    'legal.p3': 'Final decisions are made solely by UK Visas and Immigration (UKVI) caseworkers. For complex cases, consult a qualified professional.',
     'legal.footer': 'Not affiliated with the UK Government or Home Office.',
     'footer.mission': 'Helping applicants understand their standing before they apply. Check your UK visa eligibility before you spend money on applications or professional advice.',
     'footer.nav': 'Navigation',
     'footer.support': 'Support',
-    'footer.rights': '© 2026 ClearVisa UK – Immigration Eligibility Pre-Check Report. All rights reserved.',
+    'footer.rights': '© 2026 ClearVisa UK. All rights reserved.',
     // Wizard
     'wizard.section.background': 'Background',
     'wizard.section.history': 'History',
@@ -165,11 +166,13 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ language: 'en', t }}>
+    <LanguageProviderInternal value={{ language: 'en', t }}>
       {children}
-    </LanguageContext.Provider>
+    </LanguageProviderInternal>
   );
 };
+
+const LanguageProviderInternal = LanguageContext.Provider;
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
