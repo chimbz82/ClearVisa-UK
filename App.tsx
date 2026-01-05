@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -10,18 +11,23 @@ import FAQ from './components/FAQ';
 import Legal from './components/Legal';
 import Footer from './components/Footer';
 import PaymentModal from './components/PaymentModal';
+import Questionnaire from './components/Questionnaire';
 import ReportTemplate from './components/ReportTemplate';
 import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import { triggerReportPdfDownload } from './utils/downloadPdf';
+import { runAssessment } from './utils/assessmentEngine';
+import { AssessmentResult } from './types';
 
-type ViewState = 'landing' | 'report' | 'privacy' | 'terms';
+type ViewState = 'landing' | 'questionnaire' | 'report' | 'privacy' | 'terms';
 
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
   const [selectedRoute, setSelectedRoute] = useState<string>('Spouse Visa');
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [applicantName, setApplicantName] = useState<string>("Alex Thompson");
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -37,14 +43,9 @@ const App: React.FC = () => {
     setIsPaymentModalOpen(true);
   };
 
-  /**
-   * Scroll helper that handles navigation and smooth scrolling.
-   * If on a different view (e.g., Report), it switches to 'landing' first.
-   */
   const scrollToSection = (id: string) => {
     if (viewState !== 'landing') {
       setViewState('landing');
-      // Delay slightly to allow the landing page to mount before attempting to scroll
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
@@ -61,19 +62,46 @@ const App: React.FC = () => {
 
   const handlePaymentSuccess = (route: string) => {
     setSelectedRoute(route);
+    setViewState('questionnaire');
+    window.scrollTo(0, 0);
+  };
+
+  const handleQuestionnaireComplete = (collectedAnswers: Record<string, any>) => {
+    setAnswers(collectedAnswers);
     setViewState('report');
     setIsLoadingReport(true);
     setShowToast(true);
     window.scrollTo(0, 0);
 
-    // Simulate report generation time
+    // Calculate result using engine
+    const result = runAssessment(selectedRoute, collectedAnswers);
+    setAssessmentResult(result);
+
+    // Simulate analysis time
     setTimeout(() => {
       setIsLoadingReport(false);
-    }, 2500);
+    }, 2800);
   };
 
   const renderContent = () => {
     switch (viewState) {
+      case 'questionnaire':
+        return (
+          <div className="bg-white min-h-screen">
+            <Header 
+              onStartCheck={() => {}} 
+              onNavigateHome={() => setViewState('landing')} 
+              onScrollToSection={() => {}}
+            />
+            <div className="pt-24">
+              <Questionnaire 
+                route={selectedRoute} 
+                onComplete={handleQuestionnaireComplete}
+                onCancel={() => setViewState('landing')}
+              />
+            </div>
+          </div>
+        );
       case 'report':
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 sm:px-6 relative">
@@ -85,8 +113,8 @@ const App: React.FC = () => {
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   </div>
                   <div>
-                    <p className="font-bold text-sm">Payment successful</p>
-                    <p className="text-xs text-slate-400">Generating your confidential assessment report...</p>
+                    <p className="font-bold text-sm uppercase tracking-tight">Assessment Engine Active</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Mapping Appendix Compliance...</p>
                   </div>
                 </div>
               </div>
@@ -94,29 +122,27 @@ const App: React.FC = () => {
 
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 bg-white rounded-2xl shadow-xl border border-slate-100">
               <div>
-                <h2 className="text-xl font-bold text-navy mb-1 uppercase tracking-tight">
-                  {isLoadingReport ? 'Generating Assessment…' : 'Assessment Ready'}
+                <h2 className="text-xl font-black text-navy mb-1 uppercase tracking-tight">
+                  {isLoadingReport ? 'Analyzing Evidence…' : 'Report Finalized'}
                 </h2>
-                <p className="text-sm text-slate-500 font-medium">
-                  {isLoadingReport ? 'Our engine is checking your answers against current Home Office guidance.' : 'Your ClearVisa UK – Immigration Eligibility Pre-Check Report is finalized.'}
+                <p className="text-sm text-slate-500 font-semibold leading-relaxed">
+                  {isLoadingReport ? 'Our engine is calculating thresholds against current UK immigration appendices.' : 'Your ClearVisa UK – Eligibility Pre-Check is ready for review.'}
                 </p>
               </div>
               <div className="flex items-center gap-4 w-full sm:w-auto">
                 <button 
                   onClick={() => setViewState('landing')}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-all"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-all uppercase text-xs tracking-widest"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                  Home
+                  Exit
                 </button>
                 <button 
                   type="button"
                   disabled={isLoadingReport}
                   onClick={triggerReportPdfDownload}
-                  className="flex-1 sm:flex-none bg-navy text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-1 sm:flex-none bg-navy text-white px-8 py-3 rounded-xl font-black shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 uppercase text-xs tracking-widest"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                  Download & Share with Lawyer
+                  Download PDF
                 </button>
               </div>
             </div>
@@ -129,23 +155,27 @@ const App: React.FC = () => {
                   applicantName={applicantName} 
                   visaRoute={selectedRoute} 
                   onDownload={triggerReportPdfDownload}
+                  assessmentData={assessmentResult!}
+                  answers={answers}
                 />
               )}
             </div>
             
-            <div className={`max-w-[210mm] mx-auto mt-12 p-8 bg-navy rounded-2xl text-white no-print shadow-2xl overflow-hidden relative transition-opacity duration-500 ${isLoadingReport ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="max-w-md">
-                  <h3 className="text-2xl font-bold mb-3 uppercase tracking-tight">OISC Consultation</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed font-semibold">
-                    Present your ClearVisa UK – Immigration Eligibility Pre-Check Report to an OISC-regulated adviser to fast-track your legal consultation.
-                  </p>
+            {!isLoadingReport && (
+              <div className="max-w-[210mm] mx-auto mt-12 p-8 bg-navy rounded-2xl text-white no-print shadow-2xl overflow-hidden relative">
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                  <div className="max-w-md">
+                    <h3 className="text-2xl font-black mb-3 uppercase tracking-tight text-accent">Professional Review</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed font-semibold">
+                      Your pre-check identified specific risks. Present this report to an OISC-regulated adviser to fast-track your formal legal review.
+                    </p>
+                  </div>
+                  <button className="whitespace-nowrap bg-white text-navy px-8 py-4 rounded-xl font-black transition-all shadow-xl uppercase tracking-widest text-sm hover:bg-accent hover:text-white">
+                    Find OISC Solicitor
+                  </button>
                 </div>
-                <button className="whitespace-nowrap bg-accent hover:bg-emerald-400 text-navy px-8 py-4 rounded-xl font-black transition-all shadow-xl uppercase tracking-widest text-sm">
-                  Find an OISC Adviser
-                </button>
               </div>
-            </div>
+            )}
           </div>
         );
       case 'privacy':
