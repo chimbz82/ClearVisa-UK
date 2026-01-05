@@ -36,6 +36,10 @@ const App: React.FC = () => {
     setIsPaymentModalOpen(true);
   };
 
+  const handleDownloadPdf = () => {
+    window.print();
+  };
+
   const handlePaymentSuccess = (route: string) => {
     setSelectedRoute(route);
     setViewState('report');
@@ -88,7 +92,7 @@ const App: React.FC = () => {
                 </button>
                 <button 
                   disabled={isLoadingReport}
-                  onClick={() => window.print()}
+                  onClick={handleDownloadPdf}
                   className="flex-1 sm:flex-none bg-navy text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -97,14 +101,17 @@ const App: React.FC = () => {
               </div>
             </div>
             
-            {isLoadingReport ? (
-              <ReportSkeleton />
-            ) : (
-              <ReportTemplate 
-                applicantName={applicantName} 
-                visaRoute={selectedRoute} 
-              />
-            )}
+            <div id="report-root">
+              {isLoadingReport ? (
+                <ReportSkeleton />
+              ) : (
+                <ReportTemplate 
+                  applicantName={applicantName} 
+                  visaRoute={selectedRoute} 
+                  onDownload={handleDownloadPdf}
+                />
+              )}
+            </div>
             
             <div className={`max-w-[210mm] mx-auto mt-12 p-8 bg-navy rounded-2xl text-white no-print shadow-2xl overflow-hidden relative transition-opacity duration-500 ${isLoadingReport ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">

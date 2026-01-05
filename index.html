@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
       html {
         scroll-behavior: smooth;
@@ -29,34 +29,59 @@
       .bg-dark-section { background-color: #081C2D; }
 
       @media print {
+        @page {
+          size: A4;
+          margin: 10mm;
+        }
         .no-print {
           display: none !important;
         }
         body {
           background-color: white !important;
+          margin: 0;
+          padding: 0;
+        }
+        #root {
+          background-color: white !important;
+        }
+        /* Target the specific report container */
+        #report-root {
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
         }
         .a4-page {
-          margin: 0;
-          border: initial;
-          border-radius: initial;
-          width: initial;
-          min-height: initial;
-          box-shadow: initial;
-          background: initial;
-          page-break-after: always;
-          position: relative;
+          margin: 0 !important;
+          border: none !important;
+          border-radius: 0 !important;
+          width: 100% !important;
+          height: auto !important;
+          min-height: auto !important;
+          box-shadow: none !important;
+          background: white !important;
+          padding: 5mm !important;
         }
         .watermark {
-          position: absolute;
+          position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%) rotate(-45deg);
           font-size: 80px;
-          color: rgba(0, 0, 0, 0.03) !important;
+          color: rgba(0, 0, 0, 0.02) !important;
           font-weight: 900;
           white-space: nowrap;
           pointer-events: none;
           z-index: 0;
+          display: block !important;
+        }
+        /* Prevent clipping */
+        h1, h2, h3, h4, p, li {
+          page-break-inside: avoid;
+        }
+        section {
+          page-break-inside: auto;
         }
       }
     </style>
