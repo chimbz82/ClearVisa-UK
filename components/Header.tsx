@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 
 interface HeaderProps {
   onStartCheck: () => void;
+  onNavigateHome: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onStartCheck }) => {
+const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -24,6 +25,10 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck }) => {
     { name: 'FAQ', href: '#faq' },
   ];
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    onNavigateHome();
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
@@ -32,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck }) => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#top" className="text-xl font-bold text-navy flex items-center gap-2">
+            <a href="#top" onClick={handleLogoClick} className="text-xl font-bold text-navy flex items-center gap-2">
               <span className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif">C</span>
               <span>ClearVisa UK</span>
             </a>

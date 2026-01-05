@@ -1,13 +1,18 @@
 
 import React from 'react';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onPrivacyClick: () => void;
+  onTermsClick: () => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
   return (
     <footer className="bg-navy text-white pt-20 pb-10 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-2">
-            <a href="#" className="text-2xl font-bold flex items-center gap-2 mb-6">
+            <a href="#top" className="text-2xl font-bold flex items-center gap-2 mb-6">
               <span className="w-8 h-8 bg-white text-navy rounded flex items-center justify-center font-serif">C</span>
               <span>ClearVisa UK</span>
             </a>
@@ -29,8 +34,8 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold mb-6">Support</h4>
             <ul className="space-y-4 text-slate-400 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Use</a></li>
+              <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors text-left">Privacy Policy</button></li>
+              <li><button onClick={onTermsClick} className="hover:text-white transition-colors text-left">Terms of Use</button></li>
               <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-white transition-colors">Contact Support</a></li>
             </ul>
           </div>

@@ -2,54 +2,59 @@
 import React from 'react';
 
 interface ReportTemplateProps {
+  applicantName?: string;
   visaRoute: string;
+  reportId?: string;
+  date?: string;
 }
 
 type VerdictType = 'likely' | 'borderline' | 'unlikely';
 
-const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
+const ReportTemplate: React.FC<ReportTemplateProps> = ({ 
+  applicantName = "Valued Client", 
+  visaRoute, 
+  reportId = `CV-${Math.floor(100000 + Math.random() * 900000)}`,
+  date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+}) => {
   const [verdict, setVerdict] = React.useState<VerdictType>('borderline');
   
-  const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  const uniqueId = `CV-${Math.floor(100000 + Math.random() * 900000)}`;
-
   const verdictContent = {
     likely: {
-      title: "Likely eligible",
+      title: "Likely Eligible",
       text: "Based on your answers, you appear to meet the key published requirements for this visa route. Review your full report and evidence carefully before applying.",
       bgColor: "bg-teal-50",
-      borderColor: "border-teal-100",
-      textColor: "text-teal-700",
-      subTextColor: "text-teal-600/80"
+      borderColor: "border-teal-200",
+      textColor: "text-teal-800",
+      subTextColor: "text-teal-700/80"
     },
     borderline: {
-      title: "Borderline – risk factors present",
+      title: "Borderline – Risk Factors Present",
       text: "Some of your answers suggest you may not clearly meet all requirements. Read your report carefully and consider addressing risk areas before submitting an application.",
       bgColor: "bg-amber-50",
-      borderColor: "border-amber-100",
-      textColor: "text-amber-700",
-      subTextColor: "text-amber-600/80"
+      borderColor: "border-amber-200",
+      textColor: "text-amber-800",
+      subTextColor: "text-amber-700/80"
     },
     unlikely: {
-      title: "Unlikely eligible based on your answers",
+      title: "Unlikely Eligible Based on Provided Answers",
       text: "Your answers suggest one or more core requirements are not currently met. Check the risk sections in your report and consider seeking advice from a qualified immigration solicitor.",
       bgColor: "bg-red-50",
-      borderColor: "border-red-100",
-      textColor: "text-red-700",
-      subTextColor: "text-red-600/80"
+      borderColor: "border-red-200",
+      textColor: "text-red-800",
+      subTextColor: "text-red-700/80"
     }
   };
 
   const content = verdictContent[verdict];
 
   const riskFactors = [
-    { category: "Relationship / sponsorship status", status: "green", explanation: "Relationship declared meets the requirement for long-term partnership." },
-    { category: "Immigration status & history", status: "green", explanation: "No adverse immigration history or criminal record declared." },
-    { category: "Financial requirement / income level", status: "amber", explanation: "Declared income is close to threshold; require specific payslip sequence." },
-    { category: "Employment / job code", status: "green", explanation: "Declared occupation falls within acceptable Home Office SOC codes." },
-    { category: "English language requirement", status: "green", explanation: "Degree-level qualification meets the exemption criteria." },
-    { category: "Accommodation / living situation", status: "green", explanation: "Private residence declared as suitable for non-overcrowded living." },
-    { category: "Documents and evidence", status: "amber", explanation: "Evidence list is complex; bank statements must precisely match payslips." }
+    { category: "Relationship / sponsorship", status: "green", explanation: "Relationship status as declared meets standard eligibility criteria for the selected route." },
+    { category: "Immigration status & history", status: "green", explanation: "Declared history shows compliance with previous visa conditions and no adverse records." },
+    { category: "Financial requirement", status: "amber", explanation: "Income level is sufficient, but documentation must strictly follow Appendix FM-SE rules." },
+    { category: "Employment & job code", status: "green", explanation: "Current job role corresponds to an eligible SOC code with meeting salary requirements." },
+    { category: "English language", status: "green", explanation: "Meets requirement via declared academic qualification or approved test result." },
+    { category: "Accommodation", status: "green", explanation: "Declared living arrangements appear to meet non-overcrowding standards." },
+    { category: "Documents & evidence", status: "amber", explanation: "High volume of evidence required; specifically around financial proof and relationship cohabitation." }
   ];
 
   const StatusIcon = ({ status }: { status: string }) => {
@@ -71,87 +76,94 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
   };
 
   return (
-    <div className="a4-page bg-white shadow-2xl mx-auto p-12 text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col">
-      {/* Dev Toggle for demoing verdicts */}
-      <div className="no-print mb-4 flex gap-2">
-        {(['likely', 'borderline', 'unlikely'] as VerdictType[]).map(v => (
-          <button 
-            key={v}
-            onClick={() => setVerdict(v)}
-            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${verdict === v ? 'bg-navy text-white' : 'bg-slate-100 text-slate-500'}`}
-          >
-            {v}
-          </button>
-        ))}
+    <div className="a4-page bg-white shadow-2xl mx-auto p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col font-sans">
+      {/* Dev Toggle (Hidden in Print) */}
+      <div className="no-print mb-8 p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+        <div className="flex gap-2">
+          {(['likely', 'borderline', 'unlikely'] as VerdictType[]).map(v => (
+            <button 
+              key={v}
+              onClick={() => setVerdict(v)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${verdict === v ? 'bg-navy text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-100'}`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+        <span className="text-[10px] font-bold text-slate-400 uppercase">Template Controls</span>
       </div>
 
-      {/* Header */}
-      <div className="flex justify-between items-start mb-10">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif text-lg font-bold">C</div>
-            <span className="text-xl font-bold tracking-tight text-navy uppercase">ClearVisa UK</span>
+      {/* 1. Cover Header */}
+      <div className="flex justify-between items-start mb-12">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-navy text-white rounded-lg flex items-center justify-center font-serif text-2xl font-bold shadow-sm">C</div>
+            <span className="text-2xl font-bold tracking-tight text-navy uppercase">ClearVisa UK</span>
           </div>
-          <h1 className="text-2xl font-bold text-navy">UK Visa Eligibility Pre-Check Report</h1>
-          <p className="text-sm text-slate-500 mt-1 max-w-sm">
+          <h1 className="text-3xl font-extrabold text-navy mb-2">UK Visa Eligibility Pre-Check Report</h1>
+          <p className="text-sm text-slate-500 max-w-md">
             Personalised assessment based on your answers and current public Home Office rules.
           </p>
         </div>
-        <div className="text-right grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-          <span className="text-slate-400 font-medium">Applicant name:</span>
-          <span className="font-bold">Valued Client</span>
-          <span className="text-slate-400 font-medium">Visa route:</span>
-          <span className="font-bold">{visaRoute}</span>
-          <span className="text-slate-400 font-medium">Date generated:</span>
-          <span className="font-bold">{date}</span>
-          <span className="text-slate-400 font-medium">Report ID:</span>
-          <span className="font-bold">{uniqueId}</span>
+        <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 text-xs min-w-[240px]">
+          <div className="grid grid-cols-[auto,1fr] gap-x-6 gap-y-2">
+            <span className="text-slate-400 font-semibold uppercase tracking-wider">Applicant name:</span>
+            <span className="font-bold text-navy truncate">{applicantName}</span>
+            <span className="text-slate-400 font-semibold uppercase tracking-wider">Visa route:</span>
+            <span className="font-bold text-navy">{visaRoute}</span>
+            <span className="text-slate-400 font-semibold uppercase tracking-wider">Date generated:</span>
+            <span className="font-bold text-navy">{date}</span>
+            <span className="text-slate-400 font-semibold uppercase tracking-wider">Report ID:</span>
+            <span className="font-bold text-navy">{reportId}</span>
+          </div>
         </div>
       </div>
 
-      <div className="h-px bg-slate-100 w-full mb-10"></div>
+      <div className="h-[2px] bg-slate-100 w-full mb-12"></div>
 
-      {/* Verdict Box */}
-      <div className={`${content.bgColor} border-2 ${content.borderColor} rounded-2xl p-8 text-center mb-10`}>
-        <h2 className={`text-2xl font-black ${content.textColor} uppercase tracking-wide mb-3`}>{content.title}</h2>
-        <p className={`text-sm ${content.subTextColor} leading-relaxed max-w-xl mx-auto italic`}>
+      {/* 2. Eligibility Verdict Box */}
+      <div className={`${content.bgColor} border-2 ${content.borderColor} rounded-2xl p-8 text-center mb-12`}>
+        <h2 className={`text-2xl font-black ${content.textColor} uppercase tracking-wide mb-4`}>{content.title}</h2>
+        <p className={`text-base ${content.subTextColor} leading-relaxed max-w-2xl mx-auto mb-6`}>
           {content.text}
         </p>
-        <p className="text-[10px] mt-4 text-slate-400 uppercase tracking-widest font-semibold">
-          This verdict is based only on your answers and publicly available Home Office guidance at the time of assessment. It is not a guarantee of visa approval.
-        </p>
+        <div className="inline-block px-4 py-2 bg-white/50 rounded-lg">
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
+            This verdict is based only on your answers and publicly available Home Office guidance at the time of assessment. It is not a guarantee of visa approval.
+          </p>
+        </div>
       </div>
 
-      {/* Summary Explanation */}
-      <div className="mb-10">
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Summary of your result</h3>
+      {/* 3. Summary Explanation */}
+      <div className="mb-12">
+        <h3 className="text-sm font-bold text-navy uppercase tracking-[0.2em] mb-4 border-b border-slate-100 pb-2">Summary of your result</h3>
         <p className="text-sm leading-relaxed text-slate-600">
-          Based on the information you provided, your case appears to meet some or all of the key requirements for the selected visa route. The sections below break down the major eligibility areas and show which aspects appear strong and which may require attention. Specifically, your financial declarations require precision in the documentation phase.
+          Based on the information you provided, your case appears to meet some or all of the key requirements for the selected visa route. The sections below break down the major eligibility areas and show which aspects appear strong and which may require attention. Specifically, your declarations regarding sponsorship and immigration history are robust, while financial documentation and evidentiary trails require careful preparation to avoid administrative refusal.
         </p>
       </div>
 
-      {/* Risk Factor Breakdown */}
-      <div className="mb-10 flex-grow">
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Risk factor breakdown</h3>
-        <div className="border border-slate-100 rounded-xl overflow-hidden">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-100">
+      {/* 4. Risk Factor Breakdown */}
+      <div className="mb-12 flex-grow">
+        <h3 className="text-sm font-bold text-navy uppercase tracking-[0.2em] mb-4 border-b border-slate-100 pb-2">Risk factor breakdown</h3>
+        <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="bg-slate-50/50 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4 font-bold text-slate-700">Requirement Category</th>
-                <th className="px-6 py-4 font-bold text-slate-700 text-center">Status</th>
-                <th className="px-6 py-4 font-bold text-slate-700">Explanation</th>
+                <th className="px-6 py-4 font-bold text-navy uppercase tracking-wider text-[11px]">Requirement Category</th>
+                <th className="px-6 py-4 font-bold text-navy uppercase tracking-wider text-[11px] text-center">Status</th>
+                <th className="px-6 py-4 font-bold text-navy uppercase tracking-wider text-[11px]">Explanation</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {riskFactors.map((factor, idx) => (
-                <tr key={idx}>
-                  <td className="px-6 py-4 font-medium text-slate-800">{factor.category}</td>
-                  <td className="px-6 py-4">
+                <tr key={idx} className="hover:bg-slate-50/30 transition-colors">
+                  <td className="px-6 py-5 font-semibold text-slate-800">{factor.category}</td>
+                  <td className="px-6 py-5">
                     <div className="flex justify-center">
                       <StatusIcon status={factor.status} />
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-500 text-xs leading-relaxed">{factor.explanation}</td>
+                  <td className="px-6 py-5 text-slate-600 text-[12px] leading-relaxed italic">{factor.explanation}</td>
                 </tr>
               ))}
             </tbody>
@@ -159,37 +171,38 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({ visaRoute }) => {
         </div>
       </div>
 
-      {/* Recommended Next Steps */}
-      <div className="mb-10 bg-slate-50 p-8 rounded-2xl border border-slate-100">
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Suggested next steps</h3>
-        <ul className="space-y-3">
+      {/* 5. Recommended Next Steps */}
+      <div className="mb-12 bg-slate-50 p-10 rounded-2xl border border-slate-100">
+        <h3 className="text-sm font-bold text-navy uppercase tracking-[0.2em] mb-6">Suggested next steps</h3>
+        <ul className="grid grid-cols-1 gap-4">
           {[
             "Gather and organise all relevant evidence before applying.",
             "If any risk factors were flagged, consider correcting them before submission.",
             "Review official Home Office guidance again before you apply.",
             "Consider speaking with a qualified immigration solicitor for complex cases."
           ].map((item, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-sm text-slate-600">
-              <span className="text-navy font-bold">•</span>
+            <li key={idx} className="flex items-center gap-4 text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+              <div className="w-2 h-2 rounded-full bg-navy flex-shrink-0"></div>
               {item}
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Disclaimer */}
-      <div className="bg-slate-100/50 p-6 rounded-xl text-[10px] text-slate-400 border border-slate-100">
-        <h4 className="font-bold mb-2 text-slate-500 uppercase">Important Disclaimer</h4>
-        <div className="space-y-1.5">
-          <p>ClearVisa UK is not a law firm and does not provide legal advice.</p>
-          <p>This report is a preliminary eligibility pre-check generated using your answers and publicly available immigration rules.</p>
-          <p>Visa decisions are made only by the UK Home Office and depend on full evidence and circumstances not captured here.</p>
-          <p>For cases involving previous refusals, overstays, criminal history, or unusual circumstances, you should seek professional legal advice.</p>
+      {/* 6. Important Disclaimer */}
+      <div className="bg-slate-100/40 p-8 rounded-2xl text-[11px] text-slate-500 border border-slate-200 leading-relaxed">
+        <h4 className="font-bold mb-3 text-navy uppercase tracking-widest">Important Information</h4>
+        <div className="space-y-3">
+          <p><span className="font-bold text-slate-700">ClearVisa UK is not a law firm and does not provide legal advice.</span> This report is a preliminary eligibility pre-check generated using your answers and publicly available immigration rules.</p>
+          <p>Visa decisions are made only by the UK Home Office and depend on full evidence and circumstances not captured here. We cannot guarantee any visa outcome.</p>
+          <p>For cases involving previous refusals, overstays, criminal history, or unusual circumstances, you should seek professional legal advice from a qualified solicitor or OISC-regulated adviser.</p>
         </div>
       </div>
 
-      <div className="mt-8 text-center text-[9px] text-slate-300 font-medium tracking-widest uppercase">
-        ClearVisa UK | Confidential Eligibility Assessment
+      <div className="mt-12 flex justify-between items-center text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase pt-6 border-t border-slate-100">
+        <span>ClearVisa UK © 2024</span>
+        <span>Confidential Eligibility Assessment</span>
+        <span>Page 1 of 1</span>
       </div>
     </div>
   );
