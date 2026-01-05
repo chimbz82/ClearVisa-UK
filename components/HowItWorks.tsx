@@ -17,7 +17,7 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-slate-50/50">
+    <section id="how-it-works" className="pt-8 md:pt-12 lg:pt-16 pb-24 bg-slate-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-5xl mx-auto mb-20">
           <h2 className="text-3xl md:text-5xl font-black text-navy mb-6 leading-tight uppercase tracking-tight">How ClearVisa UK – Immigration Eligibility Pre-Check Report works</h2>

@@ -6,7 +6,7 @@ interface PrivacyPolicyProps {
 
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
   return (
-    <div className="min-h-screen bg-off-white py-20">
+    <div className="min-h-screen bg-off-white pt-8 md:pt-12 lg:pt-16 pb-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={onBack}
