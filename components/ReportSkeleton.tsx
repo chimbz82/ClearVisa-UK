@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const ReportSkeleton: React.FC = () => {
@@ -24,28 +23,32 @@ const ReportSkeleton: React.FC = () => {
       <div className="h-[2px] bg-slate-100 w-full mb-12"></div>
 
       {/* Verdict Box Skeleton */}
-      <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-8 text-center mb-12">
-        <div className="h-8 bg-slate-200 rounded w-64 mx-auto mb-4"></div>
+      <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-10 text-center mb-12">
+        <div className="h-8 bg-slate-200 rounded w-64 mx-auto mb-6"></div>
         <div className="h-4 bg-slate-200 rounded w-full mx-auto mb-2"></div>
         <div className="h-4 bg-slate-200 rounded w-3/4 mx-auto"></div>
+        <div className="mt-8 h-4 bg-slate-100 rounded w-40 mx-auto"></div>
       </div>
 
-      {/* Table Skeleton */}
+      {/* Steps Skeleton */}
       <div className="mb-12 flex-grow">
-        <div className="h-4 bg-slate-200 rounded w-48 mb-6"></div>
-        <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex border-b border-slate-100 p-5 items-center gap-4">
-              <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-              <div className="w-8 h-8 bg-slate-200 rounded-full mx-auto"></div>
-              <div className="h-4 bg-slate-200 rounded w-1/3 ml-auto"></div>
+        <div className="h-4 bg-slate-200 rounded w-48 mb-8"></div>
+        <div className="space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex p-4 bg-slate-50 rounded-xl border border-slate-100 items-center gap-4">
+              <div className="w-3 h-3 bg-slate-200 rounded-full"></div>
+              <div className="h-4 bg-slate-200 rounded w-2/3"></div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Footer Skeleton */}
-      <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 h-48"></div>
+      {/* Legal Footer Skeleton */}
+      <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 space-y-3 mt-auto">
+        <div className="h-3 bg-slate-200 rounded w-1/4"></div>
+        <div className="h-3 bg-slate-100 rounded w-full"></div>
+        <div className="h-3 bg-slate-100 rounded w-full"></div>
+      </div>
     </div>
   );
 };
