@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FAQItemProps {
   question: string;
@@ -22,35 +23,38 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
 );
 
 const FAQ: React.FC = () => {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
     {
-      question: "Is this legal advice?",
-      answer: "No. ClearVisa UK – Immigration Eligibility Pre-Check Report is for informational purposes only. We are not a law firm. Our report is based on publicly available Home Office guidance to help you understand your standing before you potentially spend thousands on legal fees or application costs."
+      question: t('faq.q1'),
+      answer: t('faq.a1')
     },
     {
-      question: "Where do you get your rules from?",
-      answer: "Our engine uses latest public Home Office caseworker guidance, policy documents, and immigration rules. We model these into structured flows to provide a highly accurate eligibility pre-check."
+      question: t('faq.q2'),
+      answer: t('faq.a2')
     },
     {
-      question: "Can this guarantee my visa will be approved?",
-      answer: "No. Final decisions are made solely by UK Visas and Immigration (UKVI). Our tool identifies potential risk areas and eligibility markers, but cannot guarantee an outcome."
+      question: t('faq.q3'),
+      answer: t('faq.a3')
     },
     {
-      question: "What happens after I pay?",
-      answer: "Your full result appears instantly. You will receive a detailed verdict, risk factor breakdown, and suggested next steps. A downloadable ClearVisa UK – Immigration Eligibility Pre-Check Report (PDF) will also be provided."
+      question: t('faq.q4'),
+      answer: t('faq.a4')
     },
     {
-      question: "Do you store my data?",
-      answer: "We take privacy seriously. All data is processed securely and encrypted. We do not sell your personal data to third parties. We are fully compliant with GDPR and modern data protection standards."
+      question: t('faq.q5'),
+      answer: t('faq.a5')
     }
   ];
 
   return (
     <section id="faq" className="pt-4 pb-16 md:pb-20 bg-white scroll-mt-[140px]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-5xl font-black text-navy mb-12 lg:mb-16 text-center uppercase tracking-tight">Frequently asked questions</h2>
+        <h2 className="text-3xl md:text-5xl font-black text-navy mb-12 lg:mb-16 text-center uppercase tracking-tight">
+          {t('section.faq.title')}
+        </h2>
         <div className="space-y-1">
           {faqs.map((faq, idx) => (
             <FAQItem

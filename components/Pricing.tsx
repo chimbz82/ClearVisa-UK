@@ -29,11 +29,11 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
             <div className="p-8 lg:p-10">
               <ul className="space-y-3.5 lg:space-y-4 mb-8 lg:mb-10">
                 {[
-                  "Route-specific compliance questionnaire",
-                  "Full eligibility verdict & explanation",
-                  "Detailed risk flag breakdown",
-                  "Downloadable summary (PDF report)",
-                  "Home Office guidance references"
+                  t('pricing.card.bullet1'),
+                  t('pricing.card.bullet2'),
+                  t('pricing.card.bullet3'),
+                  t('pricing.card.bullet4'),
+                  t('pricing.card.bullet5')
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-3 text-sm text-slate-700 font-semibold">
                     <svg className="w-5 h-5 text-teal-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>

@@ -1,18 +1,21 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 const HowItWorks: React.FC = () => {
+  const { t } = useLanguage();
+
   const steps = [
     {
-      title: "Step 1 – Tell us about your situation",
-      desc: "Choose your route (spouse, skilled worker, or other common categories) and answer a short series of questions about your status, sponsor, income, and history."
+      title: t('section.howItWorks.step1Title'),
+      desc: t('section.howItWorks.step1Body')
     },
     {
-      title: "Step 2 – ClearVisa UK analysis",
-      desc: "Our engine maps your answers against latest Home Office rules and provides a clear preview summary (likely eligible, borderline, or unlikely eligible)."
+      title: t('section.howItWorks.step2Title'),
+      desc: t('section.howItWorks.step2Body')
     },
     {
-      title: "Step 3 – Get your official report",
-      desc: "Pay a one-time fee to unlock your full ClearVisa UK – Immigration Eligibility Pre-Check Report, covering every risk factor and recommended next steps."
+      title: t('section.howItWorks.step3Title'),
+      desc: t('section.howItWorks.step3Body')
     }
   ];
 
@@ -20,8 +23,12 @@ const HowItWorks: React.FC = () => {
     <section id="how-it-works" className="pt-4 pb-20 bg-slate-50/50 scroll-mt-[140px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-5xl mx-auto mb-14 md:mb-16">
-          <h2 className="text-3xl md:text-5xl font-black text-navy mb-5 leading-tight uppercase tracking-tight">How ClearVisa UK – Immigration Eligibility Pre-Check Report works</h2>
-          <p className="text-lg md:text-xl text-slate-600 font-bold">A three-step flow to complete clarity before you apply.</p>
+          <h2 className="text-3xl md:text-5xl font-black text-navy mb-5 leading-tight uppercase tracking-tight">
+            {t('section.howItWorks.title')}
+          </h2>
+          <p className="text-lg md:text-xl text-slate-600 font-bold">
+            {t('section.howItWorks.subtitle')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">

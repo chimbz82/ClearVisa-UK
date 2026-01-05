@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FooterProps {
   onPrivacyClick: () => void;
@@ -7,7 +8,8 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollToSection }) => {
-  // TODO: Once available, add company registration number and any required legal details here.
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-[#081C2D] text-white pt-24 pb-12 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,22 +20,22 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
               <span className="leading-tight tracking-tight uppercase">ClearVisa UK – Immigration Eligibility<br/>Pre-Check Report</span>
             </div>
             <p className="text-slate-400 text-sm max-w-sm leading-relaxed font-bold mb-8">
-              Helping applicants understand their standing before they apply. Check your UK visa eligibility before you spend money on applications or professional advice.
+              {t('footer.mission')}
             </p>
           </div>
           
           <div>
-            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Navigation</h4>
+            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">{t('footer.nav')}</h4>
             <ul className="space-y-5 text-slate-300 text-sm font-bold">
-              <li><button onClick={() => onScrollToSection('how-it-works')} className="hover:text-accent transition-colors focus:outline-none">How it works</button></li>
-              <li><button onClick={() => onScrollToSection('who-its-for')} className="hover:text-accent transition-colors focus:outline-none">Who it's for</button></li>
-              <li><button onClick={() => onScrollToSection('pricing')} className="hover:text-accent transition-colors focus:outline-none">Pricing</button></li>
-              <li><button onClick={() => onScrollToSection('faq')} className="hover:text-accent transition-colors focus:outline-none">FAQ</button></li>
+              <li><button onClick={() => onScrollToSection('how-it-works')} className="hover:text-accent transition-colors focus:outline-none">{t('nav.howItWorks')}</button></li>
+              <li><button onClick={() => onScrollToSection('who-its-for')} className="hover:text-accent transition-colors focus:outline-none">{t('nav.whosItFor')}</button></li>
+              <li><button onClick={() => onScrollToSection('pricing')} className="hover:text-accent transition-colors focus:outline-none">{t('nav.pricing')}</button></li>
+              <li><button onClick={() => onScrollToSection('faq')} className="hover:text-accent transition-colors focus:outline-none">{t('nav.faq')}</button></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Support</h4>
+            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">{t('footer.support')}</h4>
             <ul className="space-y-5 text-slate-300 text-sm font-bold">
               <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors text-left focus:outline-none">Privacy Policy</button></li>
               <li><button onClick={onTermsClick} className="hover:text-accent transition-colors text-left focus:outline-none">Terms of Use</button></li>
@@ -44,10 +46,10 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
         
         <div className="pt-12 border-t border-white/5 flex flex-col items-center gap-4 text-center">
           <p className="text-slate-500 text-[11px] font-black uppercase tracking-widest">
-            © 2026 ClearVisa UK – Immigration Eligibility Pre-Check Report. All rights reserved.
+            {t('footer.rights')}
           </p>
           <p className="text-slate-600 text-[9px] uppercase tracking-[0.3em] font-black">
-            Not affiliated with the UK Government or Home Office.
+            {t('legal.footer')}
           </p>
         </div>
       </div>

@@ -1,12 +1,15 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 const WhatYouGet: React.FC = () => {
+  const { t } = useLanguage();
+
   const deliverables = [
-    { title: "Eligibility verdict", desc: "Likely, borderline, or unlikely based on your answers." },
-    { title: "Risk factor breakdown", desc: "Which areas look strong and which may cause problems." },
-    { title: "Plain-English explanation", desc: "What this means for your situation." },
-    { title: "Suggested next steps", desc: "What to fix or prepare before you spend money on applications or professional advice." },
-    { title: "Downloadable summary", desc: "A clean PDF-style report you can save or share." }
+    { title: t('section.whatYouGet.itemVerdictTitle'), desc: t('section.whatYouGet.itemVerdictBody') },
+    { title: t('section.whatYouGet.itemRiskTitle'), desc: t('section.whatYouGet.itemRiskBody') },
+    { title: t('section.whatYouGet.itemPlainTitle'), desc: t('section.whatYouGet.itemPlainBody') },
+    { title: t('section.whatYouGet.itemNextStepsTitle'), desc: t('section.whatYouGet.itemNextStepsBody') },
+    { title: t('section.whatYouGet.itemDownloadTitle'), desc: t('section.whatYouGet.itemDownloadBody') }
   ];
 
   return (
@@ -17,8 +20,8 @@ const WhatYouGet: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
           <div className="mb-12 lg:mb-0">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 lg:mb-5 leading-tight">What you get from your pre-check</h2>
-            <p className="text-lg text-slate-400 mb-8 lg:mb-10 font-medium">Not just a score – a structured summary you can actually use.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 lg:mb-5 leading-tight">{t('section.whatYouGet.title')}</h2>
+            <p className="text-lg text-slate-400 mb-8 lg:mb-10 font-medium">{t('section.whatYouGet.subtitle')}</p>
             
             <ul className="space-y-5 lg:space-y-6">
               {deliverables.map((item, idx) => (
@@ -36,7 +39,7 @@ const WhatYouGet: React.FC = () => {
 
             <div className="mt-8 lg:mt-10 p-3.5 border border-slate-700/50 rounded-lg bg-slate-800/30 inline-block">
               <p className="text-xs text-slate-400 italic font-medium">
-                You can take this summary to a solicitor, advisor, or keep it for your own planning.
+                {t('section.whatYouGet.footerNote')}
               </p>
             </div>
           </div>
