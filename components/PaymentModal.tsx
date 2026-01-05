@@ -94,7 +94,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               </button>
 
               <p className="text-[10px] text-slate-400 text-center mt-6">
-                Not sure? Don't worry, you can refine your details in the assessment.
+                Not sure? Don’t worry, you can refine your details in the assessment.
               </p>
             </div>
           )}
@@ -105,7 +105,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               <div className="bg-slate-50 p-4 rounded-xl flex justify-between items-center mb-6">
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Plan</p>
-                  <p className="text-sm font-bold text-navy">{selectedRoute} Pre-Check</p>
+                  <p className="text-sm font-bold text-navy">{selectedRoute === 'Spouse' ? 'Spouse Pre-Check' : 'Skilled Worker Pre-Check'}</p>
                 </div>
                 <p className="text-lg font-bold text-navy">£19.00</p>
               </div>
@@ -184,12 +184,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
               </div>
               <h4 className="text-2xl font-bold text-navy mb-2">Payment Confirmed</h4>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Thank you. Your access to the <strong>{selectedRoute} Pre-Check</strong> is now active. You can start the assessment immediately.
+                Thank you. Your access to the <strong>{selectedRoute === 'Spouse' ? 'Spouse' : 'Skilled Worker'} Pre-Check</strong> is now active. You can start the assessment immediately.
               </p>
               
               <div className="space-y-3">
                 <button 
-                  onClick={() => onSuccess(selectedRoute || 'Spouse Visa')}
+                  onClick={() => onSuccess(selectedRoute === 'Spouse' ? 'Spouse Visa' : 'Skilled Worker Visa')}
                   className="w-full bg-navy text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition-all shadow-lg"
                 >
                   Start My Pre-Check

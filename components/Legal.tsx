@@ -5,9 +5,9 @@ const Legal: React.FC = () => {
   return (
     <section className="py-16 bg-slate-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-xl font-bold text-navy mb-4">Important information</h3>
-          <div className="space-y-4 text-slate-500 text-sm leading-relaxed">
+        <div className="bg-white p-8 md:p-12 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 className="text-2xl font-bold text-navy mb-6">Important information</h3>
+          <div className="space-y-6 text-slate-600 text-base leading-relaxed">
             <p>
               ClearVisa UK is not a law firm and does not provide legal advice. Our service is not a replacement for advice from a qualified immigration solicitor or OISC-regulated adviser.
             </p>

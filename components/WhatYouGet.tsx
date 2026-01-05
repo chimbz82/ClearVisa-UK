@@ -19,7 +19,7 @@ const WhatYouGet: React.FC = () => {
         <div className="lg:grid lg:grid-cols-2 lg:gap-20 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">What you get from your pre-check</h2>
-            <p className="text-lg text-slate-400 mb-12">Not just a score – a structured summary you can actually use.</p>
+            <p className="text-lg text-slate-400 mb-12 font-medium">Not just a score – a structured summary you can actually use.</p>
             
             <ul className="space-y-8">
               {deliverables.map((item, idx) => (
@@ -49,19 +49,19 @@ const WhatYouGet: React.FC = () => {
                 <div className="p-6 bg-white border-b border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-navy rounded flex items-center justify-center text-[10px] font-bold text-white">C</div>
-                    <span className="text-xs font-bold text-navy tracking-tight">Eligibility Report</span>
+                    <span className="text-xs font-bold text-navy tracking-tight uppercase">Eligibility Report</span>
                   </div>
-                  <span className="text-[10px] text-slate-400">Date: Oct 2024</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Confidential</span>
                 </div>
                 <div className="p-10 space-y-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 text-2xl">✓</div>
+                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 text-2xl shadow-inner font-bold">✓</div>
                     <div>
-                      <h3 className="text-xl font-bold text-navy">Likely Eligible</h3>
-                      <p className="text-xs text-slate-500">Route: Spouse Visa</p>
+                      <h3 className="text-xl font-bold text-navy uppercase tracking-tight">Likely Eligible</h3>
+                      <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Route: Spouse Visa</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-4 gap-4">
                     <div className="h-1 bg-teal-500 rounded"></div>
                     <div className="h-1 bg-teal-500 rounded"></div>
                     <div className="h-1 bg-teal-500 rounded"></div>
@@ -73,7 +73,7 @@ const WhatYouGet: React.FC = () => {
                     <div className="h-3 bg-slate-200 rounded w-4/5"></div>
                   </div>
                   <div className="pt-8 flex justify-center">
-                    <div className="px-6 py-2 border-2 border-navy text-navy font-bold text-xs rounded-full">Report ID: PRE-40392</div>
+                    <div className="px-6 py-2 border-2 border-navy text-navy font-bold text-[10px] uppercase tracking-widest rounded-full">Report ID: PRE-40392</div>
                   </div>
                 </div>
               </div>

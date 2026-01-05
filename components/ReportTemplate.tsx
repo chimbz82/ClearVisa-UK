@@ -20,7 +20,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   
   const verdictContent = {
     likely: {
-      title: "Likely Eligible",
+      title: "Likely eligible",
       text: "Based on your answers, you appear to meet the key published requirements for this visa route. Review your full report and evidence carefully before applying.",
       bgColor: "bg-teal-50",
       borderColor: "border-teal-200",
@@ -28,7 +28,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       subTextColor: "text-teal-700/80"
     },
     borderline: {
-      title: "Borderline – Risk Factors Present",
+      title: "Borderline – risk factors present",
       text: "Some of your answers suggest you may not clearly meet all requirements. Read your report carefully and consider addressing risk areas before submitting an application.",
       bgColor: "bg-amber-50",
       borderColor: "border-amber-200",
@@ -36,7 +36,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       subTextColor: "text-amber-700/80"
     },
     unlikely: {
-      title: "Unlikely Eligible Based on Provided Answers",
+      title: "Unlikely eligible based on your answers",
       text: "Your answers suggest one or more core requirements are not currently met. Check the risk sections in your report and consider seeking advice from a qualified immigration solicitor.",
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
@@ -100,7 +100,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             <div className="w-10 h-10 bg-navy text-white rounded-lg flex items-center justify-center font-serif text-2xl font-bold shadow-sm">C</div>
             <span className="text-2xl font-bold tracking-tight text-navy uppercase">ClearVisa UK</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-navy mb-2">UK Visa Eligibility Pre-Check Report</h1>
+          <h1 className="text-3xl font-extrabold text-navy mb-2 uppercase tracking-tight">UK Visa Eligibility Pre-Check Report</h1>
           <p className="text-sm text-slate-500 max-w-md">
             Personalised assessment based on your answers and current public Home Office rules.
           </p>
@@ -122,9 +122,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       <div className="h-[2px] bg-slate-100 w-full mb-12"></div>
 
       {/* 2. Eligibility Verdict Box */}
-      <div className={`${content.bgColor} border-2 ${content.borderColor} rounded-2xl p-8 text-center mb-12`}>
+      <div className={`${content.bgColor} border-2 ${content.borderColor} rounded-2xl p-8 text-center mb-12 shadow-sm`}>
         <h2 className={`text-2xl font-black ${content.textColor} uppercase tracking-wide mb-4`}>{content.title}</h2>
-        <p className={`text-base ${content.subTextColor} leading-relaxed max-w-2xl mx-auto mb-6`}>
+        <p className={`text-base ${content.subTextColor} leading-relaxed max-w-2xl mx-auto mb-6 font-medium italic`}>
           {content.text}
         </p>
         <div className="inline-block px-4 py-2 bg-white/50 rounded-lg">

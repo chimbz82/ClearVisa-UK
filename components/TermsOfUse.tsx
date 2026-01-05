@@ -22,35 +22,30 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
           
           <div className="prose prose-slate max-w-none space-y-6 text-slate-600">
             <p className="text-lg font-medium text-slate-900">
-              ClearVisa UK provides an online eligibility pre-check tool for UK visa routes. By using this site, you agree to the following terms:
+              ClearVisa UK provides an online eligibility pre-check tool for UK visa routes. By using this site, you agree that:
             </p>
             
-            <ul className="space-y-4 list-none pl-0">
-              <li className="flex gap-4">
-                <span className="text-teal-600 font-bold">•</span>
-                <span>The service is for information purposes only and is <strong>not legal advice</strong>.</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-teal-600 font-bold">•</span>
-                <span>You are responsible for the accuracy of the information you submit.</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-teal-600 font-bold">•</span>
-                <span>We do not guarantee any visa outcome or application success.</span>
-              </li>
-              <li className="flex gap-4">
-                <span className="text-teal-600 font-bold">•</span>
-                <span>We may update the service and these terms at any time.</span>
-              </li>
+            <ul className="space-y-6 list-none pl-0">
+              {[
+                "The service is for information purposes only and is not legal advice.",
+                "You are responsible for the accuracy of the information you submit.",
+                "We do not guarantee any visa outcome or application success.",
+                "We may update the service and these terms at any time."
+              ].map((item, idx) => (
+                <li key={idx} className="flex gap-4 items-start">
+                  <span className="text-teal-600 font-bold text-xl leading-none mt-1">•</span>
+                  <span className="text-slate-700 font-medium">{item}</span>
+                </li>
+              ))}
             </ul>
 
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mt-8">
-              <p className="text-sm italic">
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mt-10">
+              <p className="text-sm font-bold text-navy italic">
                 If you do not agree to these terms, please do not use the service.
               </p>
             </div>
             
-            <p className="text-xs text-slate-400 pt-10 border-t border-slate-100">
+            <p className="text-xs text-slate-400 pt-10 border-t border-slate-100 uppercase font-bold tracking-widest">
               Last updated: October 2024
             </p>
           </div>
