@@ -16,31 +16,34 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Define which questions belong to which stage
+  // Define Stage 1 IDs explicitly
+  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
+
+  // Dynamic question filtering based on funnel stage
   const visibleQuestions = QUESTIONS.filter(q => {
-    // If not paid, only show quick check questions
-    if (!isPaid) return q.showIf({ tier: 'basic', route: 'any', answers }) && (q.id === 'nationality' || q.id === 'current_location' || q.id === 'immigration_status' || q.id === 'visa_route' || q.id === 'previous_refusals' || q.id === 'income_band');
-    
-    // If paid, show everything relevant
     const route = answers['visa_route'] === 'spouse' ? 'spouse' : answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-    return q.showIf({ tier: 'full', route, answers });
+    const isSharedOrRoute = q.showIf({ tier: 'full', route, answers });
+    
+    if (!isPaid) {
+      // Stage 1: only high-signal questions
+      return stage1Ids.includes(q.id) && isSharedOrRoute;
+    }
+    
+    // Stage 2: everything else that's relevant
+    return isSharedOrRoute;
   });
 
-  // Reset step when paid status changes (to start second stage from first new question)
+  // When payment is successful, we start from the first question that doesn't have an answer
   useEffect(() => {
     if (isPaid) {
-      // Find index of first question not answered or first question in stage 2
-      // For simplicity, we just reset to 0 and filter will handle the jump
-      setCurrentStep(0);
+      const firstUnansweredIndex = visibleQuestions.findIndex(q => !answers[q.id]);
+      if (firstUnansweredIndex !== -1) {
+        setCurrentStep(firstUnansweredIndex);
+      }
     }
   }, [isPaid]);
 
   const activeQuestion = visibleQuestions[currentStep];
-
-  if (!activeQuestion) {
-    // Should not happen if filtered correctly
-    return null;
-  }
 
   const handleAnswer = (value: any) => {
     setAnswers(prev => ({ ...prev, [activeQuestion.id]: value }));
@@ -59,7 +62,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
   };
 
   const renderField = (q: QuestionConfig) => {
-    const val = answers[q.id] || "";
+    const val = answers[q.id];
 
     switch (q.type) {
       case 'boolean':
@@ -88,8 +91,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
               <button 
                 key={opt.value}
                 onClick={() => { handleAnswer(opt.value); next(); }}
-                className={`w-full p-5 text-left border-2 rounded-2xl font-semibold text-lg transition-all ${
-                  val === opt.value ? 'border-navy bg-navy/5 text-navy' : 'border-slate-100 hover:border-slate-200'
+                className={`w-full p-5 text-left border-2 rounded-2xl font-bold text-lg transition-all ${
+                  val === opt.value ? 'border-navy bg-navy/5 text-navy shadow-sm' : 'border-slate-100 hover:border-slate-200 bg-white'
                 }`}
               >
                 {opt.label}
@@ -105,9 +108,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
             <input 
               type={q.type === 'shortText' ? 'text' : 'number'}
               placeholder={q.placeholder}
-              value={val}
+              value={val || ""}
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-5 bg-white border-2 border-slate-100 rounded-2xl focus:border-navy outline-none text-xl font-medium"
+              className="w-full p-5 bg-white border-2 border-slate-100 rounded-2xl focus:border-navy outline-none text-xl font-black shadow-inner"
               autoFocus
             />
             <Button onClick={next} fullWidth size="lg" disabled={!val}>
@@ -119,26 +122,28 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
     }
   };
 
+  if (!activeQuestion) return null;
+
   const progress = Math.round(((currentStep + 1) / visibleQuestions.length) * 100);
 
   return (
-    <div className="py-8 md:py-16 max-w-[720px] mx-auto min-h-[500px] flex flex-col">
-      <div className="mb-10">
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-[13px] font-black uppercase text-slate-400 tracking-widest">
-            {isPaid ? 'Full Assessment' : 'Quick Check'} • Question {currentStep + 1} of {visibleQuestions.length}
+    <div className="py-8 md:py-16 max-w-[720px] mx-auto min-h-[600px] flex flex-col">
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-[13px] font-black uppercase text-slate-400 tracking-widest leading-none">
+            {isPaid ? 'Professional Assessment' : 'Free Quick Check'} • {currentStep + 1} of {visibleQuestions.length}
           </span>
-          <span className="text-[13px] font-bold text-navy">{progress}%</span>
+          <span className="text-[13px] font-black text-navy leading-none">{progress}% Complete</span>
         </div>
-        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-navy transition-all duration-500" style={{ width: `${progress}%` }}></div>
+        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
+          <div className="h-full bg-navy transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h3 className="mb-3 leading-tight">{activeQuestion.label}</h3>
+        <h3 className="mb-4 text-3xl font-black text-navy leading-tight uppercase tracking-tight">{activeQuestion.label}</h3>
         {activeQuestion.helpText && (
-          <p className="text-slate-500 text-[15px] mb-8 leading-relaxed font-medium">
+          <p className="text-slate-500 text-[15px] mb-10 leading-relaxed font-bold italic bg-navy/5 p-5 rounded-2xl border-l-4 border-accent">
             {activeQuestion.helpText}
           </p>
         )}
@@ -149,7 +154,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
 
       <div className="flex items-center justify-between pt-10 border-t border-slate-100 mt-auto">
         <Button onClick={back} variant="ghost" disabled={currentStep === 0}>Back</Button>
-        <Button onClick={onCancel} variant="ghost" className="text-rose-500 hover:bg-rose-50">Cancel</Button>
+        <Button onClick={onCancel} variant="ghost" className="text-rose-500 hover:bg-rose-50">Cancel Check</Button>
       </div>
     </div>
   );
