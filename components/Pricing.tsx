@@ -11,106 +11,89 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
 
   const tiers = [
     {
-      key: 'basic',
-      label: t('pricing.tier.basic.label'),
-      price: t('pricing.tier.basic.price'),
-      desc: t('pricing.tier.basic.desc'),
-      bullets: [
-        'Automated eligibility verdict',
-        'Summary of strong vs weak areas',
-        'Risk flag indicators',
-        'Plain-English explanation'
-      ],
-      cta: 'Get Basic Pre-Check',
-      note: t('pricing.tier.basic.note')
-    },
-    {
       key: 'full',
-      label: t('pricing.tier.full.label'),
-      name: 'Full Pre-Check + Checklist',
-      price: t('pricing.tier.full.price'),
-      desc: t('pricing.tier.full.desc'),
+      label: 'Most Professional',
+      name: 'Full Eligibility Audit',
+      price: '£79',
+      desc: 'Complete detailed risk assessment and document checklist.',
       bullets: [
-        'Everything in Basic',
+        'Complete 30-Question assessment',
         'Personalized document checklist',
-        'Detailed risk factor breakdown',
-        'Step-by-step next-actions plan',
-        'Professional PDF Report'
+        'Detailed risk factor identification',
+        'Step-by-step next actions plan',
+        'Professional PDF Audit Report'
       ],
-      cta: 'Get Full Pre-Check',
+      cta: 'Start Free Pre-Check',
       recommended: true
     },
     {
       key: 'human',
-      label: t('pricing.tier.human.label'),
-      price: t('pricing.tier.human.price'),
-      desc: t('pricing.tier.human.desc'),
+      label: 'Expert Support',
+      name: 'Human Review Add-On',
+      price: '£149',
+      desc: 'Everything in Full tier plus expert manual verification.',
       bullets: [
-        'Everything in Full tier',
-        'Human review of your case',
-        'Expert feedback on evidence',
-        'Follow-up Q&A email support'
+        'Expert caseworker review',
+        'Manual evidence verification',
+        'Follow-up Q&A email support',
+        'Strategic corrections to case'
       ],
-      cta: 'Get Human Review'
+      cta: 'Inquire Now',
+      recommended: false
     }
   ];
 
   return (
-    <section id="pricing" className="py-20 bg-slate-50/50">
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6">
+    <section id="pricing" className="section-py bg-slate-50/80">
+      <div className="app-container">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="mb-4">{t('pricing.title')}</h2>
-          <p className="text-lg text-slate-600 font-medium">{t('pricing.subtitle')}</p>
+          <h2 className="text-h2 text-navy mb-4">Professional Eligibility Audit</h2>
+          <p className="text-body text-secondary">Simple, one-time fees. No subscriptions or hidden costs.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {tiers.map((tier) => (
             <div 
               key={tier.key} 
-              className={`flex flex-col bg-white rounded-[24px] shadow-sm border p-8 transition-all ${
-                tier.recommended ? 'ring-2 ring-accent border-transparent scale-105 z-10' : 'border-slate-100 hover:border-slate-200'
+              className={`flex flex-col app-card p-10 transition-all ${
+                tier.recommended ? 'ring-2 ring-accent scale-105 z-10' : 'border border-slate-200'
               }`}
             >
-              <div className="mb-8 text-center">
-                <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">{tier.label}</span>
-                <div className="mt-4 flex items-center justify-center gap-1">
-                  <span className="text-4xl font-black text-navy">{tier.price}</span>
-                  <span className="text-[13px] font-bold text-slate-400 mt-2">one-time</span>
+              <div className="mb-10 text-center">
+                <span className="text-caption text-slate-400 font-bold">{tier.label}</span>
+                <h3 className="text-h3 mt-2 text-navy">{tier.name}</h3>
+                <div className="mt-6 flex items-center justify-center gap-1">
+                  <span className="text-display text-navy">{tier.price}</span>
+                  <span className="text-caption text-slate-400 mt-2">one-time</span>
                 </div>
               </div>
               
               <div className="flex-grow">
-                <ul className="space-y-4 mb-10">
+                <ul className="space-y-4 mb-12">
                   {tier.bullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-3 text-[14px] text-slate-700 font-medium">
-                      <span className="text-accent text-lg leading-none">✓</span>
+                    <li key={i} className="flex items-start gap-3 text-body-sm text-slate-700 font-medium">
+                      <span className="text-accent font-bold mt-0.5">✓</span>
                       {bullet}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="mt-auto pt-8">
-                <Button 
-                  onClick={() => onStartCheck(tier.key)}
-                  variant={tier.recommended ? 'primary' : 'outline'}
-                  fullWidth
-                >
-                  {tier.cta}
-                </Button>
-                {tier.note && (
-                  <p className="mt-4 text-[12px] text-center text-slate-400 font-medium">{tier.note}</p>
-                )}
-              </div>
+              <Button 
+                onClick={() => onStartCheck(tier.key)}
+                variant={tier.recommended ? 'primary' : 'outline'}
+                fullWidth
+                size="lg"
+              >
+                {tier.cta}
+              </Button>
             </div>
           ))}
         </div>
 
-        <div className="mt-16 text-center text-slate-500 text-sm">
-          <p className="max-w-2xl mx-auto italic">
-            ClearVisa UK – Providing professional eligibility assessments since 2024. Not a government entity.
-          </p>
-        </div>
+        <p className="text-center text-body-sm text-slate-400 mt-16 max-w-xl mx-auto italic font-medium">
+          Professional UK visa eligibility reports built around official Home Office policy. We identify risks before you lose your application fees.
+        </p>
       </div>
     </section>
   );

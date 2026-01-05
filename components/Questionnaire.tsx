@@ -16,40 +16,55 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Define Stage 1 IDs explicitly
+  // Stage 1 filter
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
 
-  // Dynamic question filtering based on funnel stage
-  const visibleQuestions = QUESTIONS.filter(q => {
-    const route = answers['visa_route'] === 'spouse' ? 'spouse' : answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-    const isSharedOrRoute = q.showIf({ tier: 'full', route, answers });
-    
-    if (!isPaid) {
-      // Stage 1: only high-signal questions
-      return stage1Ids.includes(q.id) && isSharedOrRoute;
-    }
-    
-    // Stage 2: everything else that's relevant
-    return isSharedOrRoute;
-  });
+  // Calculate visible questions based on current stage and answered logic
+  const getVisibleQuestions = () => {
+    return QUESTIONS.filter(q => {
+      const route = answers['visa_route'] === 'spouse' ? 'spouse' : answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
+      const showIfResult = q.showIf({ tier: 'full', route, answers });
+      
+      if (!isPaid) {
+        return stage1Ids.includes(q.id) && showIfResult;
+      }
+      return showIfResult;
+    });
+  };
 
-  // When payment is successful, we start from the first question that doesn't have an answer
+  const visibleQuestions = getVisibleQuestions();
+
+  // Defensive: jump to first unanswered question when paying
   useEffect(() => {
-    if (isPaid) {
-      const firstUnansweredIndex = visibleQuestions.findIndex(q => !answers[q.id]);
+    if (isPaid && currentStep === 0) {
+      const firstUnansweredIndex = visibleQuestions.findIndex(q => answers[q.id] === undefined);
       if (firstUnansweredIndex !== -1) {
         setCurrentStep(firstUnansweredIndex);
       }
     }
-  }, [isPaid]);
+  }, [isPaid, visibleQuestions, answers]);
 
   const activeQuestion = visibleQuestions[currentStep];
+
+  // Defensive: Fallback for missing config
+  if (!activeQuestion && visibleQuestions.length > 0) {
+    return (
+      <div className="py-20 text-center">
+        <h3 className="text-h3 text-rose-600 mb-4">Assessment Loading Error</h3>
+        <p className="text-body mb-8">We encountered a temporary issue loading the next question.</p>
+        <Button onClick={onCancel} variant="outline">Back to Home</Button>
+      </div>
+    );
+  }
+
+  if (!activeQuestion) return null;
 
   const handleAnswer = (value: any) => {
     setAnswers(prev => ({ ...prev, [activeQuestion.id]: value }));
   };
 
   const next = () => {
+    if (answers[activeQuestion.id] === undefined) return;
     if (currentStep < visibleQuestions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -69,14 +84,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
         return (
           <div className="grid grid-cols-2 gap-4">
             <Button 
-              onClick={() => { handleAnswer(true); next(); }}
+              onClick={() => { handleAnswer(true); setTimeout(next, 200); }}
               variant={val === true ? 'navy' : 'outline'}
               size="lg"
             >
               Yes
             </Button>
             <Button 
-              onClick={() => { handleAnswer(false); next(); }}
+              onClick={() => { handleAnswer(false); setTimeout(next, 200); }}
               variant={val === false ? 'navy' : 'outline'}
               size="lg"
             >
@@ -90,8 +105,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
             {q.options?.map(opt => (
               <button 
                 key={opt.value}
-                onClick={() => { handleAnswer(opt.value); next(); }}
-                className={`w-full p-5 text-left border-2 rounded-2xl font-bold text-lg transition-all ${
+                onClick={() => { handleAnswer(opt.value); setTimeout(next, 200); }}
+                className={`w-full p-6 text-left border-2 rounded-2xl text-body font-bold transition-all ${
                   val === opt.value ? 'border-navy bg-navy/5 text-navy shadow-sm' : 'border-slate-100 hover:border-slate-200 bg-white'
                 }`}
               >
@@ -104,17 +119,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
       case 'number':
       case 'shortText':
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <input 
               type={q.type === 'shortText' ? 'text' : 'number'}
-              placeholder={q.placeholder}
+              placeholder={q.placeholder || "Type your answer..."}
               value={val || ""}
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-5 bg-white border-2 border-slate-100 rounded-2xl focus:border-navy outline-none text-xl font-black shadow-inner"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner transition-colors"
               autoFocus
             />
-            <Button onClick={next} fullWidth size="lg" disabled={!val}>
-              Continue
+            <Button onClick={next} fullWidth size="lg" disabled={val === undefined || val === ""}>
+              Next Question
             </Button>
           </div>
         );
@@ -122,28 +137,26 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
     }
   };
 
-  if (!activeQuestion) return null;
-
   const progress = Math.round(((currentStep + 1) / visibleQuestions.length) * 100);
 
   return (
-    <div className="py-8 md:py-16 max-w-[720px] mx-auto min-h-[600px] flex flex-col">
+    <div className="max-w-[720px] mx-auto min-h-[500px] flex flex-col pt-8">
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-[13px] font-black uppercase text-slate-400 tracking-widest leading-none">
-            {isPaid ? 'Professional Assessment' : 'Free Quick Check'} • {currentStep + 1} of {visibleQuestions.length}
+          <span className="text-caption text-slate-400">
+            {isPaid ? 'Full Audit' : 'Initial Screen'} • {currentStep + 1} of {visibleQuestions.length}
           </span>
-          <span className="text-[13px] font-black text-navy leading-none">{progress}% Complete</span>
+          <span className="text-body-sm font-bold text-navy">{progress}%</span>
         </div>
-        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
+        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
           <div className="h-full bg-navy transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h3 className="mb-4 text-3xl font-black text-navy leading-tight uppercase tracking-tight">{activeQuestion.label}</h3>
+        <h3 className="text-h3 mb-3 text-navy tracking-tight">{activeQuestion.label}</h3>
         {activeQuestion.helpText && (
-          <p className="text-slate-500 text-[15px] mb-10 leading-relaxed font-bold italic bg-navy/5 p-5 rounded-2xl border-l-4 border-accent">
+          <p className="text-body-sm text-slate-500 mb-8 leading-relaxed font-medium">
             {activeQuestion.helpText}
           </p>
         )}
@@ -153,8 +166,12 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
       </div>
 
       <div className="flex items-center justify-between pt-10 border-t border-slate-100 mt-auto">
-        <Button onClick={back} variant="ghost" disabled={currentStep === 0}>Back</Button>
-        <Button onClick={onCancel} variant="ghost" className="text-rose-500 hover:bg-rose-50">Cancel Check</Button>
+        <button onClick={back} disabled={currentStep === 0} className="text-body-sm font-bold text-slate-400 hover:text-navy disabled:opacity-0 transition-colors px-4 py-2">
+          Back
+        </button>
+        <button onClick={onCancel} className="text-body-sm font-bold text-rose-400 hover:text-rose-600 transition-colors px-4 py-2">
+          Cancel Check
+        </button>
       </div>
     </div>
   );
