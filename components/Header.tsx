@@ -33,8 +33,8 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck }) => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <a href="#top" className="text-xl font-bold text-navy flex items-center gap-2">
-              <span className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif">UK</span>
-              <span>Visa Pre-Check</span>
+              <span className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif">C</span>
+              <span>ClearVisa UK</span>
             </a>
           </div>
 

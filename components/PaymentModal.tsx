@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: (route: string) => void;
 }
 
 type CheckoutStep = 'select-route' | 'payment' | 'success';
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,7 +72,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
               <p className="text-slate-600 text-sm mb-6">Choose the visa type you want to check eligibility for.</p>
               
               <button 
-                onClick={() => handleRouteSelect('Spouse')}
+                onClick={() => handleRouteSelect('Spouse Visa')}
                 className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
@@ -82,7 +83,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
               </button>
 
               <button 
-                onClick={() => handleRouteSelect('Skilled Worker')}
+                onClick={() => handleRouteSelect('Skilled Worker Visa')}
                 className="w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 hover:border-navy hover:bg-slate-50 transition-all text-left group"
               >
                 <div>
@@ -188,10 +189,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
               
               <div className="space-y-3">
                 <button 
-                  onClick={() => alert("Redirecting to the dynamic questionnaire...")}
+                  onClick={() => onSuccess(selectedRoute || 'Spouse Visa')}
                   className="w-full bg-navy text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition-all shadow-lg"
                 >
-                  Start My Pre-Check
+                  View My Report
                 </button>
                 <p className="text-xs text-slate-400">A receipt has been sent to your email.</p>
               </div>

@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UK Visa Pre-Check | Check Your Eligibility Instantly</title>
+    <title>ClearVisa UK | UK Visa Eligibility Pre-Check</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +24,32 @@
       .bg-teal-muted { background-color: #14b8a6; }
       .text-teal-muted { color: #14b8a6; }
       .bg-off-white { background-color: #f8fafc; }
+
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          background-color: white !important;
+        }
+        .print-only {
+          display: block !important;
+        }
+        @page {
+          size: A4;
+          margin: 0;
+        }
+        .a4-page {
+          margin: 0;
+          border: initial;
+          border-radius: initial;
+          width: initial;
+          min-height: initial;
+          box-shadow: initial;
+          background: initial;
+          page-break-after: always;
+        }
+      }
     </style>
   <script type="importmap">
 {
