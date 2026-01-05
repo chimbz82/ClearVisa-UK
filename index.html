@@ -30,8 +30,8 @@
 
       @media print {
         @page {
-          size: A4;
-          margin: 10mm;
+          size: A4 portrait;
+          margin: 0;
         }
         .no-print {
           display: none !important;
@@ -40,11 +40,13 @@
           background-color: white !important;
           margin: 0;
           padding: 0;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         #root {
           background-color: white !important;
         }
-        /* Target the specific report container */
+        /* Ensure the report container is the only thing shown */
         #report-root {
           width: 100% !important;
           max-width: none !important;
@@ -56,12 +58,13 @@
           margin: 0 !important;
           border: none !important;
           border-radius: 0 !important;
-          width: 100% !important;
-          height: auto !important;
-          min-height: auto !important;
+          width: 210mm !important;
+          min-height: 297mm !important;
           box-shadow: none !important;
           background: white !important;
-          padding: 5mm !important;
+          padding: 10mm 15mm !important;
+          position: relative;
+          page-break-after: always;
         }
         .watermark {
           position: fixed;
@@ -76,13 +79,23 @@
           z-index: 0;
           display: block !important;
         }
-        /* Prevent clipping */
-        h1, h2, h3, h4, p, li {
-          page-break-inside: avoid;
+        /* Page numbering and footer details */
+        .print-footer-info {
+          display: flex !important;
+          position: absolute;
+          bottom: 10mm;
+          left: 15mm;
+          right: 15mm;
+          justify-content: space-between;
+          font-size: 8pt;
+          color: #94a3b8;
+          border-top: 1pt solid #f1f5f9;
+          padding-top: 4mm;
         }
-        section {
-          page-break-inside: auto;
-        }
+      }
+      /* Hidden by default, only shown in print if needed */
+      .print-footer-info {
+        display: none;
       }
     </style>
   <script type="importmap">
