@@ -33,7 +33,7 @@ const WhoItsFor: React.FC = () => {
   ];
 
   return (
-    <section id="who-its-for" className="pt-8 md:pt-10 lg:pt-12 pb-20 bg-white scroll-mt-[120px]">
+    <section id="who-its-for" className="pt-4 pb-20 bg-white scroll-mt-[140px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-14 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-3">Who this tool is for</h2>
