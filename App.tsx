@@ -40,6 +40,28 @@ const App: React.FC = () => {
     window.print();
   };
 
+  /**
+   * Scroll helper that handles navigation and smooth scrolling.
+   * If on a different view (e.g., Report), it switches to 'landing' first.
+   */
+  const scrollToSection = (id: string) => {
+    if (viewState !== 'landing') {
+      setViewState('landing');
+      // Delay slightly to allow the landing page to mount before attempting to scroll
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   const handlePaymentSuccess = (route: string) => {
     setSelectedRoute(route);
     setViewState('report');
@@ -136,7 +158,11 @@ const App: React.FC = () => {
       default:
         return (
           <>
-            <Header onStartCheck={handleStartCheck} onNavigateHome={() => setViewState('landing')} />
+            <Header 
+              onStartCheck={handleStartCheck} 
+              onNavigateHome={() => setViewState('landing')} 
+              onScrollToSection={scrollToSection}
+            />
             <main>
               <Hero onStartCheck={handleStartCheck} />
               <TrustStrip />
@@ -150,6 +176,7 @@ const App: React.FC = () => {
             <Footer 
               onPrivacyClick={() => { setViewState('privacy'); window.scrollTo(0, 0); }} 
               onTermsClick={() => { setViewState('terms'); window.scrollTo(0, 0); }} 
+              onScrollToSection={scrollToSection}
             />
           </>
         );

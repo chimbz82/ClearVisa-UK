@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 interface HeaderProps {
   onStartCheck: () => void;
   onNavigateHome: () => void;
+  onScrollToSection: (id: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
+const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollToSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -18,10 +19,10 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
   }, []);
 
   const navLinks = [
-    { name: 'How it works', href: '#how-it-works' },
-    { name: 'Who it’s for', href: '#who-its-for' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'FAQ', href: '#faq' },
+    { name: 'How it works', id: 'how-it-works' },
+    { name: 'Who it’s for', id: 'who-its-for' },
+    { name: 'Pricing', id: 'pricing' },
+    { name: 'FAQ', id: 'faq' },
   ];
 
   return (
@@ -31,22 +32,25 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex-shrink-0">
-            <a href="#top" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-xl font-bold text-navy flex items-center gap-2">
+            <button 
+              onClick={(e) => { e.preventDefault(); onNavigateHome(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="text-xl font-bold text-navy flex items-center gap-2 focus:outline-none"
+            >
               <div className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-serif flex-shrink-0">C</div>
               <span className="hidden lg:inline text-sm tracking-tight">ClearVisa UK – Immigration Eligibility Pre-Check Report</span>
               <span className="lg:hidden text-lg">ClearVisa UK</span>
-            </a>
+            </button>
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.name}
-                href={link.href}
-                className="text-sm font-bold text-slate-600 hover:text-navy transition-colors whitespace-nowrap"
+                onClick={() => onScrollToSection(link.id)}
+                className="text-sm font-bold text-slate-600 hover:text-navy transition-colors whitespace-nowrap focus:outline-none"
               >
                 {link.name}
-              </a>
+              </button>
             ))}
             <button 
               onClick={onStartCheck}
@@ -71,9 +75,13 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome }) => {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-4 duration-300">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className="block text-lg font-bold text-navy">
+            <button 
+              key={link.name} 
+              onClick={() => { setIsMenuOpen(false); onScrollToSection(link.id); }} 
+              className="block w-full text-left text-lg font-bold text-navy focus:outline-none"
+            >
               {link.name}
-            </a>
+            </button>
           ))}
           <button onClick={() => { setIsMenuOpen(false); onStartCheck(); }} className="w-full bg-navy text-white px-5 py-4 rounded-xl text-base font-bold">
             Start eligibility check

@@ -3,9 +3,10 @@ import React from 'react';
 interface FooterProps {
   onPrivacyClick: () => void;
   onTermsClick: () => void;
+  onScrollToSection: (id: string) => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
+const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollToSection }) => {
   // TODO: Once available, add company registration number and any required legal details here.
   return (
     <footer className="bg-[#081C2D] text-white pt-24 pb-12 no-print">
@@ -24,18 +25,18 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick }) => {
           <div>
             <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Navigation</h4>
             <ul className="space-y-5 text-slate-300 text-sm font-bold">
-              <li><a href="#how-it-works" className="hover:text-accent transition-colors">How it works</a></li>
-              <li><a href="#who-its-for" className="hover:text-accent transition-colors">Who it's for</a></li>
-              <li><a href="#pricing" className="hover:text-accent transition-colors">Pricing</a></li>
-              <li><a href="#faq" className="hover:text-accent transition-colors">FAQ</a></li>
+              <li><button onClick={() => onScrollToSection('how-it-works')} className="hover:text-accent transition-colors focus:outline-none">How it works</button></li>
+              <li><button onClick={() => onScrollToSection('who-its-for')} className="hover:text-accent transition-colors focus:outline-none">Who it's for</button></li>
+              <li><button onClick={() => onScrollToSection('pricing')} className="hover:text-accent transition-colors focus:outline-none">Pricing</button></li>
+              <li><button onClick={() => onScrollToSection('faq')} className="hover:text-accent transition-colors focus:outline-none">FAQ</button></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-black text-xs uppercase tracking-[0.2em] text-slate-500 mb-8">Support</h4>
             <ul className="space-y-5 text-slate-300 text-sm font-bold">
-              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors text-left">Privacy Policy</button></li>
-              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors text-left">Terms of Use</button></li>
+              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors text-left focus:outline-none">Privacy Policy</button></li>
+              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors text-left focus:outline-none">Terms of Use</button></li>
               <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-accent transition-colors">Support Contact</a></li>
             </ul>
           </div>
