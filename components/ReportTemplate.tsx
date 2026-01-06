@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
@@ -47,7 +46,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
   const getTierDisplay = () => {
     switch (tier) {
-      // Fix: Updated 'humanReview' to 'pro_plus' to match PlanId definition
       case 'pro_plus': return 'Professional Plus';
       case 'full': return 'Professional Audit';
       case 'basic': return 'Basic Pre-Check';
@@ -57,15 +55,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
   return (
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
-      {/* Floating Badge for Enhanced Analysis */}
-      {/* Fix: Updated 'humanReview' to 'pro_plus' */}
       {tier === 'pro_plus' && (
         <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-50 shadow-md">
           ⚡ Enhanced Analysis
         </div>
       )}
 
-      {/* Design accents */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-navy/5 rounded-bl-full"></div>
       
       <header className="flex justify-between items-start mb-10 relative z-10 border-b border-slate-100 pb-6">
@@ -84,7 +79,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       </header>
 
-      {/* Primary Verdict Card */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 relative z-10">
         <div className="md:col-span-2 p-6 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center">
           <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-3" style={{ color: current.color }}>Verdict: {current.title}</h2>
@@ -106,11 +100,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       </section>
 
-      {/* Detailed Content */}
       <div className="space-y-10 mb-10 flex-grow">
         
-        {/* Professional Plus Evidence Gap Analysis */}
-        {/* Fix: Updated 'humanReview' to 'pro_plus' */}
         {tier === 'pro_plus' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
@@ -150,8 +141,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           );
         })()}
 
-        {/* Compliance Matrix */}
-        {/* Fix: Updated 'humanReview' to 'pro_plus' */}
         {(tier === 'full' || tier === 'pro_plus') && (
           <section>
             <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
@@ -186,7 +175,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </section>
         )}
 
-        {/* Risk Flags */}
         <section>
           <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Profile Flag Analysis</h3>
           <div className="space-y-3">
@@ -204,7 +192,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </div>
         </section>
 
-        {/* Next Steps */}
         <section>
           <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Recommended Action Plan</h3>
           <div className="grid grid-cols-1 gap-3">
@@ -220,64 +207,68 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       </div>
 
-      {/* Professional Plus Upgrade Section */}
       {tier === 'full' && onUpgrade && (
-        <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-10 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
+        <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-12 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
             <div className="flex-shrink-0">
-              <div className="w-20 h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+              <div className="w-20 h-20 bg-accent text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                 ⚡
               </div>
             </div>
             
             <div className="flex-grow">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-caption text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
-                  UPGRADE AVAILABLE
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
+                  Recommended for complex cases
                 </span>
               </div>
-              <h3 className="text-h3 text-navy mb-4 uppercase tracking-tight leading-tight">
-                Unlock Evidence Gap Analysis
+              <h3 className="text-2xl font-bold text-navy mb-4 uppercase tracking-tight">
+                Upgrade to Professional Plus
               </h3>
-              <p className="text-body text-slate-700 mb-6 font-medium leading-relaxed">
-                Add automated gap detection, personalized improvement suggestions, and extended narrative questions to strengthen your application. One-time upgrade of £99.
+              <p className="text-body text-slate-700 mb-8 font-medium leading-relaxed max-w-xl">
+                Best for complex histories, refusals risk, or borderline evidence. Unlock deeper evidence gap analysis and practical suggests to strengthen your application.
               </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                <div className="flex items-start gap-2">
-                  <span className="text-accent font-bold mt-0.5">✓</span>
-                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
-                    Evidence Gap Analysis
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                <div className="flex items-start gap-3">
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                    Deeper Gap Analysis
                   </span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-accent font-bold mt-0.5">✓</span>
-                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
-                    Extended Narrative Questions
+                <div className="flex items-start gap-3">
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                    Extra Narrative Questions
                   </span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-accent font-bold mt-0.5">✓</span>
-                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
-                    Deeper Case Review
+                <div className="flex items-start gap-3">
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                    Upgrade Weak Documents
                   </span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-accent font-bold mt-0.5">✓</span>
-                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
-                    Personalized Improvements
+                <div className="flex items-start gap-3">
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                    Solicitor-Ready Summary
                   </span>
                 </div>
               </div>
               
-              <button 
-                onClick={onUpgrade}
-                className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-colors shadow-lg"
-              >
-                Upgrade to Professional Plus - £99
-              </button>
+              <div className="space-y-4">
+                <button 
+                  onClick={onUpgrade}
+                  className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
+                >
+                  Upgrade to Professional Plus - £99
+                </button>
+                <p className="text-[9px] text-slate-400 font-medium leading-tight px-1">
+                  By proceeding, you agree to our <a href="/terms" className="underline">Terms</a>, <a href="/privacy" className="underline">Privacy</a>, and <a href="/refunds" className="underline">Refund Policy</a>.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -288,7 +279,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
            <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
            <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
-             Not legal advice. Accuracy depends on user inputs. ClearVisa UK is not affiliated with the UK Home Office. Final decisions made by UKVI.
+             Not legal advice. ClearVisa UK is not a law firm. Accuracy depends on user inputs. Final decisions made exclusively by UKVI.
            </p>
         </div>
         <div className="flex justify-between items-center text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">

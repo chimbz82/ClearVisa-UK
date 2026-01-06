@@ -42,6 +42,7 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
             <ul className="space-y-4 text-slate-300 text-sm font-medium">
               <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors">Privacy Policy</button></li>
               <li><button onClick={onTermsClick} className="hover:text-white transition-colors">Terms of Use</button></li>
+              <li><a href="/refunds" className="hover:text-white transition-colors">Refund & Payment Policy</a></li>
               <li className="pt-2 text-[10px] text-slate-500 leading-tight italic uppercase tracking-wider">
                 Not affiliated with the UK Government or Home Office.
               </li>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import Button from './Button';
@@ -24,7 +23,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
           {PLANS.map((plan) => (
             <div 
               key={plan.id} 
-              className={`flex flex-col app-card p-7 sm:p-8 min-h-[340px] relative overflow-hidden transition-all duration-300 ${
+              className={`flex flex-col app-card p-7 sm:p-8 relative overflow-hidden transition-all duration-300 h-full ${
                 plan.id === 'full' 
                 ? 'md:scale-[1.02] border-[#2BB24C]/40 ring-4 ring-[#2BB24C]/5 z-10' 
                 : 'bg-white'
@@ -33,10 +32,9 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
               <div className="mb-6">
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 inline-block ${
                   plan.id === 'full' ? 'bg-[#2BB24C] text-white' : 
-                  // Fix: Updated 'humanReview' to 'pro_plus' to match PlanId definition
                   plan.id === 'pro_plus' ? 'bg-[#041229] text-white' : 'bg-slate-100 text-slate-500'
                 }`}>
-                  {plan.id === 'basic' ? 'BUDGET' : plan.id === 'full' ? 'RECOMMENDED' : 'ENHANCED'}
+                  {plan.id === 'basic' ? 'BUDGET' : plan.id === 'full' ? 'RECOMMENDED' : 'BEST FOR COMPLEX CASES'}
                 </span>
                 
                 <h3 className="text-lg font-bold text-[#041229] mb-1">{plan.name}</h3>
@@ -44,7 +42,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
                   <span className="text-3xl font-bold text-[#041229]">£{plan.priceGBP}</span>
                   <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">once</span>
                 </div>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed italic">
+                <p className="text-xs text-slate-500 font-medium leading-relaxed italic min-h-[40px]">
                   {plan.description}
                 </p>
               </div>
@@ -60,18 +58,23 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
                 </ul>
               </div>
 
-              <div>
+              <div className="mt-auto pt-4">
                 <Button 
                   onClick={() => onStartCheck(plan.id)}
                   fullWidth
                   variant={plan.id === 'full' ? 'primary' : 'outline'}
                   size="md"
                 >
-                  Choose Plan
+                  Choose {plan.name}
                 </Button>
-                <p className="mt-4 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                  Secure Payment by Stripe
-                </p>
+                <div className="mt-4 text-center space-y-2">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                    Secure Payment by Stripe
+                  </p>
+                  <p className="text-[9px] text-slate-400 font-medium leading-tight">
+                    By proceeding, you agree to our <a href="/terms" className="underline">Terms</a>, <a href="/privacy" className="underline">Privacy</a>, and <a href="/refunds" className="underline">Refund Policy</a>.
+                  </p>
+                </div>
               </div>
             </div>
           ))}

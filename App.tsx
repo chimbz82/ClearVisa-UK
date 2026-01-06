@@ -52,9 +52,9 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'Full 25–30 question audit and professional PDF report.',
+    description: 'Full audit and professional PDF report for straightforward cases.',
     includedFeatures: [
-      'Everything in Basic',
+      'Everything in Basic Pre-Check',
       'Personalised document checklist',
       'Route-specific compliance checks',
       'Detailed risk factor breakdown',
@@ -67,12 +67,13 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
-    description: 'Enhanced professional audit with deeper evidence gap analysis.',
+    description: 'For complex or borderline cases that need tighter evidence and narrative.',
     includedFeatures: [
       'Everything in Professional Audit',
-      'Deeper evidence gap highlights (where documents or timeline look weak)',
-      'More granular risk explanation per rule category',
-      'Additional practical preparation tips before speaking to a solicitor'
+      'Deeper evidence gap analysis by rule category',
+      'Extra narrative questions to strengthen explanations',
+      'Practical suggestions to upgrade weak documents',
+      'Clear summary to discuss with a solicitor or advisor'
     ]
   }
 ];
@@ -89,7 +90,6 @@ const AppContent: React.FC = () => {
   const [isPaid, setIsPaid] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
-  // ✅ STEP 4.1: Save state to localStorage
   useEffect(() => {
     const state = {
       answers,
@@ -103,7 +103,6 @@ const AppContent: React.FC = () => {
     localStorage.setItem('clearvisaState', JSON.stringify(state));
   }, [answers, selectedPlan, isPaid, viewState]);
 
-  // ✅ STEP 4.1: Load state on mount
   useEffect(() => {
     const saved = localStorage.getItem('clearvisaState');
     if (saved) {
@@ -115,7 +114,6 @@ const AppContent: React.FC = () => {
           setIsPaid(state.isPaid);
           if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
             setViewState(state.viewState);
-            // If we're on the report, we need to regenerate the assessment result
             if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
               const routeKey = state.answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
               const result = runAssessment(routeKey, state.answers);
@@ -132,11 +130,9 @@ const AppContent: React.FC = () => {
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
-    // If upgrading to Pro Plus, show ONLY delta questions
     if (isUpgrading && selectedPlan === 'pro_plus') {
       return QUESTIONS.filter(q => {
         const route = answers['visa_route'] === 'spouse' ? 'spouse' : 'skilled';
-        // Only show questions that are Pro Plus tier AND haven't been answered
         const isProOnly = q.showIf({ tier: 'pro_plus', route, answers }) && 
                           !q.showIf({ tier: 'full', route, answers });
         return isProOnly;
@@ -206,22 +202,20 @@ const AppContent: React.FC = () => {
 
   const handleQuickCheckComplete = async (collectedAnswers: Record<string, any>) => {
     setAnswers(collectedAnswers);
-    setIsLoadingReport(true);  // ✅ STEP 5.1: Show loading
+    setIsLoadingReport(true);
     setViewState('quickVerdict');
     
-    // Simulate processing time for better UX
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
-    setIsLoadingReport(false);  // ✅ STEP 5.1: Hide loading
+    setIsLoadingReport(false);
     localStorage.removeItem('clearvisaState');
     window.scrollTo(0, 0);
   };
 
   const handleFullAssessmentComplete = (collectedAnswers: Record<string, any>) => {
-    // Merge answers if upgrading
     const finalAnswers = isUpgrading ? { ...answers, ...collectedAnswers } : collectedAnswers;
     setAnswers(finalAnswers);
     
@@ -231,7 +225,7 @@ const AppContent: React.FC = () => {
     setAssessmentResult(result);
     setViewState('report');
     setIsLoadingReport(true);
-    setIsUpgrading(false); // Reset upgrading flag after completion
+    setIsUpgrading(false);
     window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
   };
@@ -259,7 +253,7 @@ const AppContent: React.FC = () => {
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
             <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
-              {isLoadingReport ? ( // ✅ STEP 5.2: Show Loading in Quick Verdict View
+              {isLoadingReport ? (
                 <div className="text-center py-20">
                   <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-navy mx-auto mb-6"></div>
                   <p className="text-body font-bold text-slate-600 uppercase tracking-tight">
@@ -286,8 +280,8 @@ const AppContent: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
-                     <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
+                     <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
+                     <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
                      <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
                   </div>
                   
@@ -320,9 +314,14 @@ const AppContent: React.FC = () => {
                 </ul>
               </div>
 
-              <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>
-                Pay £{plan.priceGBP} & Continue
-              </Button>
+              <div className="space-y-4">
+                <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>
+                  Pay £{plan.priceGBP} & Continue
+                </Button>
+                <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
+                  By proceeding, you agree to our <a href="/terms" className="underline hover:text-slate-600">Terms of Use</a>, <a href="/privacy" className="underline hover:text-slate-600">Privacy Policy</a>, and <a href="/refunds" className="underline hover:text-slate-600">Refund Policy</a>.
+                </p>
+              </div>
               
               <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">
                 Go back
@@ -336,7 +335,7 @@ const AppContent: React.FC = () => {
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card shadow-xl">
               <div className="text-left">
                 <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Your Audit is Ready</h3>
-                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {selectedPlan?.toUpperCase()}</p>
+                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === selectedPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>

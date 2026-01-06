@@ -18,6 +18,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
 
   const plan = PLANS.find(p => p.id === selectedTier) || PLANS.find(p => p.id === 'full')!;
+  const isPreview = window.location.hostname === 'localhost' || window.location.hostname.includes('stackblitz');
 
   useEffect(() => {
     if (status === 'success') {
@@ -45,9 +46,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
     setStatus('processing');
     
     setTimeout(() => {
-      // ✅ STEP 6.1: Simulate occasional failures for testing
-      const success = Math.random() > 0.1; // 90% success rate
-      
+      const success = Math.random() > 0.05; // 95% success rate for simulation
       if (success) {
         setStatus('success');
       } else {
@@ -102,6 +101,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
           {status === 'idle' && step === 'payment' && (
             <form onSubmit={handleMockPayment} className="space-y-6">
+              {isPreview && (
+                <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg">
+                  <p className="text-[10px] text-amber-700 font-bold uppercase tracking-tight text-center leading-tight">
+                    Preview environment: use test card numbers only. No real payments are processed here.
+                  </p>
+                </div>
+              )}
               <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
                 <p className="text-[10px] text-slate-400 mb-2 uppercase font-bold tracking-widest leading-none">{plan.name}</p>
                 <div className="flex justify-between items-center">
@@ -116,7 +122,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                   <input required type="text" placeholder="CVC" className="w-1/2 p-4 bg-white border border-slate-200 rounded-lg text-sm outline-none font-semibold focus:border-[#07162A] transition-colors" />
                 </div>
               </div>
-              <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
+              <div className="space-y-3">
+                <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
+                <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
+                  By proceeding, you agree to our <a href="/terms" className="underline">Terms</a>, <a href="/privacy" className="underline">Privacy</a>, and <a href="/refunds" className="underline">Refund Policy</a>.
+                </p>
+              </div>
             </form>
           )}
 
@@ -140,7 +151,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
             </div>
           )}
 
-          {/* ✅ NEW: Error State */}
           {status === 'error' && (
             <div className="text-center animate-in fade-in duration-500">
               <div className="w-24 h-24 mx-auto mb-10 bg-rose-100 rounded-full flex items-center justify-center">

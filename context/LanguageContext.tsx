@@ -63,19 +63,19 @@ const translations: Translations = {
     // FAQ
     'section.faq.title': 'Frequently asked questions',
     'faq.q1': 'Is this legal advice?',
-    'faq.a1': 'ClearVisa UK is not a law firm and does not provide legal advice. It is a preliminary pre-check tool based on public rules.',
+    'faq.a1': 'No. ClearVisa UK is an automated information tool. It is not a law firm and does not provide legal advice or act as your legal representative. Results are for pre-check and planning purposes only.',
     'faq.q2': 'Where do you get your rules from?',
-    'faq.a2': 'Our system uses publicly available Home Office guidance and policy documents.',
+    'faq.a2': 'Our system maps your answers against publicly available UK Government (Home Office) rules and policy guidance. We do not have "insider" access to private Home Office systems.',
     'faq.q3': 'Can this guarantee my visa will be approved?',
-    'faq.a3': 'No. Visa decisions are made exclusively by the Home Office based on final evidence.',
+    'faq.a3': 'No tool can guarantee a visa outcome. The Home Office makes the final decision based on your full evidence. ClearVisa UK identifies risk areas to help you prepare better.',
     'faq.q4': 'What happens after I pay?',
-    'faq.a4': 'The full result appears instantly on screen, and a link is provided to download or email a summary.',
+    'faq.a4': 'The full audit report appears instantly on screen. You can download it as a PDF for your records or to share with a professional solicitor for a formal legal opinion.',
     'faq.q5': 'Do you store my data?',
-    'faq.a5': 'Data is handled securely, only used for generating the result, and never sold to third parties.',
-    'faq.q6': 'Can I use this if I’ve already applied or been refused?',
-    'faq.a6': 'Yes, to understand specific risk areas. However, for complex histories, consult a solicitor.',
-    'faq.q7': 'Do you connect me to lawyers?',
-    'faq.a7': 'No. We provide no automatic referrals. You stay in control of your data.',
+    'faq.a5': 'Your answers are encrypted and used solely to generate your report. We do not sell your data to third parties or share it with the Home Office.',
+    'faq.q6': 'Can I use this if I have a complex history?',
+    'faq.a6': 'Yes, but for borderline cases or complex histories (e.g. overstays, criminal records), we strongly recommend using the Professional Plus tier and consulting an OISC-regulated adviser or solicitor.',
+    'faq.q7': 'Does this submit my application?',
+    'faq.a7': 'No. This is a pre-check tool only. It does not complete, submit, or monitor your application with the Home Office. You stay in full control of your actual application process.',
     // Footer
     'footer.disclaimer': 'Not affiliated with the UK Government or Home Office.'
   }
