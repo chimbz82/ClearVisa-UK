@@ -82,6 +82,9 @@ const translations: Translations = {
     'pricing.subtitle': 'No subscriptions. No hidden fees. Pay once per pre-check report.',
     'pricing.guarantee.title': 'Confidence Guarantee',
     'pricing.guarantee.body': 'If your report shows you are clearly ineligible under current public rules, we will refund your fee in full upon request.',
+    'pricing.tier.basic.badge': 'BUDGET',
+    'pricing.tier.full.badge': 'RECOMMENDED',
+    'pricing.tier.humanReview.badge': 'ENHANCED',
     'pricing.b2b': 'Legal firms or agencies? Contact us for bulk licensing.',
     // Legal
     'legal.title': 'Important Information',

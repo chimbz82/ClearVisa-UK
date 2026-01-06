@@ -30,7 +30,7 @@ export const analyzeEvidenceGaps = (
     }
     
     // Check relationship timeline
-    if (answers['live_together'] === 'never') {
+    if (answers['live_together_history'] === 'never') {
       gaps.push('Never having lived together may trigger additional genuineness questions.');
       improvements.push('Compile comprehensive evidence of in-person meetings: photos, tickets, accommodation bookings, witness statements.');
     }
@@ -42,15 +42,21 @@ export const analyzeEvidenceGaps = (
       gaps.push('Employment change within 6 months requires additional verification steps (Category B).');
       improvements.push('Obtain formal letter from current and previous employers to show 12 months of consistent earnings.');
     }
+    
+    if (answers['bank_statements_format'] === 'pdf') {
+      gaps.push('Digital bank statements may not be accepted unless officially stamped or accompanied by a bank letter.');
+      improvements.push('Request stamped/sealed paper statements from your bank branch, or a formal letter verifying the PDFs.');
+    }
   }
   
   if (answers['income_sources']?.includes('self_employment')) {
-    gaps.push('Self-employment income requires more complex documentation.');
+    gaps.push('Self-employment income requires more complex documentation (Appendix FM-SE).');
     improvements.push('Ensure you have: full SA302s, Tax Year Overviews, business accounts, and accountant letter for last full financial year.');
   }
   
   if (answers['income_sources']?.includes('savings')) {
-    if (answers['savings_amount'] === 'under_16k' && visaRoute === 'Spouse Visa') {
+    const amount = answers['savings_amount'];
+    if (amount === 'under_16k' && visaRoute === 'Spouse Visa') {
       gaps.push('Savings under £16,000 cannot be counted towards the financial requirement.');
       improvements.push('Focus on showing employment income or increase savings to above the £16k threshold.');
     }
@@ -58,9 +64,11 @@ export const analyzeEvidenceGaps = (
   
   // Skilled Worker Specific
   if (visaRoute === 'Skilled Worker Visa') {
-    if (answers['income_band'] === 'under_29k') {
-      gaps.push(`Income band appears to be below the general £38,700 threshold.`);
-      improvements.push('Check if role qualifies for shortage occupation rate (lower threshold) or new entrant rate.');
+    const salary = parseFloat(answers['sw_salary_exact'] || '0');
+    
+    if (salary > 0 && salary < 38700 && !answers['shortage_occupation']) {
+      gaps.push(`Salary of £${salary.toLocaleString()} is below the £38,700 general threshold.`);
+      improvements.push('Check if role qualifies for Immigration Salary List rate (lower threshold) or new entrant rate.');
     }
     
     if (answers['sponsor_license'] === 'unsure') {
@@ -77,7 +85,10 @@ export const analyzeEvidenceGaps = (
   // Immigration History Gaps
   if (answers['previous_refusals']) {
     gaps.push('Previous refusal noted - high risk of suitability scrutiny.');
-    improvements.push('Submit SAR to UKVI to retrieve copies of all previous refusal notices to address specific concerns.');
+    if (answers['refusal_letters_status'] !== 'all') {
+      gaps.push('Missing refusal letters - you should obtain copies from UKVI via Subject Access Request.');
+      improvements.push('Submit SAR to UKVI to retrieve copies of all previous refusal notices to address specific concerns.');
+    }
   }
   
   if (answers['overstays_detail']) {
@@ -86,9 +97,17 @@ export const analyzeEvidenceGaps = (
   }
   
   // Accommodation Gaps
-  if (!answers['acc_evidence'] || answers['acc_evidence'].length === 0) {
-    gaps.push('No accommodation evidence indicated.');
+  if (answers['uk_living_plan'] === 'none') {
+    gaps.push('No accommodation arranged - this is required evidence for most visa types.');
     improvements.push('Secure accommodation evidence: rental agreement, mortgage, or letter from homeowner offering accommodation.');
+  }
+
+  if (answers['uk_living_plan'] === 'family') {
+    const accEvidence = answers['acc_evidence'] || [];
+    if (!accEvidence.includes('permission')) {
+      gaps.push('Living with family requires letter of permission from the property owner.');
+      improvements.push('Obtain formal letter from homeowner granting permission, plus proof they own/rent the property.');
+    }
   }
   
   // Return results

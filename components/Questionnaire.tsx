@@ -26,8 +26,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // If we've paid for Full, find the first unanswered question from the expanded set
-    if (isPaid && selectedPlan === 'full' && currentStep === 0 && !isReviewing) {
+    // If we've paid for Full or Human, find the first unanswered question from the expanded set
+    if (isPaid && (selectedPlan === 'full' || selectedPlan === 'humanReview') && currentStep === 0 && !isReviewing) {
       const firstUnansweredIndex = visibleQuestionsList.findIndex(q => answers[q.id] === undefined);
       if (firstUnansweredIndex !== -1) {
         setCurrentStep(firstUnansweredIndex);
@@ -106,7 +106,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id];
-    const isAnswered = val !== undefined && val !== "" && (Array.isArray(val) ? val.length > 0 : true);
+    // For numbers and longText, we allow them to proceed if touched or specifically skipped via next()
+    const isAnswered = (q.type === 'longText' || q.type === 'number') ? true : (val !== undefined && val !== "" && (Array.isArray(val) ? val.length > 0 : true));
 
     switch (q.type) {
       case 'boolean':
@@ -126,8 +127,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 No
               </button>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={val === undefined}>
-              {currentStep === visibleQuestionsList.length - 1 ? 'Review Assessment' : 'Continue'}
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
             </Button>
           </div>
         );
@@ -148,8 +149,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 </button>
               ))}
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!val}>
-              {currentStep === visibleQuestionsList.length - 1 ? 'Review Assessment' : 'Continue'}
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
             </Button>
           </div>
         );
@@ -171,8 +172,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 </button>
               ))}
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={currentMulti.length === 0}>
-              {currentStep === visibleQuestionsList.length - 1 ? 'Review Assessment' : 'Continue'}
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
             </Button>
           </div>
         );
@@ -198,8 +199,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 autoFocus
               />
             )}
-            <Button onClick={next} fullWidth size="lg" disabled={q.type !== 'longText' && !val}>
-              {currentStep === visibleQuestionsList.length - 1 ? 'Review Assessment' : 'Continue'}
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
             </Button>
           </div>
         );

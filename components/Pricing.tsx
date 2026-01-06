@@ -33,7 +33,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
                   plan.id === 'full' ? 'text-accent' : 
                   plan.id === 'humanReview' ? 'text-navy' : 'text-slate-400'
                 }`}>
-                  {plan.id === 'basic' ? 'BUDGET' : (plan.id === 'humanReview' ? 'ENHANCED' : 'RECOMMENDED')}
+                  {t(`pricing.tier.${plan.id}.badge`)}
                 </span>
                 <h3 className="text-h3 mt-3 text-navy min-h-[3rem] flex items-center justify-center leading-tight">
                   {plan.name}

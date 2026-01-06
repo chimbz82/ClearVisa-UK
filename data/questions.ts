@@ -83,7 +83,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'property', label: 'Property Rental Income' },
       { value: 'exempt', label: 'Exempt Benefits (PIP, etc.)' }
     ],
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   },
   {
     id: 'employment_length',
@@ -94,7 +94,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'less_6m', label: 'Less than 6 months' },
       { value: 'over_6m', label: 'More than 6 months' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
   },
   {
     id: 'savings_amount',
@@ -106,7 +106,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: '16k_65k', label: '£16,000 – £65,000' },
       { value: 'over_65k', label: 'Over £65,000' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' && ctx.answers.income_sources?.includes('savings')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.answers.income_sources?.includes('savings')
   },
   {
     id: 'english_test',
@@ -119,7 +119,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'exempt', label: 'Exempt (Age / Nationality)' },
       { value: 'no', label: 'No, need to take test' }
     ],
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   },
   {
     id: 'rel_evidence',
@@ -131,16 +131,17 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'joint_tenancy', label: 'Joint Tenancy / Mortgage' },
       { value: 'joint_bills', label: 'Joint Council Tax / Utility Bills' },
       { value: 'photos', label: 'Photos & Travel Evidence' },
-      { value: 'children', label: 'Shared children' }
+      { value: 'children', label: 'Shared children' },
+      { value: 'joint_bank', label: 'Joint Bank Account' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'spouse'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
   },
   {
     id: 'living_together',
     section: 'Relationship',
     label: 'Have you lived together for at least 2 years?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'spouse'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
   },
   {
     id: 'acc_evidence',
@@ -151,44 +152,45 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'tenancy', label: 'Tenancy Agreement' },
       { value: 'title', label: 'Land Registry / Deeds' },
       { value: 'landlord_letter', label: 'Landlord Permission Letter' },
-      { value: 'council_tax', label: 'Council Tax Bill' }
+      { value: 'council_tax', label: 'Council Tax Bill' },
+      { value: 'permission', label: 'Homeowner Permission Letter' }
     ],
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   },
   {
     id: 'overstays_detail',
     section: 'History',
     label: 'Have you ever stayed in the UK beyond your visa expiry?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   },
   {
     id: 'criminal_records',
     section: 'History',
     label: 'Do you have any criminal convictions (any country)?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   },
   {
     id: 'tb_test',
     section: 'Requirements',
     label: 'Are you applying from a country requiring a TB test?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full' && ctx.answers.current_location === 'outside_uk'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.answers.current_location === 'outside_uk'
   },
   {
     id: 'job_code',
     section: 'Employment',
     label: 'Do you know your Occupation Code (SOC Code)?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
   },
   {
     id: 'job_offer',
     section: 'Employment',
     label: 'Do you have a formal job offer from a UK licensed sponsor?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
   },
   {
     id: 'sponsor_license',
@@ -200,15 +202,84 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'no', label: 'No' },
       { value: 'unsure', label: 'Unsure' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
+  },
+
+  // --- PROFESSIONAL PLUS (HUMAN REVIEW) EXTRAS ---
+  {
+    id: 'living_arrangement',
+    section: 'Relationship',
+    label: 'What is your current living arrangement?',
+    type: 'singleSelect',
+    options: [
+      { value: 'together', label: 'Living together permanently' },
+      { value: 'separate', label: 'Living separately' }
+    ],
+    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'spouse'
   },
   {
-    id: 'dependent_count',
-    section: 'Family',
-    label: 'How many dependents (children) will apply with you?',
+    id: 'live_together_history',
+    section: 'Relationship',
+    label: 'Have you ever lived together in person?',
+    type: 'singleSelect',
+    options: [
+      { value: 'always', label: 'Yes, we live together now' },
+      { value: 'past', label: 'Yes, we have in the past' },
+      { value: 'never', label: 'No, never' }
+    ],
+    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'spouse'
+  },
+  {
+    id: 'bank_statements_format',
+    section: 'Financials',
+    label: 'In what format are your bank statements?',
+    type: 'singleSelect',
+    options: [
+      { value: 'original', label: 'Original paper statements' },
+      { value: 'pdf', label: 'Downloaded PDFs' },
+      { value: 'pdf_stamped', label: 'PDFs stamped by the bank' }
+    ],
+    showIf: (ctx) => ctx.tier === 'human' && (ctx.answers.income_sources?.includes('salary') || ctx.answers.income_sources?.includes('savings'))
+  },
+  {
+    id: 'sw_salary_exact',
+    section: 'Employment',
+    label: 'What is the exact gross annual salary on your job offer?',
     type: 'number',
-    placeholder: '0',
-    showIf: (ctx) => ctx.tier === 'full'
+    placeholder: '38700',
+    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'skilled'
+  },
+  {
+    id: 'shortage_occupation',
+    section: 'Employment',
+    label: 'Is your job on the UK Immigration Salary List (formerly Shortage Occupation)?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'skilled'
+  },
+  {
+    id: 'refusal_letters_status',
+    section: 'History',
+    label: 'Do you have copies of all previous refusal letters?',
+    type: 'singleSelect',
+    options: [
+      { value: 'all', label: 'Yes, I have all of them' },
+      { value: 'some', label: 'I have some but not all' },
+      { value: 'none', label: 'I have none of them' }
+    ],
+    showIf: (ctx) => ctx.tier === 'human' && ctx.answers.previous_refusals === true
+  },
+  {
+    id: 'uk_living_plan',
+    section: 'Accommodation',
+    label: 'What is your planned living arrangement in the UK?',
+    type: 'singleSelect',
+    options: [
+      { value: 'renting', label: 'Renting our own home' },
+      { value: 'family', label: 'Living with family/friends' },
+      { value: 'buying', label: 'Buying a property' },
+      { value: 'none', label: 'No firm plans yet' }
+    ],
+    showIf: (ctx) => ctx.tier === 'human'
   },
   {
     id: 'main_worry',
@@ -216,6 +287,6 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'What is your primary concern regarding the application?',
     type: 'longText',
     placeholder: 'Describe any specific issues you are worried about...',
-    showIf: (ctx) => ctx.tier === 'full'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
   }
 ];
