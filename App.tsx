@@ -21,6 +21,7 @@ import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
+import { QUESTIONS } from './data/questions';
 
 export type PlanId = 'basic' | 'full' | 'humanReview';
 
@@ -52,7 +53,7 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'A comprehensive audit with detailed compliance checks and a tailored checklist.',
+    description: 'A comprehensive automated audit with detailed compliance checks and a tailored checklist.',
     includedFeatures: [
       'Everything in Basic',
       'Per-requirement pass/fail table',
@@ -67,12 +68,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Pro Analysis Add-On',
     priceGBP: 149,
     stripePriceId: 'price_pro_149',
-    description: 'Advanced automated deep-dive to identify hidden gaps in complex evidence.',
+    description: 'Advanced automated deep-dive to identify hidden gaps in complex evidence scenarios.',
     includedFeatures: [
       'Everything in Professional Audit',
       'Automated evidence gap analysis',
-      'Scenario-based compliance Q&A',
-      'Advanced case improvement suggestions',
+      'Advanced scenario compliance checks',
+      'Case improvement suggestions',
       'Common refusal risk identifiers'
     ]
   }
@@ -88,6 +89,34 @@ const AppContent: React.FC = () => {
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+
+  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
+
+  const getVisibleQuestions = () => {
+    return QUESTIONS.filter(q => {
+      const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
+                    answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
+      
+      // Determine correct tier based on payment status and selected plan
+      let tier: string;
+      if (!isPaid) {
+        tier = 'basic';
+      } else if (selectedPlan === 'basic') {
+        tier = 'basic';
+      } else if (selectedPlan === 'humanReview') {
+        tier = 'human';
+      } else {
+        tier = 'full';
+      }
+      
+      // For free and basic users, only show core questions
+      if (!isPaid || selectedPlan === 'basic') {
+        return stage1Ids.includes(q.id) && q.showIf({ tier, route, answers });
+      }
+      // For professional and pro users, show all applicable questions
+      return q.showIf({ tier, route, answers });
+    });
+  };
 
   const handleStartCheck = () => {
     if (viewState === 'landing') {
@@ -162,6 +191,7 @@ const AppContent: React.FC = () => {
                 isPaid={isPaid}
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
+                visibleQuestionsList={getVisibleQuestions()}
               />
             </div>
           </div>
@@ -180,7 +210,7 @@ const AppContent: React.FC = () => {
               </div>
               <h2 className="text-h2 mb-4">Initial Result: <span className="uppercase font-black">{assessmentResult?.verdict === 'likely' ? 'Likely Eligible' : assessmentResult?.verdict === 'borderline' ? 'Borderline' : 'High Risk'}</span></h2>
               <p className="text-body text-slate-600 mb-10 font-bold uppercase tracking-tight">
-                Screening completed. Choose a plan below to unlock your detailed report and personalized checklist.
+                Initial screening completed. Choose a plan to unlock your detailed report and personalized checklist.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Unlock Basic (£29)</Button>
@@ -206,7 +236,7 @@ const AppContent: React.FC = () => {
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
                   {plan.includedFeatures.map((f, i) => (
-                    <li key={i} className="flex gap-3 items-start text-small font-black text-slate-700 uppercase tracking-tight">
+                    <li key={i} className="flex gap-3 items-start text-small font-black text-slate-700 uppercase tracking-tight text-left">
                       <span className="text-accent">✓</span> {f}
                     </li>
                   ))}
@@ -215,10 +245,10 @@ const AppContent: React.FC = () => {
 
               <div className="bg-emerald-50 p-6 rounded-2xl mb-10 border border-emerald-100">
                 <h4 className="text-body font-black text-emerald-800 mb-1 flex items-center gap-2 uppercase tracking-tight">
-                  🛡️ Clear Outcome Guarantee
+                  🛡️ Outcome Confidence Guarantee
                 </h4>
                 <p className="text-small text-emerald-700 font-medium">
-                  If your answers clearly show you are ineligible under current public rules, we refund your fee in full.
+                  If your answers clearly show you are ineligible under current public rules, we refund your fee in full upon request.
                 </p>
               </div>
 

@@ -10,38 +10,32 @@ interface QuestionnaireProps {
   isPaid: boolean;
   initialAnswers?: Record<string, any>;
   selectedPlan: string;
+  visibleQuestionsList: QuestionConfig[];
 }
 
-const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isPaid, initialAnswers = {}, selectedPlan }) => {
+const Questionnaire: React.FC<QuestionnaireProps> = ({ 
+  onComplete, 
+  onCancel, 
+  isPaid, 
+  initialAnswers = {}, 
+  selectedPlan,
+  visibleQuestionsList 
+}) => {
   const { t } = useLanguage();
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(0);
   const [isReviewing, setIsReviewing] = useState(false);
 
-  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
-
-  const getVisibleQuestions = () => {
-    return QUESTIONS.filter(q => {
-      const route = answers['visa_route'] === 'spouse' ? 'spouse' : answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-      if (!isPaid || selectedPlan === 'basic') {
-        return stage1Ids.includes(q.id) && q.showIf({ tier: 'full', route, answers });
-      }
-      return q.showIf({ tier: 'full', route, answers });
-    });
-  };
-
-  const visibleQuestions = getVisibleQuestions();
-
   useEffect(() => {
     if (isPaid && currentStep === 0 && !isReviewing) {
-      const firstUnansweredIndex = visibleQuestions.findIndex(q => answers[q.id] === undefined);
+      const firstUnansweredIndex = visibleQuestionsList.findIndex(q => answers[q.id] === undefined);
       if (firstUnansweredIndex !== -1) {
         setCurrentStep(firstUnansweredIndex);
       }
     }
-  }, [isPaid, visibleQuestions, answers, isReviewing]);
+  }, [isPaid, visibleQuestionsList, answers, isReviewing]);
 
-  const activeQuestion = visibleQuestions[currentStep];
+  const activeQuestion = visibleQuestionsList[currentStep];
 
   const handleAnswer = (value: any) => {
     setAnswers(prev => ({ ...prev, [activeQuestion.id]: value }));
@@ -55,7 +49,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
 
   const next = () => {
     if (answers[activeQuestion.id] === undefined) return;
-    if (currentStep < visibleQuestions.length - 1) {
+    if (currentStep < visibleQuestionsList.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       setIsReviewing(true);
@@ -75,15 +69,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
     return (
       <div className="max-w-[720px] mx-auto pt-8">
         <h2 className="text-h2 mb-6 text-navy">Review your answers</h2>
-        <div className="space-y-4 mb-10">
-          {visibleQuestions.map((q, idx) => (
+        <div className="space-y-4 mb-10 text-left">
+          {visibleQuestionsList.map((q, idx) => (
             <div key={q.id} className="app-card !p-4 flex justify-between items-center group">
               <div className="flex-grow pr-4">
-                <p className="text-caption text-slate-400 mb-1">{q.label}</p>
+                <p className="text-caption text-slate-400 mb-1 font-black">{q.label}</p>
                 <p className="text-small font-bold text-navy">
                   {Array.isArray(answers[q.id]) 
-                    ? (answers[q.id] as string[]).join(', ') 
-                    : String(answers[q.id] === true ? 'Yes' : answers[q.id] === false ? 'No' : answers[q.id] || 'Not answered')}
+                    ? (answers[q.id] as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
+                    : String(answers[q.id] === true ? 'Yes' : answers[q.id] === false ? 'No' : 
+                        q.options?.find(o => o.value === answers[q.id])?.label || answers[q.id] || 'Not answered')}
                 </p>
               </div>
               <button 
@@ -103,16 +98,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
             Go back
           </button>
         </div>
-      </div>
-    );
-  }
-
-  if (!activeQuestion && visibleQuestions.length > 0) {
-    return (
-      <div className="py-20 text-center app-card">
-        <h3 className="text-h3 text-rose-600 mb-4">Assessment Flow Error</h3>
-        <p className="text-body mb-8">We encountered an issue loading this step. Please refresh or return home.</p>
-        <Button onClick={onCancel} variant="outline">Back to Home</Button>
       </div>
     );
   }
@@ -172,7 +157,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
         const currentMulti = (val as string[]) || [];
         return (
           <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
@@ -224,14 +209,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
     }
   };
 
-  const progress = Math.round(((currentStep + 1) / visibleQuestions.length) * 100);
+  const progress = Math.round(((currentStep + 1) / visibleQuestionsList.length) * 100);
 
   return (
     <div className="max-w-[720px] mx-auto min-h-[550px] flex flex-col pt-4">
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-caption text-slate-400 font-bold">
-            {isPaid ? (selectedPlan === 'basic' ? 'Basic Summary' : 'Professional Audit') : 'Free Pre-Check'} • Step {currentStep + 1} of {visibleQuestions.length}
+          <span className="text-caption text-slate-400 font-bold uppercase tracking-widest">
+            {isPaid ? (selectedPlan === 'basic' ? 'Basic Summary' : 'Professional Audit') : 'Free Pre-Check'} • Step {currentStep + 1} of {visibleQuestionsList.length}
           </span>
           <span className="text-small font-bold text-navy">{progress}%</span>
         </div>
@@ -240,10 +225,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
         </div>
       </div>
 
-      <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h3 className="text-h2 mb-4 text-navy tracking-tight leading-tight">{activeQuestion.label}</h3>
+      <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
+        <h3 className="text-h2 mb-4 text-navy tracking-tight leading-tight font-black">{activeQuestion.label}</h3>
         {activeQuestion.helpText && (
-          <p className="text-small text-slate-500 mb-10 leading-relaxed font-medium">
+          <p className="text-small text-slate-500 mb-10 leading-relaxed font-bold">
             {activeQuestion.helpText}
           </p>
         )}
