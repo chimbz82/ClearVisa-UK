@@ -28,27 +28,27 @@ const WhoItsFor: React.FC = () => {
   ];
 
   return (
-    <section id="who-its-for" className="py-20 bg-white scroll-mt-20">
+    <section id="who-its-for" className="section-py bg-white scroll-mt-20">
       <div className="app-container">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Target Audience</span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#041229] mb-4">Who this tool is for</h2>
-          <p className="text-sm sm:text-base text-slate-600">ClearVisa UK is built for real people making serious life decisions.</p>
+        <div className="text-center max-w-xl mx-auto mb-10">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Target Audience</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#07162A] mb-3">Who this tool is for</h2>
+          <p className="text-sm text-slate-600">Built for real people making serious life decisions.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {cards.map((card, idx) => (
-            <div key={idx} className="app-card hover-card flex flex-col p-6 min-h-[240px]">
-              <div className="mb-6 w-11 h-11 rounded-lg bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center">
+            <div key={idx} className="app-card hover-card flex flex-col p-6 min-h-[220px] lg:min-h-[240px] group">
+              <div className="mb-4 w-10 h-10 rounded-lg bg-[#1877F2]/5 text-[#1877F2] flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-[#1877F2] group-hover:text-white">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">{card.icon}</svg>
               </div>
-              <h3 className="text-base font-bold text-[#041229] mb-2 leading-tight">
+              <h3 className="text-[15px] font-bold text-[#07162A] mb-2 leading-tight">
                 {card.title}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed flex-grow italic">
+              <p className="text-[12px] text-slate-500 leading-relaxed flex-grow italic font-medium">
                 {card.desc}
               </p>
-              <div className="mt-6 pt-4 border-t border-slate-50 text-[10px] font-bold uppercase tracking-widest text-[#1877F2]">
+              <div className="mt-5 pt-4 border-t border-slate-50 text-[10px] font-bold uppercase tracking-widest text-[#1877F2]">
                 Available now
               </div>
             </div>
