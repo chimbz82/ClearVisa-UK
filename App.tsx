@@ -39,13 +39,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Basic Pre-Check',
     priceGBP: 29,
     stripePriceId: 'price_basic_29',
-    description: 'Quick automated eligibility verdict and summary.',
+    description: 'A quick, honest traffic-light verdict with key risk pointers.',
     includedFeatures: [
       'Automated eligibility verdict',
-      'Summary of strong vs weak areas',
-      'Key risk flag indicators',
-      'Plain-English explanation',
-      'Downloadable summary (short PDF)'
+      'High-level summary of strong/weak areas',
+      'Primary risk flag heatmap',
+      'Downloadable short PDF summary'
     ]
   },
   {
@@ -53,28 +52,28 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'Full 25–30 question audit and professional PDF report.',
+    description: 'Our most comprehensive automated audit and tailored checklist.',
     includedFeatures: [
       'Everything in Basic',
       'Personalised document checklist',
-      'Route-specific compliance checks',
-      'Detailed risk factor breakdown',
+      'Per-requirement compliance table',
+      'Detailed risk factor analysis',
       'Step-by-step next-actions plan',
-      'Full detailed PDF report'
+      'Professional-grade PDF report'
     ]
   },
   {
     id: 'humanReview',
-    name: 'Pro Assessment Add-On',
+    name: 'Pro Analysis Add-On',
     priceGBP: 149,
     stripePriceId: 'price_pro_149',
-    description: 'Extra deep-dive analysis on top of the professional report.',
+    description: 'Deep automated evidence gap analysis for complex cases.',
     includedFeatures: [
       'Everything in Professional Audit',
       'Automated evidence gap analysis',
-      'Suggested case improvements',
-      'Deeper rule-based review',
-      'In-report Smart Q&A section'
+      'Advanced case improvement suggestions',
+      'Complex suitability rule-checks',
+      'Smart scenario-based Q&A guidance'
     ]
   }
 ];
