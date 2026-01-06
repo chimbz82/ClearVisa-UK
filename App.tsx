@@ -293,7 +293,7 @@ const AppContent: React.FC = () => {
               </div>
               <div className="bg-white border-y border-slate-100">
                 <div className="app-container section-py">
-                  <WhoItsFor />
+                   WhoItsFor />
                 </div>
               </div>
               <div className="app-container section-py">

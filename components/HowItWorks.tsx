@@ -49,7 +49,7 @@ const HowItWorks: React.FC = () => {
 
         <div className="mt-12 text-center">
           <p className="text-caption text-slate-400 font-bold uppercase tracking-widest italic">
-            {t('section.howItWorks.footer')}
+            You stay in control: no automatic referrals, no unexpected calls.
           </p>
         </div>
       </div>

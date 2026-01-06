@@ -144,7 +144,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
                 <h3 className="text-[13px] text-navy font-black uppercase tracking-widest">
-                  Evidence Gap Analysis (Professional Plus)
+                  Personalised Evidence Gap Analysis
                 </h3>
               </div>
               
@@ -152,7 +152,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
               {analysis.gaps.length > 0 ? (
                 <div className="mb-10">
                   <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
-                    Critical Issues Detected:
+                    Identified Evidence Gaps:
                   </h4>
                   <div className="space-y-3">
                     {analysis.gaps.map((gap, idx) => (
@@ -166,7 +166,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
               ) : (
                 <div className="p-8 bg-emerald-500 text-white rounded-2xl mb-10 shadow-lg text-center">
                   <p className="text-[13px] font-black uppercase tracking-[0.2em]">
-                    No critical evidence gaps detected
+                    No critical evidence gaps detected based on inputs
                   </p>
                 </div>
               )}
