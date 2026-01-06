@@ -99,7 +99,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'benefits', label: 'Exempt Benefits / PIP / Disability' },
       { value: 'property', label: 'Property Rental Income' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'humanReview'
+    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
   },
   {
     id: 'rel_evidence',
@@ -114,7 +114,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'chat_logs', label: 'Chat Logs / Communication Records' },
       { value: 'children', label: 'Shared Responsibility for Children' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'humanReview') && ctx.route === 'spouse'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
   },
   {
     id: 'acc_evidence',
@@ -128,7 +128,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'council_tax', label: 'Council Tax Bills' },
       { value: 'utility', label: 'Utility Bills' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'humanReview'
+    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
   },
   {
     id: 'immigration_facts',
@@ -143,7 +143,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'fraud', label: 'Accused of deception/fraud' },
       { value: 'none', label: 'None of the above' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'humanReview'
+    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
   },
   {
     id: 'main_worry',
@@ -157,6 +157,6 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'documents', label: 'Document quality/formatting' },
       { value: 'fees', label: 'Cost of application' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'humanReview'
+    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
   }
 ];

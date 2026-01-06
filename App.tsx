@@ -39,12 +39,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Basic Pre-Check',
     priceGBP: 29,
     stripePriceId: 'price_basic_29',
-    description: 'A quick, honest traffic-light verdict with key risk pointers.',
+    description: 'A quick eligibility verdict and high-level risk pointers.',
     includedFeatures: [
       'Automated eligibility verdict',
-      'High-level summary of strong/weak areas',
-      'Primary risk flag heatmap',
-      'Downloadable short PDF summary'
+      'High-level risk heatmap',
+      'Plain-English result explanation',
+      'Downloadable PDF summary'
     ]
   },
   {
@@ -52,14 +52,14 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'Our most comprehensive automated audit and tailored checklist.',
+    description: 'A comprehensive audit with detailed compliance checks and a tailored checklist.',
     includedFeatures: [
       'Everything in Basic',
+      'Per-requirement pass/fail table',
       'Personalised document checklist',
-      'Per-requirement compliance table',
-      'Detailed risk factor analysis',
+      'Detailed risk factor breakdown',
       'Step-by-step next-actions plan',
-      'Professional-grade PDF report'
+      'Full professional PDF report'
     ]
   },
   {
@@ -67,13 +67,13 @@ export const PLANS: PlanConfig[] = [
     name: 'Pro Analysis Add-On',
     priceGBP: 149,
     stripePriceId: 'price_pro_149',
-    description: 'Deep automated evidence gap analysis for complex cases.',
+    description: 'Advanced automated deep-dive to identify hidden gaps in complex evidence.',
     includedFeatures: [
       'Everything in Professional Audit',
       'Automated evidence gap analysis',
+      'Scenario-based compliance Q&A',
       'Advanced case improvement suggestions',
-      'Complex suitability rule-checks',
-      'Smart scenario-based Q&A guidance'
+      'Common refusal risk identifiers'
     ]
   }
 ];
