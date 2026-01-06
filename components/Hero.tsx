@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import Button from './Button';
@@ -15,7 +14,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
     <section className="relative pt-24 pb-12 lg:pt-40 lg:pb-20 bg-white">
       <div className="app-container">
         <div className="lg:flex lg:items-center lg:gap-12">
-          <div className="lg:w-3/5 mb-10 lg:mb-0">
+          <div className="lg:w-3/5 mb-10 lg:mb-0 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full mb-6">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.1em]">ClearVisa UK – UK Visa Pre-Check</span>
             </div>
@@ -81,12 +80,15 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-xl shadow-lg border border-slate-100 max-w-[180px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-5 h-5 bg-[#2BB24C] text-white rounded-full flex items-center justify-center text-[10px]">✓</div>
-                  <span className="text-[11px] font-bold text-[#041229]">Likely Eligible</span>
+              <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 max-w-[190px] animate-in slide-in-from-left duration-700 delay-300">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-[#2BB24C] text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 shadow-sm">✓</div>
+                  <div>
+                    <span className="text-[12px] font-bold text-[#041229] block leading-none mb-1">Likely Eligible</span>
+                    <span className="text-[10px] text-slate-400 font-medium block leading-tight italic">Based on example answers</span>
+                  </div>
                 </div>
-                <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="mt-3 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-[#2BB24C] w-[85%]"></div>
                 </div>
               </div>
@@ -98,5 +100,4 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
   );
 };
 
-// Fixed error: Added missing default export
 export default Hero;
