@@ -135,25 +135,20 @@ const AppContent: React.FC = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
     
-    if (isUpgrading) {
-      setIsUpgrading(false);
-      const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-      const result = runAssessment(routeKey, answers);
-      setAssessmentResult(result);
-      setViewState('report');
-      setIsLoadingReport(true);
-      setTimeout(() => setIsLoadingReport(false), 2000);
-      return;
-    }
-
     if (selectedPlan === 'basic') {
+      // Basic: show report with existing answers
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
       setAssessmentResult(result);
       setViewState('report');
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
+    } else if (selectedPlan === 'humanReview' && isUpgrading) {
+      // ✅ NEW: Pro Plus upgrade - show questionnaire with ONLY new questions
+      setIsUpgrading(false);
+      setViewState('questionnaire');
     } else {
+      // Full Audit or Pro Plus from scratch - show full questionnaire
       setViewState('questionnaire');
     }
     window.scrollTo(0, 0);
