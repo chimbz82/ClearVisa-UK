@@ -39,16 +39,16 @@ const WhoItsFor: React.FC = () => {
     <section id="who-its-for" className="py-16 md:py-24 bg-white scroll-mt-[80px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-black text-navy mb-4 uppercase tracking-tight">{t('section.whoFor.title')}</h2>
-          <p className="text-lg text-slate-600 font-bold">{t('section.whoFor.subtitle')}</p>
+          <h2 className="heading-l text-navy mb-4 uppercase tracking-tight">{t('section.whoFor.title')}</h2>
+          <p className="body-m text-slate-600 font-bold">{t('section.whoFor.subtitle')}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map((card, idx) => (
-            <div key={idx} className="flex flex-col bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-accent/20 transition-all group">
+            <div key={idx} className="flex flex-col bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-accent/30 transition-all group min-h-[300px]">
               <div className="mb-6 group-hover:scale-110 transition-transform">{card.icon}</div>
-              <h3 className="text-xl font-black text-navy mb-3 uppercase tracking-tight">{card.title}</h3>
-              <p className="text-slate-600 text-sm font-bold leading-relaxed">{card.desc}</p>
+              <h3 className="heading-s text-navy mb-3 uppercase tracking-tight">{card.title}</h3>
+              <p className="body-s text-slate-600 font-bold leading-relaxed">{card.desc}</p>
             </div>
           ))}
         </div>
