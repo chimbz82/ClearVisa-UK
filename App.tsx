@@ -92,6 +92,17 @@ const AppContent: React.FC = () => {
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
+    // ✅ NEW: If upgrading to Pro Plus, show ONLY delta questions
+    if (isUpgrading && selectedPlan === 'humanReview') {
+      return QUESTIONS.filter(q => {
+        const route = answers['visa_route'] === 'spouse' ? 'spouse' : 'skilled';
+        // Only show questions that are Pro Plus tier AND haven't been answered
+        const isProOnly = q.showIf({ tier: 'human', route, answers }) && 
+                          !q.showIf({ tier: 'full', route, answers });
+        return isProOnly;
+      });
+    }
+
     return QUESTIONS.filter(q => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
