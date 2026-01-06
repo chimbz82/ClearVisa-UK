@@ -1,5 +1,4 @@
 import React from 'react';
-import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import { useLanguage } from '../context/LanguageContext';
 import Button from './Button';
 
@@ -16,7 +15,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
       <div className="app-container">
         <div className="lg:grid lg:grid-cols-12 lg:gap-12 items-center">
           <div className="lg:col-span-7 mb-12 lg:mb-0">
-            <h1 className="text-display text-navy mb-6">
+            <h1 className="text-h1 text-navy mb-6">
               {t('hero.heading')} <span className="text-accent">{t('hero.headingAccent')}</span>
             </h1>
             <p className="text-body-lg text-slate-600 mb-10 max-w-xl">
@@ -59,7 +58,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
             <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-slate-100 hidden md:block">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-accent/10 rounded flex items-center justify-center text-accent">✓</div>
-                <p className="text-body-sm font-bold text-navy leading-none">Compliant with Appendix FM</p>
+                <p className="text-small font-bold text-navy leading-none">Compliant with Appendix FM</p>
               </div>
             </div>
           </div>

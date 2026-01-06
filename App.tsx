@@ -43,36 +43,38 @@ export const PLANS: PlanConfig[] = [
     includedFeatures: [
       'Automated eligibility verdict',
       'Summary of strong vs weak areas',
-      'Risk flag indicators',
-      'Downloadable summary (PDF)'
+      'Key risk flags based on public rules',
+      'Plain-English explanation',
+      'Downloadable summary (short PDF)'
     ]
   },
   {
     id: 'full',
-    name: 'Professional Assessment',
+    name: 'Full Pre-Check + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'Full 25–30 question audit and PDF report.',
+    description: 'Full 25–30 question audit and professional PDF report.',
     includedFeatures: [
       'Everything in Basic',
-      'Personalised document checklist',
+      'Personalized document checklist',
+      'Route-specific compliance checks',
       'Detailed risk factor breakdown',
       'Step-by-step next-actions plan',
-      'Downloadable PDF report'
+      'Downloadable professional PDF report'
     ]
   },
   {
     id: 'humanReview',
-    name: 'Pro Analysis Add-On',
+    name: 'Pro Assessment Add-On',
     priceGBP: 149,
     stripePriceId: 'price_pro_149',
     description: 'Extra deep-dive analysis on top of the professional report.',
     includedFeatures: [
-      'Everything in Professional Assessment',
-      'Enhanced evidence quality review (automated)',
-      'Additional risk commentary section',
-      'Priority engine processing',
-      'Smart scenario Q&A inside report'
+      'Everything in Full Pre-Check',
+      'Automated evidence gap analysis',
+      'Suggested case improvements',
+      'Deeper rule-based review',
+      'In-report Smart Q&A section'
     ]
   }
 ];
@@ -115,6 +117,8 @@ const AppContent: React.FC = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
     
+    // If it was basic, they might have finished stage 1 and we can just show the report now.
+    // Otherwise, they continue to the full questionnaire if they haven't finished it.
     if (selectedPlan === 'basic') {
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
@@ -177,13 +181,13 @@ const AppContent: React.FC = () => {
                   {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
                 </div>
               </div>
-              <h2 className="heading-m mb-4">Initial Result: <span className="uppercase">{assessmentResult?.verdict === 'unlikely' ? 'High Risk' : (assessmentResult?.verdict === 'likely' ? 'Likely Eligible' : 'Borderline')}</span></h2>
-              <p className="body-m text-slate-600 mb-10">
-                Screening completed. Choose a plan to unlock your detailed report and personalized checklist.
+              <h2 className="text-h2 mb-4">Preliminary Status: <span className="uppercase">{assessmentResult?.verdict === 'likely' ? 'Likely Eligible' : assessmentResult?.verdict === 'borderline' ? 'Borderline' : 'High Risk'}</span></h2>
+              <p className="text-body text-slate-600 mb-10">
+                Your initial profile has been screened. To see the specific risk factors, personalized document checklist, and professional report, unlock the full assessment.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline">Unlock Basic (£29)</Button>
-                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }}>Professional Audit (£79)</Button>
+                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }}>Full Assessment (£79)</Button>
               </div>
             </div>
           </div>
@@ -194,15 +198,15 @@ const AppContent: React.FC = () => {
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
             <div className="max-w-[700px] w-full app-card border border-slate-200">
               <div className="text-center mb-8">
-                <span className="caption text-accent mb-2 block uppercase font-bold">{plan.name}</span>
-                <h2 className="heading-l mb-4">Unlock your full report</h2>
-                <p className="body-m text-slate-600">{plan.description}</p>
+                <span className="text-caption text-accent mb-2 block">{plan.name}</span>
+                <h2 className="text-h2 mb-4">Unlock your full assessment</h2>
+                <p className="text-body text-slate-600">{plan.description}</p>
               </div>
               
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
                   {plan.includedFeatures.map((f, i) => (
-                    <li key={i} className="flex gap-2 items-start body-s font-semibold text-slate-700">
+                    <li key={i} className="flex gap-2 items-start text-small font-semibold text-slate-700">
                       <span className="text-accent">✓</span> {f}
                     </li>
                   ))}
@@ -210,11 +214,11 @@ const AppContent: React.FC = () => {
               </div>
 
               <div className="bg-emerald-50 p-6 rounded-2xl mb-10 border border-emerald-100">
-                <h4 className="body-m font-bold text-emerald-800 mb-1 flex items-center gap-2">
+                <h4 className="text-body font-bold text-emerald-800 mb-1 flex items-center gap-2">
                   🛡️ Clear Outcome Guarantee
                 </h4>
-                <p className="body-s text-emerald-700 leading-relaxed">
-                  If your answers show you are clearly ineligible, we refund your fee in full. We do not refund for change of mind or subjective dissatisfaction.
+                <p className="text-small text-emerald-700">
+                  If your answers clearly show you are ineligible under current public rules, we refund your fee in full. No refunds for change of mind or outcomes differing from hope.
                 </p>
               </div>
 
@@ -222,7 +226,7 @@ const AppContent: React.FC = () => {
                 Pay £{plan.priceGBP} & Continue
               </Button>
               
-              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center caption text-slate-400 hover:text-navy font-bold">
+              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-caption text-slate-400 hover:text-navy">
                 Cancel and return to home
               </button>
             </div>
@@ -233,8 +237,8 @@ const AppContent: React.FC = () => {
           <div className="bg-slate-100 min-h-screen py-12 px-4 relative">
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card">
               <div>
-                <h3 className="heading-s mb-1">Assessment Ready</h3>
-                <p className="body-s text-slate-500 font-medium">Your {selectedPlan === 'basic' ? 'Basic' : 'Full'} Audit is ready.</p>
+                <h3 className="text-h3 mb-1">Assessment Ready</h3>
+                <p className="text-small text-slate-500 font-medium">Your {selectedPlan === 'basic' ? 'Basic' : 'Full'} Audit has been finalized.</p>
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
