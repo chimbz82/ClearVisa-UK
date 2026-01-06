@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
@@ -45,44 +44,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     return rows;
   };
 
-  const getDocumentChecklist = () => {
-    const list: { category: string, items: string[] }[] = [];
-    
-    if (answers['visa_route'] === 'spouse') {
-      list.push({
-        category: 'Relationship Evidence',
-        items: [
-          'Official Marriage or Civil Partnership Certificate',
-          'Evidence of living together (e.g. Joint Tenancy, Council Tax)',
-          'Proof of meeting in person (stamped passport pages, photos)',
-          ...(answers['rel_evidence'] || [])
-        ]
-      });
-    }
-
-    list.push({
-      category: 'Financial Documents',
-      items: [
-        '6 months of personal bank statements matching payslips',
-        '6 months of original payslips',
-        'Signed Employer Letter confirming salary and tenure',
-        ...(answers['income_sources']?.includes('savings') ? ['Cash savings statements (held for 6 months)'] : []),
-        ...(answers['income_sources']?.includes('self_employment') ? ['Tax returns', 'Accountant certificates'] : [])
-      ]
-    });
-
-    list.push({
-      category: 'Accommodation & Identity',
-      items: [
-        'Valid Passport (current and previous)',
-        'Housing Evidence (Tenancy agreement or Land Registry)',
-        'Landlord Letter confirming permission and no overcrowding'
-      ]
-    });
-
-    return list;
-  };
-
   const getTierDisplay = () => {
     switch (tier) {
       case 'humanReview': return 'Professional Plus';
@@ -94,6 +55,13 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
   return (
     <div className="bg-white mx-auto p-[12mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-2xl border border-slate-200">
+      {/* Floating Badge for Enhanced Analysis */}
+      {tier === 'humanReview' && (
+        <div className="absolute top-4 right-4 bg-accent text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest z-50 shadow-lg">
+          ⚡ Enhanced Analysis
+        </div>
+      )}
+
       {/* Design accents */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-[#0B1F3B]/5 rounded-bl-full"></div>
       
@@ -142,9 +110,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {tier === 'humanReview' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
-            <section className="bg-teal-50/20 p-8 rounded-[40px] border border-teal-100 mb-12">
+            <section className="bg-emerald-50/20 p-8 rounded-[40px] border border-emerald-100 mb-12">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
+                <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
                 <h3 className="text-[13px] text-navy font-black uppercase tracking-widest">
                   Personalised Evidence Gap Analysis
                 </h3>
@@ -155,7 +123,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 <div className="space-y-4">
                   <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Identified Issues</h4>
                   {analysis.gaps.map((gap, idx) => (
-                    <div key={idx} className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm">
+                    <div key={idx} className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
                       <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
                       <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
                     </div>
@@ -164,11 +132,11 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 </div>
                 
                 {/* Suggested Improvements */}
-                <div className="space-y-4 pt-4 border-t border-teal-100">
+                <div className="space-y-4 pt-4 border-t border-emerald-100">
                   <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Recommended Improvements</h4>
                   <ul className="space-y-3">
                     {analysis.improvements.map((improvement, idx) => (
-                      <li key={idx} className="flex gap-4 items-start p-5 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-sm">
+                      <li key={idx} className="flex gap-4 items-start p-5 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-sm transition-colors border-l-4 border-l-emerald-500">
                         <span className="text-emerald-500 font-black text-xl flex-shrink-0 mt-0.5">→</span>
                         <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
                       </li>
@@ -180,19 +148,19 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           );
         })()}
 
-        {/* Upgrade Call to Action for Audit users */}
+        {/* Professional → Professional Plus Upgrade */}
         {tier === 'full' && (
-          <section className="mt-12 bg-gradient-to-br from-teal-50 to-teal-100 p-10 rounded-[40px] border-2 border-teal-200 shadow-lg no-print">
+          <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-10 rounded-[40px] border-2 border-accent/30 no-print shadow-lg">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-teal-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+                <div className="w-20 h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
                   ⚡
                 </div>
               </div>
               
               <div className="flex-grow">
                 <div className="mb-3">
-                  <span className="text-[10px] text-teal-700 font-black uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-teal-200 shadow-sm">
+                  <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-accent/20">
                     UPGRADE AVAILABLE
                   </span>
                 </div>
@@ -206,15 +174,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
                   <div className="flex items-start gap-2">
-                    <span className="text-teal-600 font-black">✓</span>
+                    <span className="text-accent font-black">✓</span>
                     <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
                       Evidence Gap Analysis
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="text-teal-600 font-black">✓</span>
+                    <span className="text-accent font-black">✓</span>
                     <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
-                      Deep Relationship Review
+                      Extended Narrative Review
                     </span>
                   </div>
                 </div>
