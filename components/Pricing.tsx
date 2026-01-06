@@ -32,9 +32,6 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
                 <div className="absolute top-0 left-0 right-0 h-2 bg-teal-500"></div>
               )}
               
-              {/* Design accents */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-[100px]"></div>
-              
               <div className="mb-8 text-center">
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-4 block py-1 px-3 rounded-full inline-block ${
                   plan.id === 'full' ? 'bg-teal-500 text-white' : 
@@ -71,7 +68,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
                 variant={plan.id === 'full' ? 'primary' : 'outline'}
                 size="lg"
               >
-                Get Started
+                Select {plan.id === 'basic' ? 'Basic' : plan.id === 'full' ? 'Audit' : 'Plus'}
               </Button>
 
               <div className="mt-8 text-center">

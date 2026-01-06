@@ -10,6 +10,7 @@ interface ReportTemplateProps {
   assessmentData: AssessmentResult;
   answers?: Record<string, any>;
   tier: string;
+  onUpgrade?: () => void;
 }
 
 const ReportTemplate: React.FC<ReportTemplateProps> = ({ 
@@ -19,7 +20,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
   assessmentData,
   answers = {} as Record<string, any>,
-  tier = 'full'
+  tier = 'full',
+  onUpgrade
 }) => {
   const currentVerdict = assessmentData.verdict;
   
@@ -135,10 +137,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       {/* Detailed Content */}
       <div className="space-y-12 mb-12 flex-grow">
         
-        {/* Pro Tier Extras - Automated Evidence Gap Analysis */}
+        {/* Professional Plus Evidence Gap Analysis */}
         {tier === 'humanReview' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
-          
           return (
             <section className="bg-emerald-50/50 p-10 rounded-[3rem] border-2 border-emerald-100 shadow-sm">
               <div className="flex items-center gap-4 mb-8">
@@ -148,30 +149,21 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 </h3>
               </div>
               
-              {/* Identified Gaps */}
-              {analysis.gaps.length > 0 ? (
-                <div className="mb-10">
-                  <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
-                    Identified Evidence Gaps:
-                  </h4>
-                  <div className="space-y-3">
-                    {analysis.gaps.map((gap, idx) => (
-                      <div key={idx} className="p-5 bg-white border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
-                        <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
-                        <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
-                      </div>
-                    ))}
-                  </div>
+              <div className="mb-10">
+                <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
+                  Identified Gaps:
+                </h4>
+                <div className="space-y-3">
+                  {analysis.gaps.map((gap, idx) => (
+                    <div key={idx} className="p-5 bg-white border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
+                      <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
+                      <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
+                    </div>
+                  ))}
+                  {analysis.gaps.length === 0 && <p className="text-small text-slate-400 italic">No critical gaps detected.</p>}
                 </div>
-              ) : (
-                <div className="p-8 bg-emerald-500 text-white rounded-2xl mb-10 shadow-lg text-center">
-                  <p className="text-[13px] font-black uppercase tracking-[0.2em]">
-                    No critical evidence gaps detected based on inputs
-                  </p>
-                </div>
-              )}
+              </div>
               
-              {/* Suggested Improvements */}
               <div className="pt-8 border-t border-emerald-100">
                 <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
                   Recommended Improvements:
@@ -189,7 +181,57 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           );
         })()}
 
-        {/* Compliance Matrix - Only for Full tier or higher */}
+        {/* Upgrade Call to Action for Audit users */}
+        {tier === 'full' && (
+          <section className="mt-12 bg-gradient-to-br from-teal-50 to-teal-100 p-10 rounded-[40px] border-2 border-teal-200 shadow-lg no-print">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-teal-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+                  ⚡
+                </div>
+              </div>
+              
+              <div className="flex-grow">
+                <div className="mb-3">
+                  <span className="text-[10px] text-teal-700 font-black uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-teal-200 shadow-sm">
+                    UPGRADE AVAILABLE
+                  </span>
+                </div>
+                <h3 className="text-h3 text-navy mb-4 uppercase tracking-tight font-black">
+                  Add Gap Analysis for £99
+                </h3>
+                <p className="text-[13px] text-slate-700 mb-6 font-bold leading-relaxed uppercase tracking-tight">
+                  Unlock automated evidence gap detection, personalized improvement 
+                  suggestions, and extended narrative questions to strengthen your case.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                  <div className="flex items-start gap-2">
+                    <span className="text-teal-600 font-black">✓</span>
+                    <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
+                      Evidence Gap Analysis
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-teal-600 font-black">✓</span>
+                    <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
+                      Deep Relationship Review
+                    </span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={onUpgrade} 
+                  className="bg-navy text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl active:scale-95"
+                >
+                  Upgrade to Professional Plus (£99)
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Compliance Matrix */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
             <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Compliance Assessment Matrix</h3>
@@ -224,7 +266,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </section>
         )}
 
-        {/* Profile Indicators */}
+        {/* Risk Flags */}
         <section>
           <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Profile Flag Analysis</h3>
           <div className="space-y-4">
@@ -241,28 +283,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             )}
           </div>
         </section>
-
-        {/* Document Checklist - Only for Full tier or higher */}
-        {(tier === 'full' || tier === 'humanReview') && (
-          <section>
-            <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Personalized Evidence Checklist</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {getDocumentChecklist().map((cat, i) => (
-                <div key={i} className="bg-slate-50 p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                  <h4 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] mb-6 border-b-2 border-white pb-3">{cat.category}</h4>
-                  <ul className="space-y-3">
-                    {cat.items.map((item, idx) => (
-                      <li key={idx} className="flex gap-4 items-start text-[11px] font-bold text-slate-600 uppercase tracking-tight leading-relaxed">
-                        <div className="w-4 h-4 rounded border-2 border-emerald-500 mt-0.5 flex-shrink-0 bg-white"></div>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Next Steps */}
         <section>

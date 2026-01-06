@@ -49,7 +49,7 @@ export const PLANS: PlanConfig[] = [
   },
   {
     id: 'full',
-    name: 'Professional Audit + Checklist',
+    name: 'Professional Audit',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
     description: 'Full 25–30 question audit and professional PDF report.',
@@ -67,13 +67,13 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
-    description: 'Enhanced professional audit with additional insights.',
+    description: 'Enhanced professional audit with deeper evidence gap analysis.',
     includedFeatures: [
       'Everything in Professional Audit',
+      'Personalised Evidence Gap Analysis',
       'Extended questionnaire with narrative fields',
       'Deeper relationship/career analysis',
-      'Additional compliance review layers',
-      'Priority support access'
+      'Additional compliance review layers'
     ]
   }
 ];
@@ -96,22 +96,17 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      // ✅ CORRECT: Tier now properly set based on payment status
-      let tier = isPaid ? 
-        (selectedPlan === 'humanReview' ? 'human' : 
-         (selectedPlan === 'full' ? 'full' : 'basic')) 
-        : 'basic';
+      let tier: 'basic' | 'full' | 'human' = 'basic';
+      if (isPaid) {
+        if (selectedPlan === 'humanReview') tier = 'human';
+        else if (selectedPlan === 'full') tier = 'full';
+      }
       
       if (!isPaid) {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
-      if (selectedPlan === 'basic') {
-        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
-      }
-
-      // ✅ CORRECT: Pro users get 'human' tier, Professional get 'full'
-      return q.showIf({ tier: selectedPlan === 'humanReview' ? 'human' : 'full', route, answers });
+      return q.showIf({ tier, route, answers });
     });
   };
 
@@ -208,12 +203,12 @@ const AppContent: React.FC = () => {
 
               <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
                 <p className="text-small text-slate-600 leading-relaxed font-medium">
-                  Based on your initial answers, you meet the core requirements for the {answers['visa_route']?.toUpperCase()} route. To see your full risk analysis, requirement matrix, and document checklist, unlock a full report below.
+                  Based on your initial answers, you meet core requirements for the {answers['visa_route']?.toUpperCase()} route. Select a report level to unlock your full analysis and document checklist.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Summary (£29)</Button>
+                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
                  <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
               </div>
               
@@ -274,6 +269,10 @@ const AppContent: React.FC = () => {
                   assessmentData={assessmentResult!}
                   answers={answers}
                   tier={selectedPlan || 'full'}
+                  onUpgrade={() => {
+                    setSelectedPlan('humanReview');
+                    setViewState('paywall');
+                  }}
                 />
               )}
             </div>
@@ -293,14 +292,14 @@ const AppContent: React.FC = () => {
               </div>
               <div className="bg-white border-y border-slate-100">
                 <div className="app-container section-py">
-                   WhoItsFor />
+                   <WhoItsFor />
                 </div>
               </div>
               <div className="app-container section-py">
                 <WhatYouGet />
               </div>
               <Pricing onStartCheck={(planId) => {
-                handleStartCheck(planId as PlanId);
+                handleStartCheck(planId);
               }} />
               <div className="bg-white">
                 <div className="app-container section-py">
