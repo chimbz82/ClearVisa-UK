@@ -12,49 +12,54 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
 
   return (
     <footer className="bg-[#0B1F3B] text-white pt-20 pb-10 no-print">
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      <div className="max-w-[1140px] mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-white text-navy rounded flex items-center justify-center font-serif flex-shrink-0">C</div>
-              <span className="text-lg font-black uppercase tracking-tight">ClearVisa UK</span>
+            <div className="flex items-center gap-3 mb-8">
+              <span className="text-xl font-black uppercase tracking-tighter text-white">
+                {t('nav.logo')}
+              </span>
             </div>
-            <p className="text-slate-400 text-sm max-w-sm leading-relaxed mb-8">
-              Check your UK visa eligibility before you spend money on applications or professional advice.
+            <p className="text-slate-400 text-sm max-w-sm leading-relaxed mb-10 font-medium">
+              {t('footer.mission')}
             </p>
-            <div className="pt-8 border-t border-white/10">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">B2B INQUIRIES</p>
-              <a href="mailto:b2b@clearvisa.co.uk" className="text-accent hover:underline text-sm font-bold">Agencies or law firms? Contact us for bulk pricing.</a>
+            <div className="flex gap-4">
+              <a href="mailto:support@ukvisacheck.com" className="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-xl text-sm font-bold transition-colors">
+                Contact Support
+              </a>
             </div>
           </div>
           
           <div>
-            <h4 className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-6">Navigation</h4>
-            <ul className="space-y-4 text-slate-300 text-sm font-semibold">
-              <li><button onClick={() => onScrollToSection('how-it-works')} className="hover:text-accent transition-colors">How it works</button></li>
-              <li><button onClick={() => onScrollToSection('who-its-for')} className="hover:text-accent transition-colors">Who it's for</button></li>
-              <li><button onClick={() => onScrollToSection('pricing')} className="hover:text-accent transition-colors">Pricing</button></li>
-              <li><button onClick={() => onScrollToSection('faq')} className="hover:text-accent transition-colors">FAQ</button></li>
+            <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-teal-500 mb-8">Navigation</h4>
+            <ul className="space-y-4 text-slate-300 text-sm font-bold uppercase tracking-wider">
+              <li><button onClick={() => onScrollToSection('how-it-works')} className="hover:text-teal-500 transition-colors">How it works</button></li>
+              <li><button onClick={() => onScrollToSection('who-its-for')} className="hover:text-teal-500 transition-colors">Who it's for</button></li>
+              <li><button onClick={() => onScrollToSection('pricing')} className="hover:text-teal-500 transition-colors">Pricing</button></li>
+              <li><button onClick={() => onScrollToSection('faq')} className="hover:text-teal-500 transition-colors">FAQ</button></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-6">Legal & Support</h4>
-            <ul className="space-y-4 text-slate-300 text-sm font-semibold">
-              <li><button onClick={onPrivacyClick} className="hover:text-accent transition-colors">Privacy Policy</button></li>
-              <li><button onClick={onTermsClick} className="hover:text-accent transition-colors">Terms of Use</button></li>
-              <li><a href="mailto:support@clearvisa.co.uk" className="hover:text-accent transition-colors">Support Contact</a></li>
+            <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-teal-500 mb-8">Legal</h4>
+            <ul className="space-y-4 text-slate-300 text-sm font-bold uppercase tracking-wider">
+              <li><button onClick={onPrivacyClick} className="hover:text-teal-500 transition-colors">Privacy Policy</button></li>
+              <li><button onClick={onTermsClick} className="hover:text-teal-500 transition-colors">Terms of Use</button></li>
+              <li className="pt-4 opacity-40 text-[11px] leading-tight font-black tracking-widest uppercase">
+                {t('footer.disclaimer')}
+              </li>
             </ul>
           </div>
         </div>
         
         <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
-            © 2026 ClearVisa UK. All rights reserved.
+          <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+            © 2026 {t('nav.logo')}. All rights reserved.
           </p>
-          <p className="text-slate-600 text-[11px] uppercase tracking-widest font-black">
-            Not affiliated with the UK Government or Home Office.
-          </p>
+          <div className="flex gap-6 items-center grayscale opacity-30">
+             <span className="text-xs font-black uppercase tracking-widest">Stripe Secure</span>
+             <span className="text-xs font-black uppercase tracking-widest">SSL Encrypted</span>
+          </div>
         </div>
       </div>
     </footer>

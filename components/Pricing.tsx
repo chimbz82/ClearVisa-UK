@@ -11,10 +11,10 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
   const { t } = useLanguage();
 
   return (
-    <section id="pricing" className="section-py bg-slate-50/80">
+    <section id="pricing" className="section-py bg-slate-50 scroll-mt-[80px]">
       <div className="app-container">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-h2 text-navy mb-4">{t('pricing.title')}</h2>
+          <h2 className="text-h2 text-[#0B1F3B] mb-4 uppercase tracking-tight">{t('pricing.title')}</h2>
           <p className="text-body text-slate-600 font-medium">{t('pricing.subtitle')}</p>
         </div>
 
@@ -22,36 +22,39 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
           {PLANS.map((plan) => (
             <div 
               key={plan.id} 
-              className={`flex flex-col app-card transition-all hover:translate-y-[-4px] ${
+              className={`flex flex-col bg-white p-10 rounded-[2.5rem] border shadow-xl relative overflow-hidden group transition-all hover:translate-y-[-4px] ${
                 plan.id === 'full' 
-                ? 'ring-2 ring-accent scale-105 z-10 border-accent/20 shadow-xl' 
-                : 'border border-slate-200'
+                ? 'ring-2 ring-teal-600 scale-105 z-10 border-teal-600/20 shadow-2xl' 
+                : 'border-slate-200 shadow-lg'
               }`}
             >
-              <div className="mb-8 text-center">
-                <span className={`text-[10px] font-black uppercase tracking-widest ${
-                  plan.id === 'full' ? 'text-accent' : 
+              {/* Design accents */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-[100px]"></div>
+              
+              <div className="mb-10 text-center">
+                <span className={`text-[11px] font-black uppercase tracking-[0.2em] mb-4 block ${
+                  plan.id === 'full' ? 'text-teal-600' : 
                   plan.id === 'humanReview' ? 'text-navy' : 'text-slate-400'
                 }`}>
                   {t(`pricing.tier.${plan.id}.badge`)}
                 </span>
-                <h3 className="text-h3 mt-3 text-navy min-h-[3rem] flex items-center justify-center leading-tight">
-                  {plan.name}
-                </h3>
-                <div className="mt-6 flex items-baseline justify-center gap-1">
-                  <span className="text-h1 text-navy leading-none">£{plan.priceGBP}</span>
+                <div className="flex items-baseline justify-center gap-1 mb-6">
+                  <span className="text-h1 text-[#0B1F3B] text-5xl leading-none">£{plan.priceGBP}</span>
                   <span className="text-caption text-slate-400 font-bold tracking-widest lowercase">once</span>
                 </div>
+                <h3 className="text-h3 text-[#0B1F3B] mb-2 uppercase tracking-tight leading-tight min-h-[3rem] flex items-center justify-center">
+                  {plan.name}
+                </h3>
+                <p className="text-small text-slate-500 font-bold leading-relaxed max-w-[280px] mx-auto italic">
+                  {plan.description}
+                </p>
               </div>
               
               <div className="flex-grow">
-                <p className="text-small text-slate-500 font-semibold mb-6 text-center leading-relaxed italic">
-                  {plan.description}
-                </p>
-                <ul className="space-y-4 mb-10">
+                <ul className="space-y-4 mb-12">
                   {plan.includedFeatures.map((feat, i) => (
-                    <li key={i} className="flex items-start gap-3 text-small text-slate-700 font-medium leading-tight">
-                      <span className="text-accent font-bold mt-0.5 flex-shrink-0">✓</span>
+                    <li key={i} className="flex items-start gap-4 text-small text-slate-700 font-semibold leading-tight">
+                      <span className="text-teal-600 font-bold text-lg mt-0.5 flex-shrink-0">✓</span>
                       {feat}
                     </li>
                   ))}
@@ -60,27 +63,26 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
 
               <Button 
                 onClick={() => onStartCheck(plan.id)}
+                className="w-full py-5 text-base"
                 variant={plan.id === 'full' ? 'primary' : 'outline'}
-                fullWidth
-                size="md"
+                size="lg"
               >
-                Select Plan
+                Select {plan.id === 'basic' ? 'Basic' : plan.id === 'full' ? 'Audit' : 'Plus'}
               </Button>
+
+              <div className="mt-8 text-center">
+                <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest">
+                  {t('pricing.reassurance')}
+                </p>
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 mt-16 border border-slate-100 flex flex-col md:flex-row items-center gap-8 shadow-sm">
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-3xl flex-shrink-0">🛡️</div>
-          <div>
-            <h4 className="text-h3 text-navy mb-2 leading-none">{t('pricing.guarantee.title')}</h4>
-            <p className="text-small text-slate-600 font-medium">{t('pricing.guarantee.body')}</p>
-          </div>
-        </div>
-
-        <div className="mt-12 text-center">
-           <a href="mailto:b2b@clearvisa.co.uk?subject=Bulk%20Pricing%20Inquiry" className="text-small text-accent hover:underline font-bold uppercase tracking-widest">
-            {t('pricing.b2b')}
+        <div className="mt-20 text-center">
+          <p className="text-caption text-slate-400 font-black uppercase tracking-[0.25em] mb-6">Legal firms or agencies?</p>
+          <a href="mailto:b2b@clearvisa.co.uk" className="text-teal-600 hover:text-teal-700 font-black uppercase tracking-widest text-[13px] border-b-2 border-teal-600/20 hover:border-teal-700 transition-all pb-1">
+            Contact us for bulk licensing
           </a>
         </div>
       </div>

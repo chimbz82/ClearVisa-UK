@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuestionConfig } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -48,7 +47,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   const next = () => {
-    if (answers[activeQuestion.id] === undefined && activeQuestion.type !== 'longText' && activeQuestion.type !== 'number' && activeQuestion.type !== 'shortText') return;
+    const val = answers[activeQuestion.id];
+    // Improved validation logic
+    const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText') 
+      ? (val !== undefined && val !== null && val !== "")
+      : (activeQuestion.type === 'multiSelect')
+      ? (Array.isArray(val) && val.length > 0)
+      : (val !== undefined && val !== null && val !== "");
+
+    if (!isAnswered) return;
+
     if (currentStep < visibleQuestionsList.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -111,7 +119,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id];
-    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText') ? !!val : (val !== undefined && val !== "" && (Array.isArray(val) ? val.length > 0 : true));
+    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText') 
+      ? (val !== undefined && val !== null && val !== "") 
+      : (q.type === 'multiSelect')
+      ? (Array.isArray(val) && val.length > 0)
+      : (val !== undefined && val !== null && val !== "");
 
     switch (q.type) {
       case 'boolean':
@@ -119,13 +131,13 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           <div className="space-y-8">
             <div className="grid grid-cols-2 gap-6">
               <button 
-                onClick={() => handleAnswer(true)}
+                onClick={() => { handleAnswer(true); }}
                 className={`py-12 rounded-2xl border-2 text-h3 transition-all ${val === true ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-navy hover:text-navy'}`}
               >
                 Yes
               </button>
               <button 
-                onClick={() => handleAnswer(false)}
+                onClick={() => { handleAnswer(false); }}
                 className={`py-12 rounded-2xl border-2 text-h3 transition-all ${val === false ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-navy hover:text-navy'}`}
               >
                 No

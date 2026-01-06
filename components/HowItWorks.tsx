@@ -20,10 +20,10 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section id="how-it-works" className="section-py bg-slate-50/50 scroll-mt-[80px]">
+    <section id="how-it-works" className="section-py bg-white scroll-mt-[80px]">
       <div className="app-container">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-h2 text-navy mb-4">
+          <h2 className="text-h2 text-[#0B1F3B] mb-4 uppercase tracking-tight">
             {t('section.howItWorks.title')}
           </h2>
           <p className="text-body text-slate-600 font-medium">
@@ -31,16 +31,26 @@ const HowItWorks: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {steps.map((step, idx) => (
-            <div key={idx} className="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
-              <div className="w-12 h-12 bg-navy text-white rounded-xl flex items-center justify-center text-xl font-black mb-6 shadow-sm">
+            <div key={idx} className="relative flex flex-col bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md group">
+              <div className="absolute -top-4 -left-4 w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center text-lg font-black shadow-lg">
                 {idx + 1}
               </div>
-              <h3 className="text-h3 text-navy mb-4 uppercase">{step.title}</h3>
-              <p className="text-small text-slate-600 leading-relaxed font-medium">{step.desc}</p>
+              <h3 className="text-h3 text-[#0B1F3B] mt-2 mb-4 leading-tight uppercase tracking-tight">
+                {step.title}
+              </h3>
+              <p className="text-small text-slate-600 leading-relaxed font-medium">
+                {step.desc}
+              </p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-caption text-slate-400 font-bold uppercase tracking-widest italic">
+            {t('section.howItWorks.footer')}
+          </p>
         </div>
       </div>
     </section>

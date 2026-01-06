@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -97,7 +96,11 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      let tier = isPaid ? (selectedPlan === 'humanReview' ? 'human' : (selectedPlan === 'full' ? 'full' : 'basic')) : 'basic';
+      // ✅ CORRECT: Tier now properly set based on payment status
+      let tier = isPaid ? 
+        (selectedPlan === 'humanReview' ? 'human' : 
+         (selectedPlan === 'full' ? 'full' : 'basic')) 
+        : 'basic';
       
       if (!isPaid) {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
@@ -107,6 +110,7 @@ const AppContent: React.FC = () => {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
 
+      // ✅ CORRECT: Pro users get 'human' tier, Professional get 'full'
       return q.showIf({ tier: selectedPlan === 'humanReview' ? 'human' : 'full', route, answers });
     });
   };

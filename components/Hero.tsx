@@ -11,88 +11,115 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
   const { t } = useLanguage();
 
   return (
-    <section id="top" className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 overflow-hidden bg-white text-left">
+    <section id="top" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
       {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
       
       <div className="app-container relative z-10">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
-          <div className="lg:col-span-7 mb-12 lg:mb-0">
-            <h1 className="text-h1 text-navy mb-6 leading-[1.1]">
-              {t('hero.heading')} <br/><span className="text-accent">{t('hero.headingAccent')}</span>
+        <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-start">
+          <div className="mb-16 lg:mb-0">
+            <h1 className="text-h1 text-[#0B1F3B] mb-6 leading-[1.15]">
+              {t('hero.heading')} <br/><span className="text-teal-600">{t('hero.headingAccent')}</span>
             </h1>
-            <p className="text-body-lg text-slate-600 mb-10 max-w-xl font-medium leading-relaxed">
+            <p className="text-body-lg text-slate-600 mb-8 max-w-xl font-medium">
               {t('hero.subheading')}
             </p>
+
+            <ul className="space-y-4 mb-10">
+              {[1, 2, 3, 4].map((i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-700 font-semibold">
+                  <div className="flex-shrink-0 w-5 h-5 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-xs">✓</div>
+                  {t(`hero.bullet${i}`)}
+                </li>
+              ))}
+            </ul>
             
-            <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
-              <Button onClick={onStartCheck} size="lg" className="w-full sm:w-auto px-10">
-                {t('hero.ctaPrimary')}
-              </Button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-4">
+              <div className="w-full sm:w-auto">
+                <Button onClick={onStartCheck} size="lg" className="w-full sm:w-auto px-10">
+                  {t('hero.ctaPrimary')}
+                </Button>
+                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-3 text-center sm:text-left ml-1">
+                  {t('hero.ctaSubtext')}
+                </p>
+              </div>
               <button 
                 onClick={() => onScrollToSection('how-it-works')} 
-                className="text-small font-black text-navy uppercase tracking-widest hover:text-accent transition-colors py-4 px-6"
+                className="text-small font-black text-[#0B1F3B] uppercase tracking-widest hover:text-teal-600 transition-colors py-4 px-2"
               >
                 {t('hero.ctaSecondary')} →
               </button>
             </div>
             
-            <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest">
-              {t('hero.footerText')}
+            <p className="text-[12px] text-slate-400 font-medium leading-relaxed max-w-md mt-6">
+              {t('hero.reassurance')}
             </p>
           </div>
 
-          <div className="lg:col-span-5 relative">
-            {/* App Preview Card */}
-            <div className="app-card border border-slate-100 shadow-[0_32px_64px_-16px_rgba(11,31,59,0.15)] scale-105 lg:scale-110 bg-white p-1">
-              <div className="bg-slate-50 rounded-[1.2rem] overflow-hidden">
+          <div className="relative">
+            {/* App Preview Card Wrapper */}
+            <div className="relative z-10 p-2 bg-white rounded-[2rem] shadow-2xl border border-slate-100 animate-in fade-in slide-in-from-right-12 duration-1000">
+              <div className="bg-slate-50 rounded-[1.75rem] overflow-hidden border border-slate-100">
+                {/* App Toolbar */}
                 <div className="p-4 bg-white border-b border-slate-100 flex items-center justify-between">
                   <div className="flex gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-rose-400"></div>
-                    <div className="w-2 h-2 rounded-full bg-amber-400"></div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
                   </div>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Eligibility Pre-Check</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Eligibility Check</span>
                 </div>
                 
-                <div className="p-6 space-y-6">
-                  <div>
-                    <div className="flex justify-between items-end mb-2">
-                      <span className="text-[10px] font-black text-navy uppercase tracking-widest">Profile Progress</span>
-                      <span className="text-[10px] font-bold text-navy">75%</span>
+                {/* App Content */}
+                <div className="p-6 md:p-8 space-y-6">
+                  {/* Progress Header */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black text-[#0B1F3B] uppercase tracking-widest">Step 2: Sponsor Details</span>
+                    <span className="text-[10px] font-bold text-teal-600">60% Complete</span>
+                  </div>
+                  <div className="flex gap-2 h-1.5 mb-8">
+                    <div className="flex-1 bg-teal-600 rounded-full"></div>
+                    <div className="flex-1 bg-teal-600 rounded-full"></div>
+                    <div className="flex-1 bg-teal-600 rounded-full"></div>
+                    <div className="flex-1 bg-slate-200 rounded-full"></div>
+                    <div className="flex-1 bg-slate-200 rounded-full"></div>
+                  </div>
+
+                  {/* Fake Fields */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="h-3 w-32 bg-slate-200 rounded"></div>
+                      <div className="h-12 w-full bg-white border border-slate-200 rounded-xl"></div>
                     </div>
-                    <div className="h-1.5 bg-slate-200 rounded-full w-full overflow-hidden">
-                      <div className="h-full bg-accent w-3/4"></div>
+                    <div className="space-y-2">
+                      <div className="h-3 w-40 bg-slate-200 rounded"></div>
+                      <div className="h-12 w-full bg-white border border-slate-200 rounded-xl"></div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">Status Verdict</span>
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-full">LIKELY</span>
+                  {/* Continue Button */}
+                  <div className="pt-4">
+                    <div className="h-12 w-full bg-[#0B1F3B] rounded-xl flex items-center justify-center">
+                      <div className="h-2 w-20 bg-white/20 rounded"></div>
                     </div>
-                    <div className="h-2 bg-slate-50 rounded w-full"></div>
-                    <div className="h-2 bg-slate-50 rounded w-2/3"></div>
-                  </div>
-
-                  <div className="p-4 bg-navy rounded-2xl shadow-xl flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-white text-xs">📄</div>
-                      <div>
-                        <p className="text-[10px] text-white font-black uppercase tracking-tight">Full Audit Report</p>
-                        <p className="text-[8px] text-slate-400 font-bold uppercase">Ready to unlock</p>
-                      </div>
-                    </div>
-                    <div className="w-6 h-6 bg-accent text-white rounded-full flex items-center justify-center text-[10px] font-bold">→</div>
                   </div>
                 </div>
               </div>
             </div>
-            
-            {/* Trust floaty */}
-            <div className="absolute -bottom-10 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 hidden md:flex items-center gap-3 animate-bounce-slow">
-              <div className="w-8 h-8 bg-accent/10 rounded-xl flex items-center justify-center text-accent">✓</div>
-              <p className="text-[10px] font-black text-navy leading-none uppercase tracking-tight">Requirement Validated</p>
+
+            {/* Result Snippet Overlay */}
+            <div className="absolute -bottom-10 -left-6 md:-left-12 z-20 bg-white p-5 rounded-2xl shadow-xl border border-slate-100 max-w-[240px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+              <div className="flex items-center justify-between mb-3">
+                <span className="px-2 py-0.5 bg-teal-100 text-teal-700 text-[9px] font-black rounded-full uppercase tracking-tighter">Likely eligible</span>
+                <span className="text-[9px] text-slate-400 font-bold">Today, 10:42 AM</span>
+              </div>
+              <p className="text-[11px] font-bold text-slate-700 leading-relaxed mb-4">
+                Based on your inputs, you meet the primary income and relationship criteria.
+              </p>
+              <div className="flex items-center gap-2 text-teal-600 text-[10px] font-black uppercase tracking-widest">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                Download PDF Summary
+              </div>
             </div>
           </div>
         </div>

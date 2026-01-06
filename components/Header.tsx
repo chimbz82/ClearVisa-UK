@@ -28,27 +28,30 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
+      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-white/0 lg:bg-transparent py-5'
     }`}>
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[1140px] mx-auto px-6">
         <div className="flex justify-between items-center">
-          <div className="flex-shrink-0 flex items-center gap-4">
+          <div className="flex-shrink-0 flex items-center">
             <button 
               onClick={onNavigateHome} 
-              className="flex items-center gap-2 focus:outline-none cursor-pointer group"
+              className="flex items-center gap-2 focus:outline-none cursor-pointer"
               aria-label="Home"
             >
-              <div className="w-8 h-8 bg-[#0B1F3B] text-white rounded-lg flex items-center justify-center font-serif flex-shrink-0">C</div>
-              <span className="text-sm font-black uppercase tracking-tight text-navy">ClearVisa UK</span>
+              <span className="text-lg font-black uppercase tracking-tighter text-[#0B1F3B]">
+                {t('nav.logo')}
+              </span>
             </button>
           </div>
 
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-2">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => onScrollToSection(link.id)}
-                className="text-[13px] font-bold text-slate-600 hover:text-navy px-4 py-2 uppercase tracking-wide transition-colors"
+                className={`text-[13px] font-bold px-4 py-2 uppercase tracking-wide transition-colors ${
+                  isScrolled ? 'text-slate-600 hover:text-[#0B1F3B]' : 'text-slate-700 lg:text-slate-600 hover:text-[#0B1F3B]'
+                }`}
               >
                 {link.name}
               </button>
@@ -58,8 +61,8 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
             </Button>
           </div>
 
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-navy p-2">
+          <div className="lg:hidden flex items-center">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-[#0B1F3B] p-2" aria-label="Toggle menu">
               {isMenuOpen ? (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               ) : (
@@ -71,12 +74,12 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-4 shadow-xl">
+        <div className="lg:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-4 shadow-xl animate-in slide-in-from-top duration-300">
           {navLinks.map((link) => (
             <button 
               key={link.id} 
               onClick={() => { setIsMenuOpen(false); onScrollToSection(link.id); }} 
-              className="block w-full text-left text-lg font-bold text-navy uppercase"
+              className="block w-full text-left text-base font-bold text-[#0B1F3B] uppercase tracking-wide"
             >
               {link.name}
             </button>
