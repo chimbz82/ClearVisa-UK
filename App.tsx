@@ -282,8 +282,8 @@ const AppContent: React.FC = () => {
                   answers={answers}
                   tier={selectedPlan || 'full'}
                   onUpgrade={() => {
-                    setSelectedPlan('humanReview');
                     setIsUpgrading(true);
+                    setSelectedPlan('humanReview');
                     setIsPaymentModalOpen(true);
                   }}
                 />

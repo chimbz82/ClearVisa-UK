@@ -57,26 +57,26 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
       {/* Floating Badge for Enhanced Analysis */}
       {tier === 'humanReview' && (
-        <div className="absolute top-4 right-4 bg-[#1877F2] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-50 shadow-md">
+        <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-50 shadow-md">
           ⚡ Enhanced Analysis
         </div>
       )}
 
       {/* Design accents */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[#041229]/5 rounded-bl-full"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-navy/5 rounded-bl-full"></div>
       
       <header className="flex justify-between items-start mb-10 relative z-10 border-b border-slate-100 pb-6">
         <div>
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-[#041229] text-white rounded flex items-center justify-center font-black text-xl">C</div>
-            <div className="text-[11px] leading-tight text-[#041229] font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
+            <div className="w-9 h-9 bg-navy text-white rounded flex items-center justify-center font-black text-xl">C</div>
+            <div className="text-[11px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
           </div>
-          <h1 className="text-3xl text-[#041229] font-bold tracking-tight mb-1 uppercase">Audit Report</h1>
+          <h1 className="text-3xl text-navy font-bold tracking-tight mb-1 uppercase">Audit Report</h1>
           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date}</p>
         </div>
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-right">
           <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
-          <div className="text-[#041229] font-black text-xl tracking-tight uppercase">Finalized</div>
+          <div className="text-navy font-black text-xl tracking-tight uppercase">Finalized</div>
           <div className="text-[9px] text-slate-500 font-bold uppercase mt-1 px-2 py-0.5 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
         </div>
       </header>
@@ -87,7 +87,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-3" style={{ color: current.color }}>Verdict: {current.title}</h2>
           <p className="text-base font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
         </div>
-        <div className="bg-[#041229] rounded-2xl p-6 flex flex-col items-center justify-center text-white relative overflow-hidden">
+        <div className="bg-navy rounded-2xl p-6 flex flex-col items-center justify-center text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-bl-full"></div>
           <h3 className="text-[9px] text-slate-400 mb-3 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
           <div className="relative w-full h-2 bg-white/10 rounded-full overflow-hidden mb-3 shadow-inner">
@@ -110,10 +110,10 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {tier === 'humanReview' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
-            <section className="bg-[#1877F2]/5 p-6 rounded-2xl border border-[#1877F2]/20 mb-8">
+            <section className="bg-accent/5 p-6 rounded-2xl border border-accent/20 mb-8">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-[#1877F2] text-white rounded flex items-center justify-center text-sm shadow-sm">📊</div>
-                <h3 className="text-[12px] text-[#041229] font-bold uppercase tracking-widest">
+                <div className="w-8 h-8 bg-accent text-white rounded flex items-center justify-center text-sm shadow-sm">📊</div>
+                <h3 className="text-[12px] text-navy font-bold uppercase tracking-widest">
                   Evidence Gap Analysis
                 </h3>
               </div>
@@ -130,7 +130,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                   {analysis.gaps.length === 0 && <p className="text-[11px] text-slate-400 italic px-1">No critical gaps detected.</p>}
                 </div>
                 
-                <div className="space-y-3 pt-4 border-t border-[#1877F2]/10">
+                <div className="space-y-3 pt-4 border-t border-accent/10">
                   <h4 className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Recommended Improvements</h4>
                   <ul className="space-y-2">
                     {analysis.improvements.map((improvement, idx) => (
@@ -149,7 +149,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {/* Compliance Matrix */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
-            <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
+            <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
             <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
                 <thead className="bg-slate-50 border-b border-slate-200">
@@ -162,7 +162,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 <tbody className="divide-y divide-slate-100">
                   {getComplianceMatrix().map((row, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 text-[#041229] font-bold tracking-tight">{row.req}</td>
+                      <td className="px-6 py-4 text-navy font-bold tracking-tight">{row.req}</td>
                       <td className="px-6 py-4 text-center">
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-black inline-block min-w-[50px] ${
                           row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
@@ -183,7 +183,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {/* Risk Flags */}
         <section>
-          <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Profile Flag Analysis</h3>
+          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Profile Flag Analysis</h3>
           <div className="space-y-3">
             {assessmentData.riskFlags.length > 0 ? assessmentData.riskFlags.map((flag, i) => (
               <div key={i} className="flex gap-3 p-4 bg-rose-50 border border-rose-100 rounded-xl items-center border-l-4 border-l-rose-500">
@@ -201,14 +201,14 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {/* Next Steps */}
         <section>
-          <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Recommended Action Plan</h3>
+          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Recommended Action Plan</h3>
           <div className="grid grid-cols-1 gap-3">
             {assessmentData.nextSteps.map((step, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm group hover:border-[#041229] transition-all">
-                <div className="w-8 h-8 bg-slate-100 text-[#041229] group-hover:bg-[#041229] group-hover:text-white rounded flex items-center justify-center font-black text-[11px] transition-all shadow-sm">
+              <div key={i} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm group hover:border-navy transition-all">
+                <div className="w-8 h-8 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded flex items-center justify-center font-black text-[11px] transition-all shadow-sm">
                   {i + 1}
                 </div>
-                <p className="text-[12px] font-bold text-[#041229] uppercase tracking-tight leading-relaxed">{step}</p>
+                <p className="text-[12px] font-bold text-navy uppercase tracking-tight leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
@@ -217,51 +217,51 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       {/* Professional Plus Upgrade Section */}
       {tier === 'full' && onUpgrade && (
-        <section className="mt-12 bg-gradient-to-br from-[#1877F2]/5 to-[#1877F2]/10 p-10 rounded-[40px] border-2 border-[#1877F2]/30 relative overflow-hidden no-print">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#1877F2]/10 rounded-full blur-3xl"></div>
+        <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-10 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
             <div className="flex-shrink-0">
-              <div className="w-20 h-20 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+              <div className="w-20 h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
                 ⚡
               </div>
             </div>
             
             <div className="flex-grow">
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-[10px] text-[#1877F2] font-black uppercase tracking-widest bg-[#1877F2]/10 px-3 py-1 rounded-full">
+                <span className="text-caption text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
                   UPGRADE AVAILABLE
                 </span>
               </div>
-              <h3 className="text-xl text-[#041229] font-bold mb-4 uppercase tracking-tight leading-tight">
+              <h3 className="text-h3 text-navy mb-4 uppercase tracking-tight leading-tight">
                 Unlock Evidence Gap Analysis
               </h3>
-              <p className="text-sm text-slate-700 mb-6 font-medium leading-relaxed">
+              <p className="text-body text-slate-700 mb-6 font-medium leading-relaxed">
                 Add automated gap detection, personalized improvement suggestions, and extended narrative questions to strengthen your application. One-time upgrade of £99.
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
                 <div className="flex items-start gap-2">
-                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
-                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                  <span className="text-accent font-bold mt-0.5">✓</span>
+                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
                     Evidence Gap Analysis
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
-                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                  <span className="text-accent font-bold mt-0.5">✓</span>
+                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
                     Extended Narrative Questions
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
-                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                  <span className="text-accent font-bold mt-0.5">✓</span>
+                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
                     Deeper Case Review
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
-                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                  <span className="text-accent font-bold mt-0.5">✓</span>
+                  <span className="text-small text-slate-700 font-bold uppercase tracking-tight">
                     Personalized Improvements
                   </span>
                 </div>
@@ -269,7 +269,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
               
               <button 
                 onClick={onUpgrade}
-                className="bg-[#1877F2] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#1565D8] transition-colors shadow-lg"
+                className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-colors shadow-lg"
               >
                 Upgrade to Professional Plus - £99
               </button>
@@ -279,7 +279,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       )}
 
       <footer className="mt-auto pt-8 border-t border-slate-100 no-print">
-        <div className="bg-[#041229] p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden">
+        <div className="bg-navy p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden">
            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
            <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
            <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
