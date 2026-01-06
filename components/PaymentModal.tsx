@@ -43,8 +43,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const handleMockPayment = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('processing');
+    
     setTimeout(() => {
-      setStatus('success');
+      // ✅ STEP 6.1: Simulate occasional failures for testing
+      const success = Math.random() > 0.1; // 90% success rate
+      
+      if (success) {
+        setStatus('success');
+      } else {
+        setStatus('error');
+        // Auto-reset to idle after 3 seconds as a fallback
+        setTimeout(() => setStatus('idle'), 3000);
+      }
     }, 2000);
   };
 
@@ -113,20 +123,43 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
           )}
 
           {(status === 'processing' || status === 'success') && (
-            <div className="text-center">
+            <div className="text-center animate-in fade-in duration-500">
               <div className="relative w-16 h-16 mx-auto mb-8">
                 <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
                 <div className={`absolute inset-0 border-4 border-[#16A34A] rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
-                <div className="absolute inset-0 flex items-center justify-center text-[#16A34A] text-2xl">
+                <div className={`absolute inset-0 flex items-center justify-center text-[#16A34A] text-2xl`}>
                   {status === 'processing' ? '' : '✓'}
                 </div>
               </div>
-              <h4 className="text-lg font-bold text-[#07162A] uppercase mb-2 tracking-tight">
+              <h4 className={`text-lg font-bold text-[#07162A] uppercase mb-2 tracking-tight`}>
                 {status === 'processing' ? 'Processing Transaction' : 'Payment Success'}
               </h4>
               <p className="text-sm text-slate-500 font-bold">
-                {status === 'processing' ? 'Encrypting sensitive details...' : `Unlocking ${plan.name} features...`}
+                {status === 'processing' 
+                  ? 'Encrypting sensitive details...' 
+                  : `Unlocking ${plan.name} features...`}
               </p>
+            </div>
+          )}
+
+          {/* ✅ STEP 6.2: Error State UI */}
+          {status === 'error' && (
+            <div className="text-center animate-in fade-in duration-500">
+              <div className="w-24 h-24 mx-auto mb-10 bg-rose-100 rounded-full flex items-center justify-center">
+                <span className="text-rose-600 text-4xl">✕</span>
+              </div>
+              <h4 className="text-h3 text-navy uppercase mb-3 tracking-tight">
+                Payment Failed
+              </h4>
+              <p className="text-body text-slate-600 font-bold mb-8">
+                There was an issue processing your payment. Please check your card details and try again.
+              </p>
+              <button 
+                onClick={() => setStatus('idle')}
+                className="text-small font-bold text-accent uppercase tracking-widest hover:underline"
+              >
+                Try Again
+              </button>
             </div>
           )}
         </div>

@@ -206,7 +206,7 @@ const AppContent: React.FC = () => {
 
   const handleQuickCheckComplete = async (collectedAnswers: Record<string, any>) => {
     setAnswers(collectedAnswers);
-    setIsLoadingReport(true);  // ✅ Show loading
+    setIsLoadingReport(true);  // ✅ STEP 5.1: Show loading
     setViewState('quickVerdict');
     
     // Simulate processing time for better UX
@@ -215,7 +215,7 @@ const AppContent: React.FC = () => {
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
-    setIsLoadingReport(false);  // ✅ Hide loading
+    setIsLoadingReport(false);  // ✅ STEP 5.1: Hide loading
     localStorage.removeItem('clearvisaState');
     window.scrollTo(0, 0);
   };
@@ -259,11 +259,12 @@ const AppContent: React.FC = () => {
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
             <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
-              {isLoadingReport ? (
-                <div className="p-12 text-center">
-                  <div className="w-12 h-12 border-4 border-slate-100 border-t-accent rounded-full animate-spin mx-auto mb-6"></div>
-                  <h3 className="text-xl font-bold text-navy mb-2 uppercase tracking-tight">Analyzing profile</h3>
-                  <p className="text-small text-slate-500 font-medium">Matching your details against latest UKVI rules...</p>
+              {isLoadingReport ? ( // ✅ STEP 5.2: Show Loading in Quick Verdict View
+                <div className="text-center py-20">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-navy mx-auto mb-6"></div>
+                  <p className="text-body font-bold text-slate-600 uppercase tracking-tight">
+                    Analyzing your eligibility...
+                  </p>
                 </div>
               ) : (
                 <>
