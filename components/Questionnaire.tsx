@@ -10,7 +10,7 @@ interface QuestionnaireProps {
   initialAnswers?: Record<string, any>;
   selectedPlan: string;
   visibleQuestionsList: QuestionConfig[];
-  isUpgrading?: boolean;  // ✅ ADDED PROPS INTERFACE
+  isUpgrading?: boolean;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ 
@@ -20,7 +20,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   initialAnswers = {}, 
   selectedPlan,
   visibleQuestionsList,
-  isUpgrading = false  // ✅ UPDATED COMPONENT SIGNATURE
+  isUpgrading = false
 }) => {
   const { t } = useLanguage();
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);

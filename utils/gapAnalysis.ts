@@ -13,80 +13,96 @@ export const analyzeEvidenceGaps = (
   if (visaRoute === 'Spouse Visa') {
     const relEvidence = answers['rel_evidence'] || [];
     
-    if (!relEvidence.includes('joint_tenancy') && !relEvidence.includes('joint_bills')) {
-      gaps.push('No joint tenancy or mortgage documentation detected. This is a primary cohabitation proof requirement for Appendix FM.');
-      improvements.push('Obtain a landlord letter explicitly naming both parties if tenancy is currently in one name only.');
+    // ✅ FIXED: Use correct property names from questions.ts
+    if (!relEvidence.includes('tenancy')) {
+      gaps.push('No joint tenancy or mortgage documentation detected. This is a primary cohabitation proof requirement.');
+      improvements.push('Obtain a landlord letter explicitly naming both parties if tenancy is in one name only.');
     }
     
-    if (!relEvidence.includes('joint_bank')) {
-      gaps.push('No joint bank account indicated. UKVI expects evidence of financial interdependence and shared responsibility.');
-      improvements.push('Open a joint bank account immediately and use it for shared expenses to show a 3-6 month history.');
+    if (!relEvidence.includes('bank')) {
+      gaps.push('No joint bank account indicated. UKVI expects evidence of financial interdependence.');
+      improvements.push('Open a joint bank account immediately and use it for shared expenses (minimum 3 months before application).');
     }
     
     if (answers['living_arrangement'] === 'separate') {
-      gaps.push('Living separately significantly raises "genuineness" scrutiny risk by caseworker standards.');
-      improvements.push('Prepare a detailed narrative explanation of why you live apart, supported by evidence of regular visits.');
+      gaps.push('Living separately significantly raises genuineness scrutiny risk.');
+      improvements.push('Prepare detailed explanation of why you live apart, including evidence of regular communication and visits.');
     }
     
-    if (answers['live_together_history'] === 'never') {
-      gaps.push('Never having lived together in person requires much stronger secondary evidence of subsisting relationship.');
-      improvements.push('Compile comprehensive evidence of in-person meetings: travel tickets, photos with family, and call logs.');
+    // ✅ FIXED: Correct property name
+    if (answers['live_together'] === 'never') {
+      gaps.push('Never having lived together may trigger additional genuineness questions.');
+      improvements.push('Compile comprehensive evidence of in-person meetings: photos, tickets, accommodation bookings, witness statements.');
     }
   }
   
   // Financial Evidence Analysis
-  const incomeSources = answers['income_sources'] || [];
-  if (incomeSources.includes('salary')) {
-    if (answers['employment_length'] === 'less_6m') {
-      gaps.push('Employment for less than 6 months requires "Category B" evidence (showing consistency over 12 months).');
-      improvements.push('Obtain formal letters from current and previous employers to show 12 months of consistent earnings above threshold.');
-    }
-    
-    if (answers['bank_statements_format'] === 'pdf') {
-      gaps.push('Digital PDF bank statements may not be accepted without official bank stamps or a verifying branch letter.');
-      improvements.push('Request stamped/sealed paper statements from your bank branch, or a formal letter verifying the PDF prints.');
+  if (answers['fin_req_method'] === 'employment') {
+    if (answers['sponsor_emp_status'] === 'changed_6m') {
+      gaps.push('Employment change within 6 months requires additional verification steps (Category B).');
+      improvements.push('Obtain formal letter from current and previous employers to show 12 months of consistent earnings.');
     }
   }
   
-  if (incomeSources.includes('self_employment')) {
-    gaps.push('Self-employment income requires complex documentation (SA302s, Tax Year Overviews, and Accountant certificates).');
-    improvements.push('Ensure you have a full year of tax returns and a letter from an OISC-regulated accountant for the last financial year.');
+  if (answers['fin_req_method'] === 'self_employment') {
+    gaps.push('Self-employment income requires more complex documentation (Appendix FM-SE).');
+    improvements.push('Ensure you have: full SA302s, Tax Year Overviews, business accounts, and accountant letter for last full financial year.');
   }
-
+  
+  if (answers['fin_req_method'] === 'savings') {
+    gaps.push('Cash savings must be held for 6 months minimum before application.');
+    improvements.push('Ensure savings have been in accessible cash accounts for full 6 months with continuous balance above threshold.');
+  }
+  
   // Skilled Worker Specific
   if (visaRoute === 'Skilled Worker Visa') {
     const salary = parseFloat(answers['sw_salary_exact'] || '0');
     
-    if (salary > 0 && salary < 38700 && !answers['shortage_occupation']) {
-      gaps.push(`The reported salary (£${salary.toLocaleString()}) is below the general £38,700 threshold.`);
-      improvements.push('Verify if your role qualifies for the "Immigration Salary List" (ISL) lower rate or "New Entrant" rate.');
+    if (salary > 0 && salary < 38700) {
+      gaps.push(`Salary of £${salary.toLocaleString()} is below the £38,700 general threshold.`);
+      improvements.push('Check if role qualifies for Immigration Salary List rate (lower threshold) or new entrant rate.');
     }
     
-    if (answers['sponsor_license'] === 'unsure' || answers['sponsor_license'] === 'no') {
-      gaps.push('Sponsor license status is unconfirmed - no application can be made without a valid Certificate of Sponsorship (CoS).');
-      improvements.push('Ask your employer to confirm their sponsor license number and check the official UK Register of Licensed Sponsors.');
+    if (answers['sponsor_license'] === 'no' || answers['sponsor_license'] === 'unsure') {
+      gaps.push('Sponsor license status uncertain - this must be verified before applying.');
+      improvements.push('Ask employer to confirm their sponsor license number and check UKVI register of licensed sponsors.');
+    }
+    
+    if (answers['job_offer_status'] === 'no') {
+      gaps.push('No formal job offer reported - application is premature.');
+      improvements.push('Obtain formal written offer specifying: job title, salary, start date, and confirmation of sponsorship.');
     }
   }
   
-  // Immigration History
-  if (answers['previous_refusals'] === true) {
-    gaps.push('Previous visa refusal(s) noted - case will trigger high scrutiny on suitability grounds.');
-    if (answers['refusal_letters_status'] !== 'all') {
-      gaps.push('Missing refusal letters - you must address previous UKVI concerns directly in your new application.');
-      improvements.push('Submit a Subject Access Request (SAR) to UKVI to retrieve copies of all previous refusal notices.');
+  // Immigration History Gaps
+  if (answers['previous_refusals']) {
+    gaps.push('Previous refusal noted - requires addressing in application.');
+    // ✅ FIXED: Correct property name
+    if (answers['refusal_letters'] && answers['refusal_letters'] !== 'all') {
+      gaps.push('Missing refusal letters - obtain copies via UKVI Subject Access Request.');
+      improvements.push('Submit SAR to UKVI to retrieve all previous refusal notices to address specific concerns properly.');
     }
   }
   
-  if (answers['overstays_detail'] === true) {
-    gaps.push('History of overstaying is a significant suitability risk for all UK visa routes.');
-    improvements.push('Prepare a detailed timeline of the overstay period and provide evidence of any mitigating circumstances.');
+  if (answers['overstays']) {
+    gaps.push('Overstay history requires comprehensive explanation and evidence it has been resolved.');
+    improvements.push('Prepare detailed chronology of overstay period, reasons, and how/when legal status was restored.');
+  }
+  
+  // Accommodation Gaps
+  if (answers['uk_living_plan'] === 'none') {
+    gaps.push('No accommodation arranged - this is required evidence for most visa types.');
+    improvements.push('Secure accommodation evidence: rental agreement, mortgage, or letter from homeowner offering accommodation.');
   }
 
-  // Accommodation
-  if (answers['uk_living_plan'] === 'none') {
-    gaps.push('No accommodation arranged - "adequate maintenance and accommodation" is a mandatory requirement.');
-    improvements.push('Identify a property and obtain a draft tenancy agreement or a letter from the homeowner/family.');
+  if (answers['uk_living_plan'] === 'family') {
+    const accEvidence = answers['acc_evidence'] || [];
+    if (!accEvidence.includes('permission')) {
+      gaps.push('Living with family requires letter of permission from the property owner.');
+      improvements.push('Obtain formal letter from homeowner granting permission, plus proof they own/rent the property.');
+    }
   }
   
+  // Return results
   return { gaps, improvements };
 };

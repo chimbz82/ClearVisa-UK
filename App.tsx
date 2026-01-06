@@ -92,7 +92,7 @@ const AppContent: React.FC = () => {
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
-    // ✅ NEW: If upgrading to Pro Plus, show ONLY delta questions
+    // If upgrading to Pro Plus, show ONLY delta questions
     if (isUpgrading && selectedPlan === 'pro_plus') {
       return QUESTIONS.filter(q => {
         const route = answers['visa_route'] === 'spouse' ? 'spouse' : 'skilled';
@@ -158,9 +158,6 @@ const AppContent: React.FC = () => {
       setViewState('report');
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
-    } else if (selectedPlan === 'pro_plus' && isUpgrading) {
-      // ✅ NEW: Pro Plus upgrade - show questionnaire with ONLY new questions
-      setViewState('questionnaire');
     } else {
       setViewState('questionnaire');
     }
@@ -177,13 +174,17 @@ const AppContent: React.FC = () => {
   };
 
   const handleFullAssessmentComplete = (collectedAnswers: Record<string, any>) => {
-    setAnswers(collectedAnswers);
-    const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-    const result = runAssessment(routeKey, collectedAnswers);
+    // Merge answers if upgrading
+    const finalAnswers = isUpgrading ? { ...answers, ...collectedAnswers } : collectedAnswers;
+    setAnswers(finalAnswers);
+    
+    const routeKey = finalAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    const result = runAssessment(routeKey, finalAnswers);
+    
     setAssessmentResult(result);
     setViewState('report');
     setIsLoadingReport(true);
-    setIsUpgrading(false); // ✅ RESET Upgrade Flag
+    setIsUpgrading(false); // Reset upgrading flag after completion
     window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
   };
@@ -199,7 +200,7 @@ const AppContent: React.FC = () => {
                 onComplete={isPaid ? handleFullAssessmentComplete : handleQuickCheckComplete} 
                 onCancel={() => setViewState('landing')} 
                 isPaid={isPaid}
-                isUpgrading={isUpgrading} // ✅ PASS FLAG
+                isUpgrading={isUpgrading}
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
                 visibleQuestionsList={getVisibleQuestions()}
