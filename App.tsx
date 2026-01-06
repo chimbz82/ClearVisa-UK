@@ -204,13 +204,19 @@ const AppContent: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  const handleQuickCheckComplete = (collectedAnswers: Record<string, any>) => {
+  const handleQuickCheckComplete = async (collectedAnswers: Record<string, any>) => {
     setAnswers(collectedAnswers);
+    setIsLoadingReport(true);  // ✅ Show loading
+    setViewState('quickVerdict');
+    
+    // Simulate processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
-    setViewState('quickVerdict');
-    localStorage.removeItem('clearvisaState');  // ✅ STEP 4.2: Clear state on complete
+    setIsLoadingReport(false);  // ✅ Hide loading
+    localStorage.removeItem('clearvisaState');
     window.scrollTo(0, 0);
   };
 
@@ -253,32 +259,42 @@ const AppContent: React.FC = () => {
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
             <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
-              <div className="mb-8 text-center">
-                <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
-                  assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
-                  assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
-                }`}>
-                  {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
+              {isLoadingReport ? (
+                <div className="p-12 text-center">
+                  <div className="w-12 h-12 border-4 border-slate-100 border-t-accent rounded-full animate-spin mx-auto mb-6"></div>
+                  <h3 className="text-xl font-bold text-navy mb-2 uppercase tracking-tight">Analyzing profile</h3>
+                  <p className="text-small text-slate-500 font-medium">Matching your details against latest UKVI rules...</p>
                 </div>
-                <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
-                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
-              </div>
+              ) : (
+                <>
+                  <div className="mb-8 text-center">
+                    <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
+                      assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
+                      assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
+                    }`}>
+                      {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
+                    </div>
+                    <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
+                    <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
+                  </div>
 
-              <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
-                <p className="text-small text-slate-600 leading-relaxed font-medium">
-                  Based on your initial answers, you meet core requirements for the {answers['visa_route']?.toUpperCase()} route. Select a report level to unlock your full analysis and document checklist.
-                </p>
-              </div>
+                  <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
+                    <p className="text-small text-slate-600 leading-relaxed font-medium">
+                      Based on your initial answers, you meet core requirements for the {answers['visa_route']?.toUpperCase()} route. Select a report level to unlock your full analysis and document checklist.
+                    </p>
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
-                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
-                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
-              </div>
-              
-              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
-                Cancel
-              </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
+                     <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
+                     <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
+                  </div>
+                  
+                  <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
+                    Cancel
+                  </button>
+                </>
+              )}
             </div>
           </div>
         );
