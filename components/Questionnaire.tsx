@@ -10,7 +10,7 @@ interface QuestionnaireProps {
   initialAnswers?: Record<string, any>;
   selectedPlan: string;
   visibleQuestionsList: QuestionConfig[];
-  isUpgrading?: boolean;  // ✅ ADD THIS LINE
+  isUpgrading?: boolean;  // ✅ ADDED PROPS INTERFACE
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ 
@@ -20,7 +20,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   initialAnswers = {}, 
   selectedPlan,
   visibleQuestionsList,
-  isUpgrading = false  // ✅ ADD THIS LINE
+  isUpgrading = false  // ✅ UPDATED COMPONENT SIGNATURE
 }) => {
   const { t } = useLanguage();
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
@@ -28,7 +28,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    if (isPaid && (selectedPlan === 'full' || selectedPlan === 'humanReview') && currentStep === 0 && !isReviewing) {
+    if (isPaid && (selectedPlan === 'full' || selectedPlan === 'pro_plus') && currentStep === 0 && !isReviewing) {
       const firstUnansweredIndex = visibleQuestionsList.findIndex(q => answers[q.id] === undefined);
       if (firstUnansweredIndex !== -1) {
         setCurrentStep(firstUnansweredIndex);

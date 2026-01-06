@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
@@ -46,7 +47,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
   const getTierDisplay = () => {
     switch (tier) {
-      case 'humanReview': return 'Professional Plus';
+      // Fix: Updated 'humanReview' to 'pro_plus' to match PlanId definition
+      case 'pro_plus': return 'Professional Plus';
       case 'full': return 'Professional Audit';
       case 'basic': return 'Basic Pre-Check';
       default: return 'Eligibility Audit';
@@ -56,7 +58,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   return (
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
       {/* Floating Badge for Enhanced Analysis */}
-      {tier === 'humanReview' && (
+      {/* Fix: Updated 'humanReview' to 'pro_plus' */}
+      {tier === 'pro_plus' && (
         <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-50 shadow-md">
           ⚡ Enhanced Analysis
         </div>
@@ -107,7 +110,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       <div className="space-y-10 mb-10 flex-grow">
         
         {/* Professional Plus Evidence Gap Analysis */}
-        {tier === 'humanReview' && (() => {
+        {/* Fix: Updated 'humanReview' to 'pro_plus' */}
+        {tier === 'pro_plus' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
             <section className="bg-accent/5 p-6 rounded-2xl border border-accent/20 mb-8">
@@ -147,7 +151,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         })()}
 
         {/* Compliance Matrix */}
-        {(tier === 'full' || tier === 'humanReview') && (
+        {/* Fix: Updated 'humanReview' to 'pro_plus' */}
+        {(tier === 'full' || tier === 'pro_plus') && (
           <section>
             <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
             <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">

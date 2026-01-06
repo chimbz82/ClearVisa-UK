@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import Button from './Button';
@@ -32,7 +33,8 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
               <div className="mb-6">
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 inline-block ${
                   plan.id === 'full' ? 'bg-[#2BB24C] text-white' : 
-                  plan.id === 'humanReview' ? 'bg-[#041229] text-white' : 'bg-slate-100 text-slate-500'
+                  // Fix: Updated 'humanReview' to 'pro_plus' to match PlanId definition
+                  plan.id === 'pro_plus' ? 'bg-[#041229] text-white' : 'bg-slate-100 text-slate-500'
                 }`}>
                   {plan.id === 'basic' ? 'BUDGET' : plan.id === 'full' ? 'RECOMMENDED' : 'ENHANCED'}
                 </span>

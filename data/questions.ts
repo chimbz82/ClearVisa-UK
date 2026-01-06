@@ -83,7 +83,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'property', label: 'Property Rental Income' },
       { value: 'exempt', label: 'Exempt Benefits (PIP, etc.)' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   },
   {
     id: 'employment_length',
@@ -94,7 +94,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'less_6m', label: 'Less than 6 months' },
       { value: 'over_6m', label: 'More than 6 months' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
   },
   {
     id: 'savings_amount',
@@ -106,7 +106,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: '16k_65k', label: '£16,000 – £65,000' },
       { value: 'over_65k', label: 'Over £65,000' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.answers.income_sources?.includes('savings')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.answers.income_sources?.includes('savings')
   },
   {
     id: 'english_test',
@@ -119,7 +119,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'exempt', label: 'Exempt (Age / Nationality)' },
       { value: 'no', label: 'No, need to take test' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   },
   {
     id: 'rel_evidence',
@@ -134,14 +134,14 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'children', label: 'Shared children' },
       { value: 'joint_bank', label: 'Joint Bank Account' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'spouse'
   },
   {
     id: 'living_together',
     section: 'Relationship',
     label: 'Have you lived together for at least 2 years?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'spouse'
   },
   {
     id: 'acc_evidence',
@@ -155,42 +155,42 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'council_tax', label: 'Council Tax Bill' },
       { value: 'permission', label: 'Homeowner Permission Letter' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   },
   {
     id: 'overstays_detail',
     section: 'History',
     label: 'Have you ever stayed in the UK beyond your visa expiry?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   },
   {
     id: 'criminal_records',
     section: 'History',
     label: 'Do you have any criminal convictions (any country)?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   },
   {
     id: 'tb_test',
     section: 'Requirements',
     label: 'Are you applying from a country requiring a TB test?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.answers.current_location === 'outside_uk'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.answers.current_location === 'outside_uk'
   },
   {
     id: 'job_code',
     section: 'Employment',
     label: 'Do you know your Occupation Code (SOC Code)?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
   },
   {
     id: 'job_offer',
     section: 'Employment',
     label: 'Do you have a formal job offer from a UK licensed sponsor?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
   },
   {
     id: 'sponsor_license',
@@ -202,10 +202,10 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'no', label: 'No' },
       { value: 'unsure', label: 'Unsure' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'skilled'
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
   },
 
-  // --- PROFESSIONAL PLUS (HUMAN REVIEW) EXTRAS ---
+  // --- PROFESSIONAL PLUS (PRO_PLUS) EXTRAS ---
   {
     id: 'living_arrangement',
     section: 'Relationship',
@@ -215,7 +215,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'together', label: 'Living together permanently' },
       { value: 'separate', label: 'Living separately' }
     ],
-    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'spouse'
+    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'spouse'
   },
   {
     id: 'live_together_history',
@@ -227,7 +227,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'past', label: 'Yes, we have in the past' },
       { value: 'never', label: 'No, never' }
     ],
-    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'spouse'
+    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'spouse'
   },
   {
     id: 'bank_statements_format',
@@ -239,7 +239,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'pdf', label: 'Downloaded PDFs' },
       { value: 'pdf_stamped', label: 'PDFs stamped by the bank' }
     ],
-    showIf: (ctx) => ctx.tier === 'human' && (ctx.answers.income_sources?.includes('salary') || ctx.answers.income_sources?.includes('savings'))
+    showIf: (ctx) => ctx.tier === 'pro_plus' && (ctx.answers.income_sources?.includes('salary') || ctx.answers.income_sources?.includes('savings'))
   },
   {
     id: 'sw_salary_exact',
@@ -247,14 +247,14 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'What is the exact gross annual salary on your job offer?',
     type: 'number',
     placeholder: '38700',
-    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'skilled'
+    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'skilled'
   },
   {
     id: 'shortage_occupation',
     section: 'Employment',
     label: 'Is your job on the UK Immigration Salary List (formerly Shortage Occupation)?',
     type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'human' && ctx.route === 'skilled'
+    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'skilled'
   },
   {
     id: 'refusal_letters_status',
@@ -266,7 +266,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'some', label: 'I have some but not all' },
       { value: 'none', label: 'I have none of them' }
     ],
-    showIf: (ctx) => ctx.tier === 'human' && ctx.answers.previous_refusals === true
+    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.answers.previous_refusals === true
   },
   {
     id: 'uk_living_plan',
@@ -279,7 +279,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'buying', label: 'Buying a property' },
       { value: 'none', label: 'No firm plans yet' }
     ],
-    showIf: (ctx) => ctx.tier === 'human'
+    showIf: (ctx) => ctx.tier === 'pro_plus'
   },
   {
     id: 'main_worry',
@@ -287,6 +287,6 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'What is your primary concern regarding the application?',
     type: 'longText',
     placeholder: 'Describe any specific issues you are worried about...',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human')
+    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
   }
 ];

@@ -21,7 +21,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
 import { QUESTIONS } from './data/questions';
 
-export type PlanId = 'basic' | 'full' | 'humanReview';
+export type PlanId = 'basic' | 'full' | 'pro_plus';
 
 export interface PlanConfig {
   id: PlanId;
@@ -63,7 +63,7 @@ export const PLANS: PlanConfig[] = [
     ]
   },
   {
-    id: 'humanReview',
+    id: 'pro_plus',
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
@@ -93,11 +93,11 @@ const AppContent: React.FC = () => {
 
   const getVisibleQuestions = () => {
     // ✅ NEW: If upgrading to Pro Plus, show ONLY delta questions
-    if (isUpgrading && selectedPlan === 'humanReview') {
+    if (isUpgrading && selectedPlan === 'pro_plus') {
       return QUESTIONS.filter(q => {
         const route = answers['visa_route'] === 'spouse' ? 'spouse' : 'skilled';
         // Only show questions that are Pro Plus tier AND haven't been answered
-        const isProOnly = q.showIf({ tier: 'human', route, answers }) && 
+        const isProOnly = q.showIf({ tier: 'pro_plus', route, answers }) && 
                           !q.showIf({ tier: 'full', route, answers });
         return isProOnly;
       });
@@ -107,9 +107,9 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      let tier: 'basic' | 'full' | 'human' = 'basic';
+      let tier: 'basic' | 'full' | 'pro_plus' = 'basic';
       if (isPaid) {
-        if (selectedPlan === 'humanReview') tier = 'human';
+        if (selectedPlan === 'pro_plus') tier = 'pro_plus';
         else if (selectedPlan === 'full') tier = 'full';
       }
       
@@ -117,6 +117,10 @@ const AppContent: React.FC = () => {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
+      if (selectedPlan === 'basic') {
+        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
+      }
+
       return q.showIf({ tier, route, answers });
     });
   };
@@ -148,18 +152,16 @@ const AppContent: React.FC = () => {
     setIsPaymentModalOpen(false);
     
     if (selectedPlan === 'basic') {
-      // Basic: show report with existing answers
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
       setAssessmentResult(result);
       setViewState('report');
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
-    } else if (selectedPlan === 'humanReview' && isUpgrading) {
+    } else if (selectedPlan === 'pro_plus' && isUpgrading) {
       // ✅ NEW: Pro Plus upgrade - show questionnaire with ONLY new questions
       setViewState('questionnaire');
     } else {
-      // Full Audit or Pro Plus from scratch - show full questionnaire
       setViewState('questionnaire');
     }
     window.scrollTo(0, 0);
@@ -175,13 +177,13 @@ const AppContent: React.FC = () => {
   };
 
   const handleFullAssessmentComplete = (collectedAnswers: Record<string, any>) => {
-    setIsUpgrading(false); // Reset upgrade flag
     setAnswers(collectedAnswers);
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
     setViewState('report');
     setIsLoadingReport(true);
+    setIsUpgrading(false); // ✅ RESET Upgrade Flag
     window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
   };
@@ -197,7 +199,7 @@ const AppContent: React.FC = () => {
                 onComplete={isPaid ? handleFullAssessmentComplete : handleQuickCheckComplete} 
                 onCancel={() => setViewState('landing')} 
                 isPaid={isPaid}
-                isUpgrading={isUpgrading}
+                isUpgrading={isUpgrading} // ✅ PASS FLAG
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
                 visibleQuestionsList={getVisibleQuestions()}
@@ -229,7 +231,7 @@ const AppContent: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
                  <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
-                 <Button onClick={() => { setSelectedPlan('humanReview'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
+                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
               </div>
               
               <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
@@ -291,7 +293,7 @@ const AppContent: React.FC = () => {
                   tier={selectedPlan || 'full'}
                   onUpgrade={() => {
                     setIsUpgrading(true);
-                    setSelectedPlan('humanReview');
+                    setSelectedPlan('pro_plus');
                     setIsPaymentModalOpen(true);
                   }}
                 />
