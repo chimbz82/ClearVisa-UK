@@ -52,8 +52,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
         setStatus('success');
       } else {
         setStatus('error');
-        // Auto-reset to idle after 3 seconds as a fallback
-        setTimeout(() => setStatus('idle'), 3000);
       }
     }, 2000);
   };
@@ -142,7 +140,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
             </div>
           )}
 
-          {/* ✅ STEP 6.2: Error State UI */}
+          {/* ✅ NEW: Error State */}
           {status === 'error' && (
             <div className="text-center animate-in fade-in duration-500">
               <div className="w-24 h-24 mx-auto mb-10 bg-rose-100 rounded-full flex items-center justify-center">

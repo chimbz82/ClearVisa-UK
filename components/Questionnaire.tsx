@@ -172,7 +172,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       case 'currency':
       case 'number':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <input 
               type="number"
               min="0"
@@ -186,7 +186,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                   handleAnswer(value);
                 }
               }}
-              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
             {q.type === 'currency' && val && (
@@ -194,40 +194,48 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 = £{Number(val).toLocaleString()}
               </p>
             )}
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
+            </Button>
           </div>
         );
+
       case 'shortText':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <input 
               type="text"
               placeholder={q.placeholder || "Type your answer..."}
               value={val || ""}
-              maxLength={100} // ✅ Limit short text
+              maxLength={100}  // ✅ Limit short text
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
+            </Button>
           </div>
         );
+
       case 'longText':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <textarea 
-              value={val || ""} 
-              onChange={(e) => handleAnswer(e.target.value)} 
-              placeholder={q.placeholder} 
-              maxLength={2000} // ✅ Limit long text
-              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-[#041229] outline-none text-sm font-semibold min-h-[140px] transition-all" 
+              value={val || ""}
+              onChange={(e) => handleAnswer(e.target.value)}
+              placeholder={q.placeholder}
+              maxLength={2000}  // ✅ Limit long text
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-body font-semibold min-h-[150px] transition-all"
             />
-            <div className="flex justify-between items-center px-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            <div className="flex justify-between items-center">
+              <span className="text-caption text-slate-400 font-bold">
                 {val?.length || 0} / 2000 characters
               </span>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              Continue
+            </Button>
           </div>
         );
       default:
