@@ -20,7 +20,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   initialAnswers = {}, 
   selectedPlan,
   visibleQuestionsList,
-  isUpgrading
+  isUpgrading = false  // ✅ ADD THIS LINE
 }) => {
   const { t } = useLanguage();
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
