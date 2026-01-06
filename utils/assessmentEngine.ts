@@ -1,65 +1,61 @@
-
 import { AssessmentResult } from '../types';
 
 export function runAssessment(route: string, answers: Record<string, any>): AssessmentResult {
   const flags: string[] = [];
-  let score = 0; // Higher is better
+  let score = 5; // Start with neutral-positive
 
-  // --- Generic Logic (Shared) ---
-  if (answers.criminal_history === 'yes_serious') {
-    flags.push("Serious criminal history is a mandatory ground for refusal.");
+  // --- Core Eligibility & Suitability ---
+  if (answers.criminal_history === true) {
+    flags.push("CRIMINAL HISTORY - Potential Suitability Grounds for Refusal.");
     score -= 10;
   }
-  if (answers.previous_refusals === 'yes_multiple') {
-    flags.push("Multiple previous refusals indicate a high risk of 'suitability' issues.");
-    score -= 5;
+  if (answers.overstays === true) {
+    flags.push("PREVIOUS OVERSTAY - Major barrier for switching inside UK.");
+    score -= 8;
   }
-  if (answers.security_ban === true) {
-    flags.push("An existing security or immigration ban is a critical barrier.");
-    score -= 10;
+  if (answers.previous_refusals === true) {
+    flags.push("PREVIOUS REFUSAL - Case requires extra scrutiny for suitability.");
+    score -= 4;
   }
-  if (answers.current_location === 'in_uk_no_visa') {
-    flags.push("Current status in the UK without a valid visa makes in-country switching impossible.");
+  if (answers.work_without_permission === true) {
+    flags.push("UNAUTHORISED WORK - Breach of previous visa conditions identified.");
     score -= 8;
   }
 
-  // --- Route Specific Logic ---
+  // --- Route Specifics ---
   if (route === 'Spouse Visa') {
-    const income = parseFloat(answers.annual_income || "0");
-    const savings = parseFloat(answers.savings_amount || "0");
-    
-    // As of 2024, the threshold is £29,000 for standard spouse visas
-    if (income < 29000 && savings < 16000) {
-      flags.push("Current combined income/savings appear to be below the £29,000 threshold.");
+    // Financial (Appendix FM)
+    if (answers.income_band === 'under_29k') {
+      flags.push("INCOME BELOW THRESHOLD - Current £29,000 baseline not met.");
       score -= 5;
-    } else if (income < 32000) {
-      flags.push("Income is close to the mandatory threshold; verification of 6 months' payslips is critical.");
-      score += 1;
-    } else {
-      score += 5;
+    }
+    
+    // Relationship
+    if (answers.rel_evidence && answers.rel_evidence.length < 3) {
+      flags.push("WEAK RELATIONSHIP EVIDENCE - Insufficient joint documentation indicated.");
+      score -= 2;
     }
 
-    if (answers.relationship_type === 'other') {
-      flags.push("The selected relationship type may not fit standard eligibility categories without extra proof.");
-      score -= 2;
+    if (answers.living_arrangement === 'separate') {
+      flags.push("LIVING APART - High risk of 'Genuineness' scrutiny by caseworkers.");
+      score -= 3;
     }
   }
 
   if (route === 'Skilled Worker Visa') {
-    const salary = parseFloat(answers.sw_annual_salary || "0");
-    if (salary < 38700) {
-      flags.push("Salary is below the general £38,700 threshold (subject to tradeable points).");
-      score -= 4;
-    } else {
-      score += 5;
+    const salary = parseFloat(answers.sw_salary_exact || "0");
+    if (salary > 0 && salary < 38700) {
+      flags.push("SALARY BELOW NEW THRESHOLD - £38,700 requirement not met.");
+      score -= 5;
+    }
+    
+    if (answers.sponsor_license === 'no') {
+      flags.push("NO SPONSOR LICENCE - Employer unable to issue valid CoS.");
+      score -= 10;
     }
 
-    if (answers.approved_sponsor === 'no') {
-      flags.push("Employer must be an approved sponsor to issue a Certificate of Sponsorship (CoS).");
-      score -= 8;
-    }
-    if (answers.job_offer === 'no') {
-      flags.push("A confirmed job offer is mandatory for a Skilled Worker application.");
+    if (answers.job_offer_status === 'no') {
+      flags.push("NO FORMAL JOB OFFER - Application is premature.");
       score -= 5;
     }
   }
@@ -70,32 +66,35 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
   let summary = "";
   let nextSteps: string[] = [];
 
-  if (score >= 5) {
+  if (score >= 4) {
     verdict = 'likely';
     riskLevel = 'LOW';
-    summary = "Based on your inputs, you meet the primary published requirements for this route. Your focus should be on perfect documentation.";
+    summary = "Your profile appears strongly aligned with public rules. Your primary task is ensuring documentation quality matches Home Office standards.";
     nextSteps = [
-      "Gather your original documents (Passport, English test, etc.)",
-      "Check the 'going rate' for your specific SOC code (if Skilled Worker)",
-      "Book a legal document review to ensure compliance."
+      "Gather your original documents based on the provided checklist.",
+      "Check the 'Going Rate' for your specific job code.",
+      "Verify English Language test validity dates.",
+      "Ensure all financial evidence covers the full 6-month period."
     ];
   } else if (score >= 0) {
     verdict = 'borderline';
     riskLevel = 'MEDIUM';
-    summary = "You meet some requirements, but key risks or 'Suitability' issues have been identified. You are in a sensitive category.";
+    summary = "You meet most core requirements, but several 'Medium Risk' flags suggest potential failure or heavy scrutiny on suitability grounds.";
     nextSteps = [
-      "Review the specific 'Flags' identified in this report.",
-      "Check if you qualify for any 'Tradeable Points' or exemptions.",
-      "Consider a consultation with an OISC-regulated adviser."
+      "Address the specific risk flags identified in this report.",
+      "Obtain formal Employer letters to clarify any income gaps.",
+      "Double-check your immigration history dates precisely.",
+      "Consult a solicitor for a second opinion on suitability risks."
     ];
   } else {
     verdict = 'unlikely';
     riskLevel = 'HIGH';
-    summary = "Significant barriers have been identified. Submitting an application now carries a high risk of refusal and loss of Home Office fees.";
+    summary = "Significant barriers have been identified. Submitting an application now carries a very high risk of refusal and loss of UKVI fees.";
     nextSteps = [
-      "DO NOT apply yet. Address the mandatory refusal grounds first.",
-      "Check if your sponsor can increase salary or provide different evidence.",
-      "Seek formal legal advice before taking further steps."
+      "DO NOT apply yet. Address mandatory refusal grounds immediately.",
+      "See if your sponsor can adjust salary or sponsorship terms.",
+      "Obtain formal OISC or Solicitor advice before proceeding.",
+      "Check if any exemptions or human rights grounds apply to your case."
     ];
   }
 

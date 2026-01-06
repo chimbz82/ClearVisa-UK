@@ -18,27 +18,22 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
   const [currentStep, setCurrentStep] = useState(0);
   const [isReviewing, setIsReviewing] = useState(false);
 
-  // Stage 1 subset: Core identity and route questions
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
 
   const getVisibleQuestions = () => {
     return QUESTIONS.filter(q => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-      // If they haven't paid or chose basic, only show stage 1.
       if (!isPaid || selectedPlan === 'basic') {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'full', route, answers });
       }
-      // Full/Pro tiers see all valid questions for their route
       return q.showIf({ tier: 'full', route, answers });
     });
   };
 
   const visibleQuestions = getVisibleQuestions();
 
-  // Handle re-entry if isPaid flips to true while in the questionnaire
   useEffect(() => {
     if (isPaid && currentStep === 0 && !isReviewing) {
-      // Auto-jump to the first unanswered question in the newly expanded list
       const firstUnansweredIndex = visibleQuestions.findIndex(q => answers[q.id] === undefined);
       if (firstUnansweredIndex !== -1) {
         setCurrentStep(firstUnansweredIndex);
@@ -83,7 +78,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
         <div className="space-y-4 mb-10">
           {visibleQuestions.map((q, idx) => (
             <div key={q.id} className="app-card !p-4 flex justify-between items-center group">
-              <div>
+              <div className="flex-grow pr-4">
                 <p className="text-caption text-slate-400 mb-1">{q.label}</p>
                 <p className="text-small font-bold text-navy">
                   {Array.isArray(answers[q.id]) 
@@ -93,7 +88,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
               </div>
               <button 
                 onClick={() => handleEdit(idx)}
-                className="text-small font-bold text-accent hover:underline uppercase tracking-widest"
+                className="text-small font-bold text-accent hover:underline uppercase tracking-widest flex-shrink-0"
               >
                 Edit
               </button>
@@ -102,10 +97,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
         </div>
         <div className="flex flex-col gap-4">
           <Button onClick={() => onComplete(answers)} fullWidth size="lg">
-            Confirm & Continue
+            Confirm & run assessment
           </Button>
           <button onClick={() => setIsReviewing(false)} className="text-small font-bold text-slate-400 uppercase tracking-widest py-3">
-            Go Back
+            Go back
           </button>
         </div>
       </div>
@@ -115,8 +110,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
   if (!activeQuestion && visibleQuestions.length > 0) {
     return (
       <div className="py-20 text-center app-card">
-        <h3 className="text-h3 text-rose-600 mb-4">Assessment Flow Interrupted</h3>
-        <p className="text-body mb-8">We encountered a configuration error at this step. Please refresh or return home.</p>
+        <h3 className="text-h3 text-rose-600 mb-4">Assessment Flow Error</h3>
+        <p className="text-body mb-8">We encountered an issue loading this step. Please refresh or return home.</p>
         <Button onClick={onCancel} variant="outline">Back to Home</Button>
       </div>
     );
@@ -126,62 +121,65 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id];
+    const isAnswered = val !== undefined && val !== "" && (Array.isArray(val) ? val.length > 0 : true);
 
     switch (q.type) {
       case 'boolean':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="grid grid-cols-2 gap-6">
               <button 
                 onClick={() => handleAnswer(true)}
-                className={`py-8 rounded-2xl border-2 text-h3 transition-all ${val === true ? 'border-navy bg-navy text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-navy hover:text-navy'}`}
+                className={`py-10 rounded-2xl border-2 text-h3 transition-all ${val === true ? 'border-navy bg-navy text-white shadow-lg' : 'border-slate-200 bg-white text-slate-500 hover:border-navy hover:text-navy'}`}
               >
                 Yes
               </button>
               <button 
                 onClick={() => handleAnswer(false)}
-                className={`py-8 rounded-2xl border-2 text-h3 transition-all ${val === false ? 'border-navy bg-navy text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-navy hover:text-navy'}`}
+                className={`py-10 rounded-2xl border-2 text-h3 transition-all ${val === false ? 'border-navy bg-navy text-white shadow-lg' : 'border-slate-200 bg-white text-slate-500 hover:border-navy hover:text-navy'}`}
               >
                 No
               </button>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={val === undefined}>
-              Next question
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              {isPaid ? "Next step" : "Next"}
             </Button>
           </div>
         );
       case 'singleSelect':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="space-y-4">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
                   onClick={() => handleAnswer(opt.value)}
-                  className={`w-full p-6 text-left border-2 rounded-2xl text-body font-bold transition-all flex justify-between items-center ${val === opt.value ? 'border-navy bg-navy/5 text-navy' : 'border-slate-100 bg-white hover:border-slate-200'}`}
+                  className={`w-full p-6 text-left border-2 rounded-2xl text-body font-bold transition-all flex justify-between items-center ${val === opt.value ? 'border-navy bg-navy text-white shadow-md' : 'border-slate-100 bg-white text-navy hover:border-slate-200'}`}
                 >
                   {opt.label}
-                  {val === opt.value && <span className="text-accent">●</span>}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${val === opt.value ? 'border-white bg-accent' : 'border-slate-200'}`}>
+                    {val === opt.value && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                  </div>
                 </button>
               ))}
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={val === undefined}>
-              Next question
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              {isPaid ? "Next step" : "Next"}
             </Button>
           </div>
         );
       case 'multiSelect':
         const currentMulti = (val as string[]) || [];
         return (
-          <div className="space-y-6">
-            <div className="space-y-4">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
                   onClick={() => toggleMultiSelect(opt.value)}
-                  className={`w-full p-5 text-left border-2 rounded-2xl text-body font-bold transition-all flex gap-4 items-center ${currentMulti.includes(opt.value) ? 'border-accent bg-accent/5' : 'border-slate-100 bg-white'}`}
+                  className={`p-5 text-left border-2 rounded-2xl text-small font-bold transition-all flex gap-4 items-center ${currentMulti.includes(opt.value) ? 'border-navy bg-navy text-white shadow-md' : 'border-slate-100 bg-white text-navy hover:border-slate-200'}`}
                 >
-                  <div className={`w-6 h-6 rounded border-2 flex items-center justify-center ${currentMulti.includes(opt.value) ? 'bg-accent border-accent text-white' : 'border-slate-200'}`}>
+                  <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 ${currentMulti.includes(opt.value) ? 'bg-accent border-white text-white' : 'border-slate-200'}`}>
                     {currentMulti.includes(opt.value) && '✓'}
                   </div>
                   {opt.label}
@@ -189,7 +187,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
               ))}
             </div>
             <Button onClick={next} fullWidth size="lg" disabled={currentMulti.length === 0}>
-              Next question
+              {isPaid ? "Next step" : "Next"}
             </Button>
           </div>
         );
@@ -198,13 +196,13 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
       case 'shortText':
       case 'longText':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {q.type === 'longText' ? (
               <textarea 
                 value={val || ""}
                 onChange={(e) => handleAnswer(e.target.value)}
                 placeholder={q.placeholder}
-                className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-body font-semibold min-h-[150px]"
+                className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-body font-semibold min-h-[150px] transition-all"
               />
             ) : (
               <input 
@@ -212,17 +210,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
                 placeholder={q.placeholder || "Type your answer..."}
                 value={val || ""}
                 onChange={(e) => handleAnswer(e.target.value)}
-                className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner"
+                className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner transition-all"
                 autoFocus
               />
             )}
-            <Button onClick={next} fullWidth size="lg" disabled={val === undefined || val === ""}>
-              Next question
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
+              {isPaid ? "Next step" : "Next"}
             </Button>
           </div>
         );
       default:
-        return <div className="p-4 bg-amber-50 text-amber-700 rounded-xl">Renderer for {q.type} not found.</div>;
+        return <div className="p-4 bg-amber-50 text-amber-700 rounded-xl">Field type error.</div>;
     }
   };
 
@@ -232,8 +230,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
     <div className="max-w-[720px] mx-auto min-h-[550px] flex flex-col pt-4">
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-caption text-slate-400">
-            {isPaid ? (selectedPlan === 'basic' ? 'Basic Summary' : 'Professional Audit') : 'Pre-Check Screen'} • Step {currentStep + 1} of {visibleQuestions.length}
+          <span className="text-caption text-slate-400 font-bold">
+            {isPaid ? (selectedPlan === 'basic' ? 'Basic Summary' : 'Professional Audit') : 'Free Pre-Check'} • Step {currentStep + 1} of {visibleQuestions.length}
           </span>
           <span className="text-small font-bold text-navy">{progress}%</span>
         </div>
@@ -243,7 +241,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ onComplete, onCancel, isP
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h3 className="text-h3 mb-4 text-navy tracking-tight">{activeQuestion.label}</h3>
+        <h3 className="text-h2 mb-4 text-navy tracking-tight leading-tight">{activeQuestion.label}</h3>
         {activeQuestion.helpText && (
           <p className="text-small text-slate-500 mb-10 leading-relaxed font-medium">
             {activeQuestion.helpText}
