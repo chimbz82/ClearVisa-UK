@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -15,8 +16,6 @@ import ReportTemplate from './components/ReportTemplate';
 import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
-import PartnerSection from './components/PartnerSection';
-import { triggerReportPdfDownload } from './utils/downloadPdf';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -91,7 +90,6 @@ const AppContent: React.FC = () => {
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
 
-  // Define core questions that always show for the free pre-check
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
@@ -99,28 +97,24 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      // Tier determines question depth
       let tier = isPaid ? (selectedPlan === 'humanReview' ? 'human' : (selectedPlan === 'full' ? 'full' : 'basic')) : 'basic';
       
-      // If not paid yet, only show Stage 1
       if (!isPaid) {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
-      // If paid Basic, only show Stage 1 (already answered) or core
       if (selectedPlan === 'basic') {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
 
-      // If paid Professional or Professional Plus, show all applicable questions for that tier
       return q.showIf({ tier: selectedPlan === 'humanReview' ? 'human' : 'full', route, answers });
     });
   };
 
-  const handleStartCheck = () => {
+  const handleStartCheck = (planId?: PlanId) => {
     setAnswers({});
     setIsPaid(false);
-    setSelectedPlan(null);
+    setSelectedPlan(planId || null);
     setViewState('questionnaire');
     window.scrollTo(0, 0);
   };
@@ -142,7 +136,6 @@ const AppContent: React.FC = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
     
-    // If it's basic, we go straight to report using current answers
     if (selectedPlan === 'basic') {
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
@@ -151,7 +144,6 @@ const AppContent: React.FC = () => {
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
     } else {
-      // If professional or plus, we go back to questionnaire to answer the extra questions
       setViewState('questionnaire');
     }
     window.scrollTo(0, 0);
@@ -182,7 +174,7 @@ const AppContent: React.FC = () => {
       case 'questionnaire':
         return (
           <div className="bg-white min-h-screen">
-            <Header onStartCheck={handleStartCheck} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
+            <Header onStartCheck={() => handleStartCheck()} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <div className="pt-24 pb-12 app-container">
               <Questionnaire 
                 onComplete={isPaid ? handleFullAssessmentComplete : handleQuickCheckComplete} 
@@ -268,7 +260,7 @@ const AppContent: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
-                <Button onClick={triggerReportPdfDownload} variant="navy" size="sm">Download PDF</Button>
+                <Button onClick={() => window.print()} variant="navy" size="sm">Download PDF</Button>
               </div>
             </div>
             <div id="report-print-root">
@@ -288,9 +280,9 @@ const AppContent: React.FC = () => {
       default:
         return (
           <div className="no-print">
-            <Header onStartCheck={handleStartCheck} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
+            <Header onStartCheck={() => handleStartCheck()} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <main>
-              <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
+              <Hero onStartCheck={() => handleStartCheck()} onScrollToSection={scrollToSection} />
               <TrustStrip />
               <div className="app-container section-py">
                 <HowItWorks />
@@ -304,8 +296,7 @@ const AppContent: React.FC = () => {
                 <WhatYouGet />
               </div>
               <Pricing onStartCheck={(planId) => {
-                setSelectedPlan(planId as PlanId);
-                handleStartCheck();
+                handleStartCheck(planId as PlanId);
               }} />
               <div className="bg-white">
                 <div className="app-container section-py">
