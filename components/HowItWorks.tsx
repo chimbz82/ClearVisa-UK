@@ -23,14 +23,14 @@ const HowItWorks: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step, idx) => (
-            <div key={idx} className="app-card flex flex-col min-h-[200px] p-6 hover-card">
+            <div key={idx} className="app-card flex flex-col min-h-[220px] p-6 hover-card">
               <div className="w-10 h-10 bg-white border border-slate-100 text-[#041229] rounded-lg flex items-center justify-center text-sm font-bold mb-6">
                 {idx + 1}
               </div>
               <h3 className="text-lg font-bold text-[#041229] mb-3 leading-tight">
                 {step.title}
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-sm text-slate-500 leading-relaxed font-medium">
                 {step.desc}
               </p>
             </div>
@@ -39,7 +39,7 @@ const HowItWorks: React.FC = () => {
 
         <div className="mt-8 text-center">
           <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest italic">
-            You stay in control: no automatic referrals, no unexpected calls.
+            YOU STAY IN CONTROL: NO AUTOMATIC REFERRALS, NO UNEXPECTED CALLS.
           </p>
         </div>
       </div>

@@ -19,7 +19,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.1em]">ClearVisa UK – UK Visa Pre-Check</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[#041229] mb-6 leading-[1.1]">
+            <h1 className="text-4xl sm:text-5_xl font-bold tracking-tight text-[#041229] mb-6 leading-[1.1]">
               Check your UK visa eligibility in minutes, <br/>
               <span className="text-[#2BB24C]">before you spend thousands.</span>
             </h1>
@@ -80,20 +80,20 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -left-4 bg-white p-5 rounded-2xl shadow-2xl border border-slate-100 min-w-[260px] animate-in slide-in-from-left duration-700 delay-300">
+              <div className="absolute -bottom-4 -left-4 bg-white p-5 rounded-2xl shadow-2xl border border-slate-100 min-w-[280px] animate-in slide-in-from-left duration-700 delay-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-[#2BB24C] text-white rounded-full flex items-center justify-center text-sm flex-shrink-0 shadow-sm">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[14px] font-black text-[#2BB24C] block leading-tight uppercase tracking-tight">Likely Eligible</span>
+                    <span className="text-[14px] font-black text-[#2BB24C] block leading-tight uppercase tracking-tight">LIKELY ELIGIBLE</span>
                     <span className="text-[10px] text-slate-400 font-bold block leading-tight">Based on example answers</span>
                   </div>
                 </div>
                 
                 <div className="mb-4">
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Compliance score</span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">COMPLIANCE SCORE</span>
                     <span className="text-[9px] font-black text-[#2BB24C] uppercase tracking-widest">85%</span>
                   </div>
                   <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -104,15 +104,15 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 <div className="space-y-1.5 border-t border-slate-50 pt-3">
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">No lawyer required to use tool</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-tight">NO LAWYER REQUIRED TO USE TOOL</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Instant result</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-tight">INSTANT ELIGIBILITY PREVIEW</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Does not submit an application</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-tight">DOES NOT SUBMIT AN APPLICATION</span>
                   </div>
                 </div>
               </div>

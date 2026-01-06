@@ -51,7 +51,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     <span className="text-[11px] text-slate-400 font-black uppercase tracking-widest">once</span>
                   </div>
                   <p className="text-xs text-slate-600 font-bold leading-relaxed min-h-[48px]">
-                    {plan.description}
+                    {isProPlus ? "For complex or borderline cases where evidence and wording really matter." : plan.description}
                   </p>
                 </div>
                 
@@ -64,6 +64,12 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                         {feat}
                       </li>
                     ))}
+                    {isProPlus && (
+                      <li className="flex items-start gap-3 text-[13px] text-slate-700 font-semibold leading-tight tracking-tight">
+                        <svg className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#1877F2]" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        Summary written specifically for solicitor/advisor discussion
+                      </li>
+                    )}
                   </ul>
                 </div>
 
@@ -81,7 +87,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                   <div className="mt-5 text-center space-y-2">
                     {isProPlus && (
                       <p className="text-[10px] text-[#1877F2] font-black uppercase tracking-tight mb-2">
-                        Most recommended for spouse visas and previous refusals.
+                        MOST RECOMMENDED FOR SPOUSE VISAS AND PREVIOUS REFUSALS
                       </p>
                     )}
                     <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
@@ -89,9 +95,9 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     </p>
                     <div className="text-[9px] text-slate-400 font-medium leading-tight">
                       By proceeding, you agree to our{' '}
-                      <button onClick={() => onNavigateLegal('terms')} className="underline hover:text-slate-600">Terms</button>,{' '}
-                      <button onClick={() => onNavigateLegal('privacy')} className="underline hover:text-slate-600">Privacy</button>, and{' '}
-                      <button onClick={() => onNavigateLegal('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
+                      <button onClick={() => onNavigateLegal('terms')} className="underline hover:text-slate-600 transition-colors">Terms</button>,{' '}
+                      <button onClick={() => onNavigateLegal('privacy')} className="underline hover:text-slate-600 transition-colors">Privacy</button>, and{' '}
+                      <button onClick={() => onNavigateLegal('refunds')} className="underline hover:text-slate-600 transition-colors">Refund Policy</button>.
                     </div>
                   </div>
                 </div>

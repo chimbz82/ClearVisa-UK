@@ -45,11 +45,11 @@ const WhoItsFor: React.FC = () => {
               <h3 className="text-base font-bold text-[#041229] mb-2 leading-tight">
                 {card.title}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed flex-grow italic font-medium">
+              <p className="text-xs text-slate-500 leading-relaxed flex-grow font-medium">
                 {card.desc}
               </p>
               <div className="mt-6 pt-4 border-t border-slate-50 text-[10px] font-bold uppercase tracking-widest text-[#1877F2]">
-                Available now
+                AVAILABLE NOW
               </div>
             </div>
           ))}
