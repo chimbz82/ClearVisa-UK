@@ -48,7 +48,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const next = () => {
     const val = answers[activeQuestion.id];
-    // Improved validation logic
     const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText') 
       ? (val !== undefined && val !== null && val !== "")
       : (activeQuestion.type === 'multiSelect')
@@ -75,41 +74,32 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   if (isReviewing) {
     return (
-      <div className="max-w-[800px] mx-auto pt-8 text-left animate-in fade-in slide-in-from-bottom-4">
-        <div className="mb-10">
-          <h2 className="text-h2 mb-2 text-navy">Review your audit details</h2>
-          <p className="text-body text-slate-500 font-medium">Please verify your responses before we generate your final report.</p>
+      <div className="max-w-2xl mx-auto pt-8 animate-fade-up">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-2 text-[#041229]">Review your audit details</h2>
+          <p className="text-sm text-slate-500 font-medium">Verify your responses before generating the report.</p>
         </div>
         
-        <div className="space-y-2 mb-12">
+        <div className="space-y-3 mb-10">
           {visibleQuestionsList.map((q, idx) => (
-            <div key={q.id} className="bg-white border border-slate-100 p-5 rounded-2xl flex justify-between items-center group hover:border-accent/30 transition-all shadow-sm">
-              <div className="flex-grow pr-6">
-                <p className="text-[10px] text-slate-400 mb-1 font-black uppercase tracking-widest">{q.section} • {q.label}</p>
-                <p className="text-small font-bold text-navy">
+            <div key={q.id} className="bg-white border border-slate-100 p-4 rounded-xl flex justify-between items-center group transition-all shadow-sm">
+              <div className="flex-grow pr-4">
+                <p className="text-[10px] text-slate-400 mb-0.5 font-bold uppercase tracking-wider">{q.section} • {q.label}</p>
+                <p className="text-sm font-semibold text-[#041229]">
                   {Array.isArray(answers[q.id]) 
                     ? (answers[q.id] as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
                     : String(answers[q.id] === true ? 'Yes' : answers[q.id] === false ? 'No' : 
                         q.options?.find(o => o.value === answers[q.id])?.label || answers[q.id] || '—')}
                 </p>
               </div>
-              <button 
-                onClick={() => handleEdit(idx)}
-                className="text-[11px] font-black text-accent hover:bg-accent/10 px-4 py-2 rounded-lg uppercase tracking-widest transition-colors"
-              >
-                Edit
-              </button>
+              <button onClick={() => handleEdit(idx)} className="text-[11px] font-bold text-[#1877F2] hover:bg-slate-50 px-3 py-1.5 rounded uppercase tracking-wider transition-colors">Edit</button>
             </div>
           ))}
         </div>
         
-        <div className="flex flex-col gap-4">
-          <Button onClick={() => onComplete(answers)} fullWidth size="lg">
-            Finalize & generate report
-          </Button>
-          <button onClick={() => setIsReviewing(false)} className="text-caption font-black text-slate-400 hover:text-navy uppercase tracking-[0.2em] py-4">
-            Back to questionnaire
-          </button>
+        <div className="flex flex-col gap-3">
+          <Button onClick={() => onComplete(answers)} fullWidth size="lg">Finalize & generate report</Button>
+          <button onClick={() => setIsReviewing(false)} className="text-xs font-bold text-slate-400 hover:text-[#041229] uppercase tracking-widest py-3 transition-colors">Back to questionnaire</button>
         </div>
       </div>
     );
@@ -128,37 +118,27 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     switch (q.type) {
       case 'boolean':
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-2 gap-6">
-              <button 
-                onClick={() => { handleAnswer(true); }}
-                className={`py-12 rounded-2xl border-2 text-h3 transition-all ${val === true ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-navy hover:text-navy'}`}
-              >
-                Yes
-              </button>
-              <button 
-                onClick={() => { handleAnswer(false); }}
-                className={`py-12 rounded-2xl border-2 text-h3 transition-all ${val === false ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-navy hover:text-navy'}`}
-              >
-                No
-              </button>
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <button onClick={() => handleAnswer(true)} className={`py-10 rounded-xl border-2 text-xl font-bold transition-all ${val === true ? 'border-[#041229] bg-[#041229] text-white shadow-lg' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>Yes</button>
+              <button onClick={() => handleAnswer(false)} className={`py-10 rounded-xl border-2 text-xl font-bold transition-all ${val === false ? 'border-[#041229] bg-[#041229] text-white shadow-lg' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>No</button>
             </div>
             <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
       case 'singleSelect':
         return (
-          <div className="space-y-8">
-            <div className="space-y-3">
+          <div className="space-y-6">
+            <div className="space-y-2">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
                   onClick={() => handleAnswer(opt.value)}
-                  className={`w-full p-6 text-left border-2 rounded-2xl text-body font-bold transition-all flex justify-between items-center ${val === opt.value ? 'border-navy bg-navy text-white shadow-md' : 'border-slate-100 bg-white text-navy hover:border-slate-200'}`}
+                  className={`w-full p-5 text-left border-2 rounded-xl text-sm font-semibold transition-all flex justify-between items-center ${val === opt.value ? 'border-[#1877F2] bg-[#1877F2]/5 text-[#1877F2]' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
                 >
                   {opt.label}
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${val === opt.value ? 'border-white bg-accent' : 'border-slate-200'}`}>
-                    {val === opt.value && <div className="w-2.5 h-2.5 bg-white rounded-full"></div>}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${val === opt.value ? 'border-[#1877F2] bg-[#1877F2]' : 'border-slate-200'}`}>
+                    {val === opt.value && <div className="w-2 h-2 bg-white rounded-full"></div>}
                   </div>
                 </button>
               ))}
@@ -169,15 +149,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       case 'multiSelect':
         const currentMulti = (val as string[]) || [];
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
                   onClick={() => toggleMultiSelect(opt.value)}
-                  className={`p-5 text-left border-2 rounded-2xl text-small font-bold transition-all flex gap-4 items-center ${currentMulti.includes(opt.value) ? 'border-navy bg-navy text-white shadow-md' : 'border-slate-100 bg-white text-navy hover:border-slate-200'}`}
+                  className={`p-4 text-left border-2 rounded-xl text-xs font-semibold transition-all flex gap-3 items-center ${currentMulti.includes(opt.value) ? 'border-[#1877F2] bg-[#1877F2]/5 text-[#1877F2]' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
                 >
-                  <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${currentMulti.includes(opt.value) ? 'bg-accent border-white text-white' : 'border-slate-200 bg-slate-50'}`}>
+                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${currentMulti.includes(opt.value) ? 'bg-[#1877F2] border-[#1877F2] text-white' : 'border-slate-200 bg-slate-50'}`}>
                     {currentMulti.includes(opt.value) && '✓'}
                   </div>
                   <span className="leading-tight uppercase tracking-tight">{opt.label}</span>
@@ -191,23 +171,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       case 'shortText':
       case 'longText':
         return (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {q.type === 'longText' ? (
-              <textarea 
-                value={val || ""}
-                onChange={(e) => handleAnswer(e.target.value)}
-                placeholder={q.placeholder}
-                className="w-full p-8 bg-slate-50 border-2 border-slate-100 rounded-[32px] focus:border-navy outline-none text-body font-bold min-h-[200px] transition-all shadow-inner leading-relaxed"
-              />
+              <textarea value={val || ""} onChange={(e) => handleAnswer(e.target.value)} placeholder={q.placeholder} className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-[#041229] outline-none text-sm font-semibold min-h-[160px] transition-all" />
             ) : (
-              <input 
-                type={q.type === 'shortText' ? 'text' : 'number'}
-                placeholder={q.placeholder || "Enter details..."}
-                value={val || ""}
-                onChange={(e) => handleAnswer(e.target.value)}
-                className="w-full p-8 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:border-navy outline-none text-h3 font-black shadow-inner transition-all text-navy uppercase tracking-tight"
-                autoFocus
-              />
+              <input type={q.type === 'shortText' ? 'text' : 'number'} placeholder={q.placeholder || "Enter details..."} value={val || ""} onChange={(e) => handleAnswer(e.target.value)} className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]" autoFocus />
             )}
             <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
@@ -220,38 +188,26 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const progress = Math.round(((currentStep + 1) / visibleQuestionsList.length) * 100);
 
   return (
-    <div className="max-w-[720px] mx-auto min-h-[550px] flex flex-col pt-4">
-      <div className="mb-12">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-caption text-slate-400 font-black uppercase tracking-[0.2em]">
-            Step {currentStep + 1} of {visibleQuestionsList.length} • {activeQuestion.section}
-          </span>
-          <span className="text-small font-black text-navy">{progress}%</span>
+    <div className="max-w-2xl mx-auto min-h-[480px] flex flex-col pt-4">
+      <div className="mb-10">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Step {currentStep + 1} of {visibleQuestionsList.length} • {activeQuestion.section}</span>
+          <span className="text-xs font-bold text-[#041229]">{progress}% Complete</span>
         </div>
-        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-navy transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
+        <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-full bg-[#1877F2] transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
 
-      <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
-        <h3 className="text-h2 mb-4 text-navy tracking-tight font-black leading-tight">{activeQuestion.label}</h3>
-        {activeQuestion.helpText && (
-          <p className="text-small text-slate-500 mb-10 leading-relaxed font-bold italic uppercase tracking-tight">
-            {activeQuestion.helpText}
-          </p>
-        )}
-        <div className="mb-12">
-          {renderField(activeQuestion)}
-        </div>
+      <div className="flex-grow animate-fade-up text-left">
+        <h3 className="text-2xl font-bold mb-4 text-[#041229] tracking-tight leading-snug">{activeQuestion.label}</h3>
+        {activeQuestion.helpText && <p className="text-xs text-slate-500 mb-8 leading-relaxed font-medium italic">{activeQuestion.helpText}</p>}
+        <div className="mb-10">{renderField(activeQuestion)}</div>
       </div>
 
-      <div className="flex items-center justify-between pt-10 border-t border-slate-100 mt-auto">
-        <button onClick={back} disabled={currentStep === 0} className="text-caption font-black text-slate-400 hover:text-navy disabled:opacity-0 transition-colors px-4 py-2 uppercase tracking-widest">
-          Back
-        </button>
-        <button onClick={onCancel} className="text-caption font-black text-rose-400 hover:text-rose-600 transition-colors px-4 py-2 uppercase tracking-widest">
-          Quit
-        </button>
+      <div className="flex items-center justify-between pt-8 border-t border-slate-100 mt-auto">
+        <button onClick={back} disabled={currentStep === 0} className="text-[11px] font-bold text-slate-400 hover:text-[#041229] disabled:opacity-0 transition-colors uppercase tracking-widest">Back</button>
+        <button onClick={onCancel} className="text-[11px] font-bold text-rose-400 hover:text-rose-600 transition-colors uppercase tracking-widest">Quit</button>
       </div>
     </div>
   );

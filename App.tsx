@@ -70,10 +70,9 @@ export const PLANS: PlanConfig[] = [
     description: 'Enhanced professional audit with deeper evidence gap analysis.',
     includedFeatures: [
       'Everything in Professional Audit',
-      'Personalised Evidence Gap Analysis',
-      'Extended questionnaire with narrative fields',
-      'Deeper relationship/career analysis',
-      'Additional compliance review layers'
+      'Deeper evidence gap highlights (where documents or timeline look weak)',
+      'More granular risk explanation per rule category',
+      'Additional practical preparation tips before speaking to a solicitor'
     ]
   }
 ];
@@ -210,9 +209,10 @@ const AppContent: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Report (£29)</Button>
                  <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
+                 <Button onClick={() => { setSelectedPlan('humanReview'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
               </div>
               
-              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-caption text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
+              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
                 Cancel
               </button>
             </div>
@@ -224,7 +224,7 @@ const AppContent: React.FC = () => {
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
             <div className="max-w-[600px] w-full app-card border border-slate-200">
               <div className="text-center mb-8">
-                <span className="text-caption text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
+                <span className="text-[11px] text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
                 <h2 className="text-h2 mb-2 text-navy">Unlock your assessment</h2>
                 <p className="text-body text-slate-600 font-medium">{plan.description}</p>
               </div>
@@ -243,7 +243,7 @@ const AppContent: React.FC = () => {
                 Pay £{plan.priceGBP} & Continue
               </Button>
               
-              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-caption text-slate-400 hover:text-navy font-bold uppercase tracking-widest">
+              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">
                 Go back
               </button>
             </div>

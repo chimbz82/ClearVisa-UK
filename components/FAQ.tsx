@@ -9,15 +9,17 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle }) => (
-  <div className="bg-white rounded-2xl mb-4 overflow-hidden border border-slate-100 shadow-sm transition-all hover:shadow-md">
-    <button onClick={onToggle} className="w-full flex items-center justify-between p-6 text-left focus:outline-none group">
-      <span className="text-base font-bold text-[#0B1F3B] group-hover:text-teal-600 transition-colors tracking-tight">{question}</span>
-      <span className={`flex-shrink-0 ml-4 transform transition-transform duration-300 ${isOpen ? 'rotate-180 text-teal-600' : 'text-slate-400'}`}>
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" /></svg>
+  <div className="border-b border-slate-100 last:border-0 transition-all">
+    <button onClick={onToggle} className="w-full flex items-center justify-between py-4 text-left focus:outline-none group">
+      <span className={`text-base font-semibold transition-colors ${isOpen ? 'text-[#1877F2]' : 'text-[#041229]'}`}>
+        {question}
+      </span>
+      <span className={`flex-shrink-0 ml-4 transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#1877F2]' : 'text-slate-400'}`}>
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </span>
     </button>
-    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-      <div className="p-6 pt-0 text-small text-slate-600 leading-relaxed font-medium">
+    <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isOpen ? 'max-h-96 opacity-100 pb-4' : 'max-h-0 opacity-0'}`}>
+      <div className="text-sm sm:text-base text-slate-500 leading-relaxed font-normal">
         <p className="whitespace-pre-line">{answer}</p>
       </div>
     </div>
@@ -39,12 +41,13 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="section-py bg-white scroll-mt-[80px]">
-      <div className="max-w-[800px] mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-h2 text-[#0B1F3B] uppercase tracking-tight">{t('section.faq.title')}</h2>
+    <section id="faq" className="py-20 bg-white scroll-mt-20">
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="text-center mb-10">
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Support</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#041229]">Frequently asked questions</h2>
         </div>
-        <div className="space-y-3">
+        <div className="app-card px-6 sm:px-8">
           {faqs.map((faq, idx) => (
             <FAQItem
               key={idx}

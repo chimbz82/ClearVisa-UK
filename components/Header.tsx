@@ -27,64 +27,56 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-white/0 lg:bg-transparent py-5'
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-slate-100' : 'bg-transparent py-5'
     }`}>
-      <div className="max-w-[1140px] mx-auto px-6">
+      <div className="app-container">
         <div className="flex justify-between items-center">
-          <div className="flex-shrink-0 flex items-center">
-            <button 
-              onClick={onNavigateHome} 
-              className="flex items-center gap-2 focus:outline-none cursor-pointer"
-              aria-label="Home"
-            >
-              <span className="text-lg font-black uppercase tracking-tighter text-[#0B1F3B]">
-                {t('nav.logo')}
+          <div className="flex-shrink-0">
+            <button onClick={onNavigateHome} className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 bg-[#041229] rounded flex items-center justify-center text-white font-black group-hover:bg-[#1877F2] transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-7.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <span className="text-lg font-bold tracking-tight text-[#041229]">
+                ClearVisa <span className="text-[#1877F2]">UK</span>
               </span>
             </button>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-2">
+          <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => onScrollToSection(link.id)}
-                className={`text-[13px] font-bold px-4 py-2 uppercase tracking-wide transition-colors ${
-                  isScrolled ? 'text-slate-600 hover:text-[#0B1F3B]' : 'text-slate-700 lg:text-slate-600 hover:text-[#0B1F3B]'
-                }`}
+                className="text-[13px] font-medium px-4 py-2 transition-all rounded-full hover:text-[#1877F2] text-slate-600"
               >
                 {link.name}
               </button>
             ))}
-            <Button onClick={onStartCheck} size="sm" className="ml-4">
+            <div className="w-px h-4 bg-slate-200 mx-3"></div>
+            <Button onClick={onStartCheck} size="sm">
               {t('nav.startCheck')}
             </Button>
           </div>
 
           <div className="lg:hidden flex items-center">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-[#0B1F3B] p-2" aria-label="Toggle menu">
-              {isMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-              )}
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-[#041229] p-2 hover:bg-slate-100 rounded-lg transition-colors">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
             </button>
           </div>
         </div>
       </div>
 
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-4 shadow-xl animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden bg-white border-b border-slate-100 absolute w-full left-0 top-full p-6 space-y-4 shadow-xl">
           {navLinks.map((link) => (
-            <button 
-              key={link.id} 
-              onClick={() => { setIsMenuOpen(false); onScrollToSection(link.id); }} 
-              className="block w-full text-left text-base font-bold text-[#0B1F3B] uppercase tracking-wide"
-            >
+            <button key={link.id} onClick={() => { setIsMenuOpen(false); onScrollToSection(link.id); }} className="block w-full text-left py-3 text-sm font-semibold text-[#041229] border-b border-slate-50 last:border-0">
               {link.name}
             </button>
           ))}
-          <Button onClick={onStartCheck} fullWidth>
+          <Button onClick={onStartCheck} fullWidth size="md" className="mt-4">
             {t('nav.startCheck')}
           </Button>
         </div>

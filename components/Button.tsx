@@ -14,20 +14,20 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props 
 }) => {
-  const baseStyles = "inline-flex items-center justify-center font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none uppercase tracking-widest";
+  const baseStyles = "inline-flex items-center justify-center font-semibold transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none rounded-full";
   
   const variants = {
-    primary: "bg-accent text-white hover:bg-emerald-600 shadow-md",
-    secondary: "bg-slate-100 text-slate-700 hover:bg-slate-200",
-    navy: "bg-[#0B1F3B] text-white hover:bg-slate-800 shadow-md",
-    outline: "border-2 border-slate-200 text-slate-600 hover:border-navy hover:text-navy bg-white",
+    primary: "bg-[#2BB24C] text-white hover:bg-[#239341] shadow-sm",
+    secondary: "bg-[#1877F2] text-white hover:bg-[#1565D8] shadow-sm",
+    navy: "bg-[#041229] text-white hover:bg-[#08224d] shadow-sm",
+    outline: "border border-slate-200 text-[#041229] hover:border-[#1877F2] hover:text-[#1877F2] bg-white",
     ghost: "text-slate-500 hover:bg-slate-50",
   };
   
   const sizes = {
-    sm: "px-4 py-2 text-[12px]",
-    md: "px-6 py-3.5 text-[14px]",
-    lg: "px-8 py-4 text-[16px]",
+    sm: "px-4 py-2 text-xs",
+    md: "px-6 py-3 text-sm",
+    lg: "px-8 py-4 text-base",
   };
 
   const width = fullWidth ? "w-full" : "";
