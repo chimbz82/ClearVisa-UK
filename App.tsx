@@ -87,6 +87,7 @@ const AppContent: React.FC = () => {
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
@@ -134,6 +135,17 @@ const AppContent: React.FC = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
     
+    if (isUpgrading) {
+      setIsUpgrading(false);
+      const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+      const result = runAssessment(routeKey, answers);
+      setAssessmentResult(result);
+      setViewState('report');
+      setIsLoadingReport(true);
+      setTimeout(() => setIsLoadingReport(false), 2000);
+      return;
+    }
+
     if (selectedPlan === 'basic') {
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
@@ -271,6 +283,7 @@ const AppContent: React.FC = () => {
                   tier={selectedPlan || 'full'}
                   onUpgrade={() => {
                     setSelectedPlan('humanReview');
+                    setIsUpgrading(true);
                     setIsPaymentModalOpen(true);
                   }}
                 />
