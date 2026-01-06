@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -271,7 +272,7 @@ const AppContent: React.FC = () => {
                   tier={selectedPlan || 'full'}
                   onUpgrade={() => {
                     setSelectedPlan('humanReview');
-                    setViewState('paywall');
+                    setIsPaymentModalOpen(true);
                   }}
                 />
               )}

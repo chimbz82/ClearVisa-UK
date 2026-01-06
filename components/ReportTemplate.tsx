@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
@@ -141,40 +142,38 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {tier === 'humanReview' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
-            <section className="bg-emerald-50/50 p-10 rounded-[3rem] border-2 border-emerald-100 shadow-sm">
+            <section className="bg-teal-50/20 p-8 rounded-[40px] border border-teal-100 mb-12">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
+                <div className="w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
                 <h3 className="text-[13px] text-navy font-black uppercase tracking-widest">
                   Personalised Evidence Gap Analysis
                 </h3>
               </div>
               
-              <div className="mb-10">
-                <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
-                  Identified Gaps:
-                </h4>
-                <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-6">
+                {/* Identified Gaps */}
+                <div className="space-y-4">
+                  <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Identified Issues</h4>
                   {analysis.gaps.map((gap, idx) => (
-                    <div key={idx} className="p-5 bg-white border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
+                    <div key={idx} className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm">
                       <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
                       <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
                     </div>
                   ))}
-                  {analysis.gaps.length === 0 && <p className="text-small text-slate-400 italic">No critical gaps detected.</p>}
+                  {analysis.gaps.length === 0 && <p className="text-small text-slate-400 italic px-2">No critical gaps detected.</p>}
                 </div>
-              </div>
-              
-              <div className="pt-8 border-t border-emerald-100">
-                <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
-                  Recommended Improvements:
-                </h4>
-                <div className="grid grid-cols-1 gap-3">
-                  {analysis.improvements.map((improvement, idx) => (
-                    <div key={idx} className="flex gap-4 items-start p-5 bg-white rounded-2xl border border-emerald-100 shadow-sm hover:border-emerald-500 transition-colors">
-                      <span className="text-emerald-500 font-black text-xl flex-shrink-0 mt-0.5">→</span>
-                      <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
-                    </div>
-                  ))}
+                
+                {/* Suggested Improvements */}
+                <div className="space-y-4 pt-4 border-t border-teal-100">
+                  <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Recommended Improvements</h4>
+                  <ul className="space-y-3">
+                    {analysis.improvements.map((improvement, idx) => (
+                      <li key={idx} className="flex gap-4 items-start p-5 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-sm">
+                        <span className="text-emerald-500 font-black text-xl flex-shrink-0 mt-0.5">→</span>
+                        <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </section>
@@ -236,7 +235,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           <section>
             <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Compliance Assessment Matrix</h3>
             <div className="overflow-hidden border-2 border-slate-100 rounded-[2rem] shadow-sm">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm border-collapse">
                 <thead className="bg-slate-50 border-b-2 border-slate-100">
                   <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     <th className="px-8 py-5">Requirement</th>
@@ -246,13 +245,13 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {getComplianceMatrix().map((row, i) => (
-                    <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-8 py-5 text-navy font-black text-[13px] uppercase tracking-tight">{row.req}</td>
                       <td className="px-8 py-5 text-center">
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black shadow-sm ${
-                          row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
-                          row.status === 'WARN' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 
-                          row.status === 'FAIL' ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-400 border border-slate-200'
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black inline-block min-w-[60px] ${
+                          row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
+                          row.status === 'WARN' ? 'bg-amber-100 text-amber-700' : 
+                          row.status === 'FAIL' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-400'
                         }`}>
                           {row.status}
                         </span>
