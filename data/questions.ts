@@ -85,11 +85,12 @@ export const QUESTIONS: QuestionConfig[] = [
     showIf: () => true
   },
 
-  // --- FULL TIER EXTRAS ---
+  // --- FULL TIER EXTRAS (PAID) ---
   {
     id: 'income_sources',
     section: 'Financials',
     label: 'Which income sources apply to your household?',
+    helpText: 'You can select multiple sources if you combine income.',
     type: 'multiSelect',
     options: [
       { value: 'salaried', label: 'Salaried Employment' },
@@ -105,6 +106,7 @@ export const QUESTIONS: QuestionConfig[] = [
     id: 'rel_evidence',
     section: 'Relationship',
     label: 'Which relationship evidence do you have available?',
+    helpText: 'Select all that apply to your situation.',
     type: 'multiSelect',
     options: [
       { value: 'marriage_cert', label: 'Marriage / Civil Partnership Certificate' },
@@ -119,7 +121,8 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'acc_evidence',
     section: 'Accommodation',
-    label: 'Which accommodation evidence do you have?',
+    label: 'Which accommodation evidence can you provide?',
+    helpText: 'Multiple documents strengthen the proof of adequate housing.',
     type: 'multiSelect',
     options: [
       { value: 'tenancy', label: 'Tenancy Agreement' },
@@ -134,6 +137,7 @@ export const QUESTIONS: QuestionConfig[] = [
     id: 'immigration_facts',
     section: 'History',
     label: 'Do any of these immigration history facts apply to you?',
+    helpText: 'Be honest; these are primary causes for automated flags.',
     type: 'multiSelect',
     options: [
       { value: 'overstay', label: 'Previous UK Overstay' },
@@ -142,20 +146,6 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'illegal_work', label: 'Worked without permission' },
       { value: 'fraud', label: 'Accused of deception/fraud' },
       { value: 'none', label: 'None of the above' }
-    ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
-  },
-  {
-    id: 'main_worry',
-    section: 'Readiness',
-    label: 'What worries you most about the application?',
-    type: 'multiSelect',
-    options: [
-      { value: 'income', label: 'Meeting income thresholds' },
-      { value: 'evidence', label: 'Relationship evidence' },
-      { value: 'history', label: 'Immigration history' },
-      { value: 'documents', label: 'Document quality/formatting' },
-      { value: 'fees', label: 'Cost of application' }
     ],
     showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
   }

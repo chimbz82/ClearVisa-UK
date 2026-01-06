@@ -40,12 +40,13 @@ export const PLANS: PlanConfig[] = [
     name: 'Basic Pre-Check',
     priceGBP: 29,
     stripePriceId: 'price_basic_29',
-    description: 'A quick eligibility verdict and high-level risk pointers.',
+    description: 'Quick automated eligibility verdict and summary pointers.',
     includedFeatures: [
       'Automated eligibility verdict',
-      'High-level risk heatmap',
+      'Summary of strong vs weak areas',
+      'Key risk flag indicators',
       'Plain-English result explanation',
-      'Downloadable PDF summary'
+      'Downloadable summary (short PDF)'
     ]
   },
   {
@@ -53,12 +54,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'A comprehensive automated audit with detailed compliance checks and a tailored checklist.',
+    description: 'A comprehensive 25-point automated audit and tailored checklist.',
     includedFeatures: [
       'Everything in Basic',
-      'Per-requirement pass/fail table',
       'Personalised document checklist',
-      'Detailed risk factor breakdown',
+      'Per-requirement compliance table',
+      'Detailed automated risk breakdown',
       'Step-by-step next-actions plan',
       'Full professional PDF report'
     ]
@@ -68,12 +69,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Pro Analysis Add-On',
     priceGBP: 149,
     stripePriceId: 'price_pro_149',
-    description: 'Advanced automated deep-dive to identify hidden gaps in complex evidence scenarios.',
+    description: 'Deep automated evidence gap analysis for complex evidence scenarios.',
     includedFeatures: [
       'Everything in Professional Audit',
       'Automated evidence gap analysis',
-      'Advanced scenario compliance checks',
-      'Case improvement suggestions',
+      'Advanced rule-based compliance checks',
+      'Enhanced case improvement suggestions',
       'Common refusal risk identifiers'
     ]
   }
@@ -210,7 +211,7 @@ const AppContent: React.FC = () => {
               </div>
               <h2 className="text-h2 mb-4">Initial Result: <span className="uppercase font-black">{assessmentResult?.verdict === 'likely' ? 'Likely Eligible' : assessmentResult?.verdict === 'borderline' ? 'Borderline' : 'High Risk'}</span></h2>
               <p className="text-body text-slate-600 mb-10 font-bold uppercase tracking-tight">
-                Initial screening completed. Choose a plan to unlock your detailed report and personalized checklist.
+                Initial screening completed. Choose a plan to unlock your detailed automated audit and personalized checklist.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Unlock Basic (£29)</Button>
@@ -245,9 +246,9 @@ const AppContent: React.FC = () => {
 
               <div className="bg-emerald-50 p-6 rounded-2xl mb-10 border border-emerald-100">
                 <h4 className="text-body font-black text-emerald-800 mb-1 flex items-center gap-2 uppercase tracking-tight">
-                  🛡️ Outcome Confidence Guarantee
+                  🛡️ Confidence Guarantee
                 </h4>
-                <p className="text-small text-emerald-700 font-medium">
+                <p className="text-small text-emerald-700 font-medium text-left">
                   If your answers clearly show you are ineligible under current public rules, we refund your fee in full upon request.
                 </p>
               </div>

@@ -35,10 +35,11 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
   const getComplianceTable = () => {
     const rows = [
-      { req: "Nationality & ID", status: answers['nationality'] ? "PASS" : "INFO", detail: "Valid identification disclosed." },
-      { req: "Financial Threshold", status: (answers['income_band'] === 'under_29k' && visaRoute === 'Spouse Visa') ? "FAIL" : "PASS", detail: visaRoute === 'Spouse Visa' ? "Meets £29,000 baseline requirement." : "Meets Skilled Worker salary threshold." },
-      { req: "Immigration History", status: (answers['overstays'] || answers['criminal_history'] || answers['previous_refusals']) ? "WARN" : "PASS", detail: "Review of suitability and compliance grounds." },
-      { req: "Relationship Status", status: visaRoute === 'Spouse Visa' ? (answers['rel_evidence']?.length > 0 ? "PASS" : "FAIL") : "N/A", detail: "Evidence of genuine relationship." }
+      { req: "Nationality & ID", status: answers['nationality'] ? "PASS" : "INFO", detail: "Valid identification and nationality disclosed." },
+      { req: "Financial Threshold", status: (answers['income_band'] === 'under_29k' && visaRoute === 'Spouse Visa') ? "FAIL" : "PASS", detail: visaRoute === 'Spouse Visa' ? "£29,000 threshold check." : "Skilled Worker salary baseline check." },
+      { req: "Relationship Status", status: visaRoute === 'Spouse Visa' ? (answers['rel_evidence']?.length > 0 ? "PASS" : "FAIL") : "N/A", detail: "Proof of genuine and subsisting relationship." },
+      { req: "Immigration History", status: (answers['overstays'] || answers['criminal_history'] || answers['previous_refusals']) ? "WARN" : "PASS", detail: "Suitability and previous compliance review." },
+      { req: "Accommodation", status: answers['acc_evidence']?.length > 0 ? "PASS" : "INFO", detail: "Proof of adequate housing without public funds." }
     ];
     return rows;
   };
@@ -52,10 +53,10 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       risks.push("Refusal based on suitability grounds due to previous history.");
     }
     if (answers['rel_evidence']?.length < 3 && visaRoute === 'Spouse Visa') {
-      risks.push("Weak 'genuine and subsisting' relationship evidence.");
+      risks.push("Inability to prove a 'genuine and subsisting' relationship through objective documentation.");
     }
     if (risks.length === 0) {
-      risks.push("Incorrect document formatting (e.g. non-stamped bank statements).");
+      risks.push("Administrative errors in form completion.");
       risks.push("Employer letters missing mandatory regulatory phrases.");
     }
     return risks;
@@ -69,8 +70,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         category: 'Relationship Evidence',
         items: [
           'Official Marriage or Civil Partnership Certificate',
-          'Proof of meeting in person (stamped passport pages, photos)',
-          'Joint Tenancy or Mortgage statement (if living together)',
+          'Proof of meeting in person (stamped passport pages, boarding passes)',
+          'Evidence of joint financial responsibility (joint bank or bills)',
           ...(answers['rel_evidence'] || [])
         ]
       });
@@ -79,8 +80,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     list.push({
       category: 'Financial Documents',
       items: [
-        '6 months of bank statements (must match payslips)',
-        '6 months of original payslips',
+        '6 months of personal bank statements (must match payslips exactly)',
+        '6 months of original payslips with employer verification',
         'Signed Employer Letter (mandatory content check)',
         ...(answers['income_sources']?.includes('self_employment') ? ['Tax returns', 'Accountant certificates'] : [])
       ]
@@ -90,7 +91,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       category: 'Accommodation',
       items: [
         ...(answers['acc_evidence'] || ['Tenancy Agreement', 'Council Tax bill']),
-        'Landlord Letter (confirming no overcrowding)'
+        'Landlord Letter confirming no overcrowding and permission for partner'
       ]
     });
 
@@ -154,11 +155,11 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       </section>
 
-      {/* Professional & Pro Tier Details */}
+      {/* Professional & Pro Details */}
       {tier !== 'basic' && (
         <>
           <section className="mb-12 relative z-10">
-            <h3 className="text-caption text-navy mb-6 font-black uppercase tracking-widest border-l-4 border-navy pl-4">Requirement Compliance Table</h3>
+            <h3 className="text-caption text-navy mb-6 font-black uppercase tracking-widest border-l-4 border-navy pl-4">Requirement Compliance Matrix</h3>
             <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm">
               <table className="w-full text-left">
                 <thead className="bg-slate-50">
@@ -230,52 +231,34 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </>
       )}
 
-      {/* Basic Summary Content */}
-      {tier === 'basic' && (
-        <section className="mb-12 relative z-10">
-          <h3 className="text-caption text-navy mb-6 font-black uppercase tracking-widest border-l-4 border-navy pl-4">Eligibility Indicators</h3>
-          <div className="space-y-4">
-            {assessmentData.riskFlags.map((flag, i) => (
-              <div key={i} className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-xs font-black text-rose-800 uppercase leading-tight">
-                ⚠️ {flag}
-              </div>
-            ))}
-            <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-200 text-center shadow-inner">
-              <p className="text-caption text-slate-400 mb-6 font-black uppercase tracking-widest">Full Audit & Detailed Checklist Locked</p>
-              <Button onClick={onUpgrade} variant="navy" size="sm">Upgrade to Professional Audit</Button>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Pro Tier Analysis Extras */}
       {tier === 'humanReview' && (
         <section className="mb-12 relative z-10 bg-accent/5 p-8 rounded-[40px] border-2 border-accent/20">
-          <h3 className="text-caption text-accent mb-6 font-black uppercase tracking-widest leading-none">Advanced Gap Analysis (Automated)</h3>
+          <h3 className="text-caption text-accent mb-6 font-black uppercase tracking-widest leading-none">Advanced Evidence Analysis (Automated)</h3>
           <div className="space-y-6">
              <div className="p-5 bg-white rounded-2xl border border-accent/10 shadow-sm">
                <h4 className="text-[10px] font-black text-navy uppercase mb-2 tracking-widest">Evidence Gap Detection</h4>
-               <p className="text-small font-bold text-navy italic leading-relaxed uppercase tracking-tight">"Based on your identified income sources ({answers['income_sources']?.join(', ')}), our engine identifies a specific audit risk in the continuity of your banking evidence. We suggest ensuring no transfers between savings accounts occur within the final 28-day window."</p>
+               <p className="text-small font-bold text-navy italic leading-relaxed uppercase tracking-tight">"Based on your identified income sources ({answers['income_sources']?.join(', ')}), our automated engine identifies a specific audit risk in the continuity of your banking evidence. We suggest ensuring no large unexplained transfers between accounts occur within the final 28-day window."</p>
              </div>
              <div className="p-5 bg-white rounded-2xl border border-accent/10 shadow-sm">
-               <h4 className="text-[10px] font-black text-navy uppercase mb-2 tracking-widest">Scenario Advice</h4>
-               <p className="text-small font-bold text-navy italic leading-relaxed uppercase tracking-tight">"Your accommodation proof indicates family-shared housing. The Home Office often requests a professional Property Inspection Report for this scenario. We suggest preparing this document even if not explicitly mandated."</p>
+               <h4 className="text-[10px] font-black text-navy uppercase mb-2 tracking-widest">Compliance Optimization</h4>
+               <p className="text-small font-bold text-navy italic leading-relaxed uppercase tracking-tight">"Your accommodation proof indicates family-shared housing. For this scenario, UKVI typically expects a professional Property Inspection Report. We suggest preparing this document to avoid an inadequate housing refusal."</p>
              </div>
           </div>
         </section>
       )}
 
-      {/* Footer Disclaimer */}
+      {/* Standard Legal Footer */}
       <footer className="mt-auto pt-10 border-t border-slate-100 relative z-10 no-print">
         <div className="bg-slate-900 p-8 rounded-[32px] text-white/80 mb-8 shadow-2xl">
-           <h4 className="text-caption text-accent mb-4 font-black uppercase tracking-widest">Legal Disclosure</h4>
+           <h4 className="text-caption text-accent mb-4 font-black uppercase tracking-widest leading-none">Legal Disclosure</h4>
            <p className="text-[11px] leading-relaxed font-bold uppercase tracking-tight">
-             This assessment is generated by an automated engine and is NOT legal advice. ClearVisa UK is not a law firm. We strongly recommend consulting a qualified solicitor before submitting your application.
+             This audit is generated using a rule-based automated engine and is NOT legal advice. ClearVisa UK is not a law firm. We strongly recommend consulting a qualified solicitor before submitting your application.
            </p>
         </div>
         <div className="flex justify-between items-center text-caption text-slate-400 font-black tracking-widest">
           <span>© 2026 ClearVisa UK</span>
-          <span>Rule-based automated audit</span>
+          <span>Official automated assessment engine</span>
         </div>
       </footer>
     </div>
