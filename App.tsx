@@ -40,12 +40,12 @@ export const PLANS: PlanConfig[] = [
     name: 'Basic Pre-Check',
     priceGBP: 29,
     stripePriceId: 'price_basic_29',
-    description: 'Quick automated eligibility verdict and summary pointers.',
+    description: 'Quick automated eligibility verdict and summary.',
     includedFeatures: [
       'Automated eligibility verdict',
       'Summary of strong vs weak areas',
       'Key risk flag indicators',
-      'Plain-English result explanation',
+      'Plain-English explanation',
       'Downloadable summary (short PDF)'
     ]
   },
@@ -54,28 +54,28 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Audit + Checklist',
     priceGBP: 79,
     stripePriceId: 'price_full_79',
-    description: 'A comprehensive 25-point automated audit and tailored checklist.',
+    description: 'Full 25–30 question audit and professional PDF report.',
     includedFeatures: [
       'Everything in Basic',
       'Personalised document checklist',
-      'Per-requirement compliance table',
-      'Detailed automated risk breakdown',
+      'Route-specific compliance checks',
+      'Detailed risk factor breakdown',
       'Step-by-step next-actions plan',
-      'Full professional PDF report'
+      'Full detailed PDF report'
     ]
   },
   {
     id: 'humanReview',
-    name: 'Pro Analysis Add-On',
-    priceGBP: 149,
-    stripePriceId: 'price_pro_149',
-    description: 'Deep automated evidence gap analysis for complex evidence scenarios.',
+    name: 'Professional Plus',
+    priceGBP: 99,
+    stripePriceId: 'price_pro_99',
+    description: 'Enhanced professional audit with additional insights.',
     includedFeatures: [
       'Everything in Professional Audit',
-      'Automated evidence gap analysis',
-      'Advanced rule-based compliance checks',
-      'Enhanced case improvement suggestions',
-      'Common refusal risk identifiers'
+      'Extended questionnaire with narrative fields',
+      'Deeper relationship/career analysis',
+      'Additional compliance review layers',
+      'Priority support access'
     ]
   }
 ];
@@ -91,40 +91,36 @@ const AppContent: React.FC = () => {
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
 
-  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'previous_refusals', 'income_band'];
+  // Define core questions that always show for the free pre-check
+  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
     return QUESTIONS.filter(q => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      // Determine correct tier based on payment status and selected plan
-      let tier: string;
+      // Tier determines question depth
+      let tier = isPaid ? (selectedPlan === 'humanReview' ? 'human' : (selectedPlan === 'full' ? 'full' : 'basic')) : 'basic';
+      
+      // If not paid yet, only show Stage 1
       if (!isPaid) {
-        tier = 'basic';
-      } else if (selectedPlan === 'basic') {
-        tier = 'basic';
-      } else if (selectedPlan === 'humanReview') {
-        tier = 'human';
-      } else {
-        tier = 'full';
+        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
-      // For free and basic users, only show core questions
-      if (!isPaid || selectedPlan === 'basic') {
-        return stage1Ids.includes(q.id) && q.showIf({ tier, route, answers });
+      // If paid Basic, only show Stage 1 (already answered) or core
+      if (selectedPlan === 'basic') {
+        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
-      // For professional and pro users, show all applicable questions
-      return q.showIf({ tier, route, answers });
+
+      // If paid Professional or Professional Plus, show all applicable questions for that tier
+      return q.showIf({ tier: selectedPlan === 'humanReview' ? 'human' : 'full', route, answers });
     });
   };
 
   const handleStartCheck = () => {
-    if (viewState === 'landing') {
-      setAnswers({});
-      setIsPaid(false);
-      setSelectedPlan(null);
-    }
+    setAnswers({});
+    setIsPaid(false);
+    setSelectedPlan(null);
     setViewState('questionnaire');
     window.scrollTo(0, 0);
   };
@@ -146,6 +142,7 @@ const AppContent: React.FC = () => {
     setIsPaid(true);
     setIsPaymentModalOpen(false);
     
+    // If it's basic, we go straight to report using current answers
     if (selectedPlan === 'basic') {
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
@@ -154,6 +151,7 @@ const AppContent: React.FC = () => {
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
     } else {
+      // If professional or plus, we go back to questionnaire to answer the extra questions
       setViewState('questionnaire');
     }
     window.scrollTo(0, 0);
@@ -199,26 +197,32 @@ const AppContent: React.FC = () => {
         );
       case 'quickVerdict':
         return (
-          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
-            <div className="max-w-[640px] w-full app-card text-center border-t-8 border-accent">
-              <div className="mb-6 flex justify-center">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-inner ${
+          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
+            <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
+              <div className="mb-8 text-center">
+                <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
                   assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
                   assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
                 }`}>
                   {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
                 </div>
+                <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
+                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
               </div>
-              <h2 className="text-h2 mb-4">Initial Result: <span className="uppercase font-black">{assessmentResult?.verdict === 'likely' ? 'Likely Eligible' : assessmentResult?.verdict === 'borderline' ? 'Borderline' : 'High Risk'}</span></h2>
-              <p className="text-body text-slate-600 mb-10 font-bold uppercase tracking-tight">
-                Initial screening completed. Choose a plan to unlock your detailed automated audit and personalized checklist.
-              </p>
+
+              <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
+                <p className="text-small text-slate-600 leading-relaxed font-medium">
+                  Based on your initial answers, you meet the core requirements for the {answers['visa_route']?.toUpperCase()} route. To see your full risk analysis, requirement matrix, and document checklist, unlock a full report below.
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Unlock Basic (£29)</Button>
-                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
+                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Summary (£29)</Button>
+                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Full Audit Report (£79)</Button>
               </div>
-              <button onClick={() => setViewState('landing')} className="mt-8 text-caption text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
-                Return home
+              
+              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-caption text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
+                Cancel
               </button>
             </div>
           </div>
@@ -226,31 +230,22 @@ const AppContent: React.FC = () => {
       case 'paywall':
         const plan = PLANS.find(p => p.id === (selectedPlan || 'full'))!;
         return (
-          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50">
-            <div className="max-w-[700px] w-full app-card border border-slate-200">
+          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
+            <div className="max-w-[600px] w-full app-card border border-slate-200">
               <div className="text-center mb-8">
                 <span className="text-caption text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
-                <h2 className="text-h2 mb-4 text-navy">Unlock your assessment</h2>
+                <h2 className="text-h2 mb-2 text-navy">Unlock your assessment</h2>
                 <p className="text-body text-slate-600 font-medium">{plan.description}</p>
               </div>
               
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
                   {plan.includedFeatures.map((f, i) => (
-                    <li key={i} className="flex gap-3 items-start text-small font-black text-slate-700 uppercase tracking-tight text-left">
-                      <span className="text-accent">✓</span> {f}
+                    <li key={i} className="flex gap-3 items-start text-small font-bold text-slate-700 uppercase tracking-tight">
+                      <span className="text-accent text-lg">✓</span> {f}
                     </li>
                   ))}
                 </ul>
-              </div>
-
-              <div className="bg-emerald-50 p-6 rounded-2xl mb-10 border border-emerald-100">
-                <h4 className="text-body font-black text-emerald-800 mb-1 flex items-center gap-2 uppercase tracking-tight">
-                  🛡️ Confidence Guarantee
-                </h4>
-                <p className="text-small text-emerald-700 font-medium text-left">
-                  If your answers clearly show you are ineligible under current public rules, we refund your fee in full upon request.
-                </p>
               </div>
 
               <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>
@@ -258,7 +253,7 @@ const AppContent: React.FC = () => {
               </Button>
               
               <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-caption text-slate-400 hover:text-navy font-bold uppercase tracking-widest">
-                Cancel
+                Go back
               </button>
             </div>
           </div>
@@ -266,10 +261,10 @@ const AppContent: React.FC = () => {
       case 'report':
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 relative">
-            <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card shadow-2xl">
-              <div>
-                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Assessment Ready</h3>
-                <p className="text-small text-slate-500 font-black uppercase tracking-widest">Tier: {selectedPlan === 'basic' ? 'Basic' : (selectedPlan === 'humanReview' ? 'Pro' : 'Professional')}</p>
+            <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card shadow-xl">
+              <div className="text-left">
+                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Your Audit is Ready</h3>
+                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {selectedPlan?.toUpperCase()}</p>
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
@@ -283,7 +278,6 @@ const AppContent: React.FC = () => {
                   assessmentData={assessmentResult!}
                   answers={answers}
                   tier={selectedPlan || 'full'}
-                  onUpgrade={() => { setSelectedPlan('humanReview'); setIsPaymentModalOpen(true); }}
                 />
               )}
             </div>
@@ -318,7 +312,6 @@ const AppContent: React.FC = () => {
                   <FAQ />
                 </div>
               </div>
-              <PartnerSection />
               <div className="app-container section-py">
                 <Legal />
               </div>

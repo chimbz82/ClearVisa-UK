@@ -1,7 +1,7 @@
 import { QuestionConfig } from '../types';
 
 export const QUESTIONS: QuestionConfig[] = [
-  // --- CORE QUESTIONS (ALL TIERS) ---
+  // --- CORE QUESTIONS (STAGE 1) ---
   {
     id: 'nationality',
     section: 'Background',
@@ -16,9 +16,9 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'Where are you currently located?',
     type: 'singleSelect',
     options: [
-      { value: 'in_uk_valid', label: 'In the UK with a valid visa' },
       { value: 'outside_uk', label: 'Outside the UK' },
-      { value: 'in_uk_no_visa', label: 'In the UK without a valid visa / overstayed' }
+      { value: 'in_uk_valid', label: 'In the UK (valid visa)' },
+      { value: 'in_uk_overstay', label: 'In the UK (overstayed/no visa)' }
     ],
     showIf: () => true
   },
@@ -28,12 +28,11 @@ export const QUESTIONS: QuestionConfig[] = [
     label: 'What is your current immigration status?',
     type: 'singleSelect',
     options: [
-      { value: 'none', label: 'No UK immigration history' },
+      { value: 'none', label: 'No UK history' },
       { value: 'visitor', label: 'Visitor' },
-      { value: 'student', label: 'Student / Graduate' },
-      { value: 'work', label: 'Skilled Worker / Work Visa' },
-      { value: 'family', label: 'Family / Partner Visa' },
-      { value: 'euss', label: 'EU Settlement Scheme' },
+      { value: 'student', label: 'Student' },
+      { value: 'work', label: 'Work Visa' },
+      { value: 'graduate', label: 'Graduate' },
       { value: 'other', label: 'Other' }
     ],
     showIf: () => true
@@ -45,108 +44,178 @@ export const QUESTIONS: QuestionConfig[] = [
     type: 'singleSelect',
     options: [
       { value: 'spouse', label: 'Spouse / Partner Visa' },
-      { value: 'skilled', label: 'Skilled Worker Visa' },
-      { value: 'other', label: 'Other / Not Sure' }
+      { value: 'skilled', label: 'Skilled Worker Visa' }
+    ],
+    showIf: () => true
+  },
+  {
+    id: 'income_band',
+    section: 'Financials',
+    label: 'What is your gross annual household income?',
+    type: 'singleSelect',
+    options: [
+      { value: 'under_29k', label: 'Under £29,000' },
+      { value: '29k_38k', label: '£29,000 – £38,700' },
+      { value: 'over_38k', label: 'Over £38,700' }
     ],
     showIf: () => true
   },
   {
     id: 'previous_refusals',
     section: 'History',
-    label: 'Have you ever had a visa refusal (UK or any other country)?',
+    label: 'Have you ever had a visa refusal (any country)?',
     type: 'boolean',
-    showIf: () => true
-  },
-  {
-    id: 'overstays',
-    section: 'History',
-    label: 'Have you ever stayed in the UK beyond your visa expiry date?',
-    type: 'boolean',
-    showIf: () => true
-  },
-  {
-    id: 'criminal_history',
-    section: 'History',
-    label: 'Do you have any criminal convictions or pending charges?',
-    type: 'boolean',
-    showIf: () => true
-  },
-  {
-    id: 'income_band',
-    section: 'Financials',
-    label: 'What is your approximate gross annual household income?',
-    type: 'singleSelect',
-    options: [
-      { value: 'under_29k', label: 'Under £29,000' },
-      { value: '29k_38k', label: '£29,000 – £38,700' },
-      { value: 'over_38k', label: 'Over £38,700' },
-      { value: 'unsure', label: 'Not sure / Variable' }
-    ],
     showIf: () => true
   },
 
-  // --- FULL TIER EXTRAS (PAID) ---
+  // --- PROFESSIONAL AUDIT QUESTIONS (STAGE 2) ---
   {
     id: 'income_sources',
     section: 'Financials',
-    label: 'Which income sources apply to your household?',
-    helpText: 'You can select multiple sources if you combine income.',
+    label: 'Which income sources will you rely on?',
+    helpText: 'You can combine multiple sources under Appendix FM.',
     type: 'multiSelect',
     options: [
-      { value: 'salaried', label: 'Salaried Employment' },
+      { value: 'salary', label: 'Salaried Employment' },
       { value: 'self_employment', label: 'Self-employment / Director' },
       { value: 'savings', label: 'Cash Savings' },
       { value: 'pension', label: 'Pension Income' },
-      { value: 'benefits', label: 'Exempt Benefits / PIP / Disability' },
-      { value: 'property', label: 'Property Rental Income' }
+      { value: 'property', label: 'Property Rental Income' },
+      { value: 'exempt', label: 'Exempt Benefits (PIP, etc.)' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
+    showIf: (ctx) => ctx.tier === 'full'
+  },
+  {
+    id: 'employment_length',
+    section: 'Financials',
+    label: 'How long have you/your sponsor been in your current job?',
+    type: 'singleSelect',
+    options: [
+      { value: 'less_6m', label: 'Less than 6 months' },
+      { value: 'over_6m', label: 'More than 6 months' }
+    ],
+    showIf: (ctx) => ctx.tier === 'full' && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
+  },
+  {
+    id: 'savings_amount',
+    section: 'Financials',
+    label: 'What is the total of your accessible cash savings?',
+    type: 'singleSelect',
+    options: [
+      { value: 'under_16k', label: 'Under £16,000' },
+      { value: '16k_65k', label: '£16,000 – £65,000' },
+      { value: 'over_65k', label: 'Over £65,000' }
+    ],
+    showIf: (ctx) => ctx.tier === 'full' && ctx.answers.income_sources?.includes('savings')
+  },
+  {
+    id: 'english_test',
+    section: 'Requirements',
+    label: 'Do you have a valid English Language test result?',
+    type: 'singleSelect',
+    options: [
+      { value: 'yes_selt', label: 'Yes, SELT level A1 or higher' },
+      { value: 'degree', label: 'Yes, UK-equivalent degree' },
+      { value: 'exempt', label: 'Exempt (Age / Nationality)' },
+      { value: 'no', label: 'No, need to take test' }
+    ],
+    showIf: (ctx) => ctx.tier === 'full'
   },
   {
     id: 'rel_evidence',
     section: 'Relationship',
-    label: 'Which relationship evidence do you have available?',
-    helpText: 'Select all that apply to your situation.',
+    label: 'Which relationship evidence do you have?',
     type: 'multiSelect',
     options: [
-      { value: 'marriage_cert', label: 'Marriage / Civil Partnership Certificate' },
+      { value: 'marriage_cert', label: 'Official Marriage Certificate' },
       { value: 'joint_tenancy', label: 'Joint Tenancy / Mortgage' },
-      { value: 'joint_bills', label: 'Joint Utility Bills' },
-      { value: 'photos', label: 'Photos / Travel Evidence' },
-      { value: 'chat_logs', label: 'Chat Logs / Communication Records' },
-      { value: 'children', label: 'Shared Responsibility for Children' }
+      { value: 'joint_bills', label: 'Joint Council Tax / Utility Bills' },
+      { value: 'photos', label: 'Photos & Travel Evidence' },
+      { value: 'children', label: 'Shared children' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'human') && ctx.route === 'spouse'
+    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'spouse'
+  },
+  {
+    id: 'living_together',
+    section: 'Relationship',
+    label: 'Have you lived together for at least 2 years?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'spouse'
   },
   {
     id: 'acc_evidence',
     section: 'Accommodation',
-    label: 'Which accommodation evidence can you provide?',
-    helpText: 'Multiple documents strengthen the proof of adequate housing.',
+    label: 'What accommodation evidence do you have?',
     type: 'multiSelect',
     options: [
       { value: 'tenancy', label: 'Tenancy Agreement' },
-      { value: 'mortgage', label: 'Mortgage Statement / Deeds' },
+      { value: 'title', label: 'Land Registry / Deeds' },
       { value: 'landlord_letter', label: 'Landlord Permission Letter' },
-      { value: 'council_tax', label: 'Council Tax Bills' },
-      { value: 'utility', label: 'Utility Bills' }
+      { value: 'council_tax', label: 'Council Tax Bill' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
+    showIf: (ctx) => ctx.tier === 'full'
   },
   {
-    id: 'immigration_facts',
+    id: 'overstays_detail',
     section: 'History',
-    label: 'Do any of these immigration history facts apply to you?',
-    helpText: 'Be honest; these are primary causes for automated flags.',
-    type: 'multiSelect',
+    label: 'Have you ever stayed in the UK beyond your visa expiry?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full'
+  },
+  {
+    id: 'criminal_records',
+    section: 'History',
+    label: 'Do you have any criminal convictions (any country)?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full'
+  },
+  {
+    id: 'tb_test',
+    section: 'Requirements',
+    label: 'Are you applying from a country requiring a TB test?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full' && ctx.answers.current_location === 'outside_uk'
+  },
+  {
+    id: 'job_code',
+    section: 'Employment',
+    label: 'Do you know your Occupation Code (SOC Code)?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+  },
+  {
+    id: 'job_offer',
+    section: 'Employment',
+    label: 'Do you have a formal job offer from a UK licensed sponsor?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+  },
+  {
+    id: 'sponsor_license',
+    section: 'Employment',
+    label: 'Does the employer have a valid Sponsor License?',
+    type: 'singleSelect',
     options: [
-      { value: 'overstay', label: 'Previous UK Overstay' },
-      { value: 'refusal', label: 'Previous Visa Refusal' },
-      { value: 'deportation', label: 'Previous Deportation / Removal' },
-      { value: 'illegal_work', label: 'Worked without permission' },
-      { value: 'fraud', label: 'Accused of deception/fraud' },
-      { value: 'none', label: 'None of the above' }
+      { value: 'yes', label: 'Yes, fully licensed' },
+      { value: 'no', label: 'No' },
+      { value: 'unsure', label: 'Unsure' }
     ],
-    showIf: (ctx) => ctx.tier === 'full' || ctx.tier === 'human'
+    showIf: (ctx) => ctx.tier === 'full' && ctx.route === 'skilled'
+  },
+  {
+    id: 'dependent_count',
+    section: 'Family',
+    label: 'How many dependents (children) will apply with you?',
+    type: 'number',
+    placeholder: '0',
+    showIf: (ctx) => ctx.tier === 'full'
+  },
+  {
+    id: 'main_worry',
+    section: 'Concerns',
+    label: 'What is your primary concern regarding the application?',
+    type: 'longText',
+    placeholder: 'Describe any specific issues you are worried about...',
+    showIf: (ctx) => ctx.tier === 'full'
   }
 ];
