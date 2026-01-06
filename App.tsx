@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustStrip from './components/TrustStrip';
@@ -89,6 +89,46 @@ const AppContent: React.FC = () => {
   const [isPaid, setIsPaid] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
+  // ✅ STEP 4.1: Save state to localStorage
+  useEffect(() => {
+    const state = {
+      answers,
+      selectedPlan,
+      isPaid,
+      viewState: viewState === 'questionnaire' ? 'questionnaire' : 
+                 viewState === 'quickVerdict' ? 'quickVerdict' :
+                 viewState === 'paywall' ? 'paywall' :
+                 viewState === 'report' ? 'report' : 'landing'
+    };
+    localStorage.setItem('clearvisaState', JSON.stringify(state));
+  }, [answers, selectedPlan, isPaid, viewState]);
+
+  // ✅ STEP 4.1: Load state on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('clearvisaState');
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        if (state.answers && Object.keys(state.answers).length > 0) {
+          setAnswers(state.answers);
+          setSelectedPlan(state.selectedPlan);
+          setIsPaid(state.isPaid);
+          if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
+            setViewState(state.viewState);
+            // If we're on the report, we need to regenerate the assessment result
+            if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
+              const routeKey = state.answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+              const result = runAssessment(routeKey, state.answers);
+              setAssessmentResult(result);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to restore state:', e);
+      }
+    }
+  }, []);
+
   const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
 
   const getVisibleQuestions = () => {
@@ -170,6 +210,7 @@ const AppContent: React.FC = () => {
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
     setViewState('quickVerdict');
+    localStorage.removeItem('clearvisaState');  // ✅ STEP 4.2: Clear state on complete
     window.scrollTo(0, 0);
   };
 
