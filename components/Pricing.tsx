@@ -22,27 +22,31 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
           {PLANS.map((plan) => (
             <div 
               key={plan.id} 
-              className={`flex flex-col bg-white p-10 rounded-[2.5rem] border shadow-xl relative overflow-hidden group transition-all hover:translate-y-[-4px] ${
+              className={`flex flex-col bg-white p-8 lg:p-10 rounded-[2.5rem] border shadow-xl relative overflow-hidden group transition-all hover:translate-y-[-4px] ${
                 plan.id === 'full' 
-                ? 'ring-2 ring-teal-600 scale-105 z-10 border-teal-600/20 shadow-2xl' 
+                ? 'ring-4 ring-teal-500/20 scale-105 z-10 border-teal-500 shadow-2xl' 
                 : 'border-slate-200 shadow-lg'
               }`}
             >
+              {plan.id === 'full' && (
+                <div className="absolute top-0 left-0 right-0 h-2 bg-teal-500"></div>
+              )}
+              
               {/* Design accents */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-[100px]"></div>
               
-              <div className="mb-10 text-center">
-                <span className={`text-[11px] font-black uppercase tracking-[0.2em] mb-4 block ${
-                  plan.id === 'full' ? 'text-teal-600' : 
-                  plan.id === 'humanReview' ? 'text-navy' : 'text-slate-400'
+              <div className="mb-8 text-center">
+                <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-4 block py-1 px-3 rounded-full inline-block ${
+                  plan.id === 'full' ? 'bg-teal-500 text-white' : 
+                  plan.id === 'humanReview' ? 'bg-navy text-white' : 'bg-slate-100 text-slate-400'
                 }`}>
                   {t(`pricing.tier.${plan.id}.badge`)}
                 </span>
-                <div className="flex items-baseline justify-center gap-1 mb-6">
+                <div className="flex items-baseline justify-center gap-1 mb-6 mt-4">
                   <span className="text-h1 text-[#0B1F3B] text-5xl leading-none">£{plan.priceGBP}</span>
                   <span className="text-caption text-slate-400 font-bold tracking-widest lowercase">once</span>
                 </div>
-                <h3 className="text-h3 text-[#0B1F3B] mb-2 uppercase tracking-tight leading-tight min-h-[3rem] flex items-center justify-center">
+                <h3 className="text-h3 text-[#0B1F3B] mb-2 uppercase tracking-tight leading-tight min-h-[3rem] flex items-center justify-center font-black">
                   {plan.name}
                 </h3>
                 <p className="text-small text-slate-500 font-bold leading-relaxed max-w-[280px] mx-auto italic">
@@ -51,10 +55,10 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
               </div>
               
               <div className="flex-grow">
-                <ul className="space-y-4 mb-12">
+                <ul className="space-y-4 mb-10">
                   {plan.includedFeatures.map((feat, i) => (
-                    <li key={i} className="flex items-start gap-4 text-small text-slate-700 font-semibold leading-tight">
-                      <span className="text-teal-600 font-bold text-lg mt-0.5 flex-shrink-0">✓</span>
+                    <li key={i} className="flex items-start gap-4 text-[13px] text-slate-700 font-bold leading-tight">
+                      <span className="text-teal-500 font-bold text-lg mt-0.5 flex-shrink-0">✓</span>
                       {feat}
                     </li>
                   ))}
@@ -63,15 +67,15 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck }) => {
 
               <Button 
                 onClick={() => onStartCheck(plan.id)}
-                className="w-full py-5 text-base"
+                className="w-full py-5 text-sm"
                 variant={plan.id === 'full' ? 'primary' : 'outline'}
                 size="lg"
               >
-                Select {plan.id === 'basic' ? 'Basic' : plan.id === 'full' ? 'Audit' : 'Plus'}
+                Get Started
               </Button>
 
               <div className="mt-8 text-center">
-                <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                   {t('pricing.reassurance')}
                 </p>
               </div>

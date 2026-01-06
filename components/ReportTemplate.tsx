@@ -24,9 +24,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   const currentVerdict = assessmentData.verdict;
   
   const verdictStyles = {
-    likely: { title: "LIKELY ELIGIBLE", color: "#2FBF71", risk: "LOW" },
-    borderline: { title: "BORDERLINE", color: "#D97706", risk: "MEDIUM" },
-    unlikely: { title: "HIGH RISK / UNLIKELY", color: "#E11D48", risk: "HIGH" }
+    likely: { title: "LIKELY ELIGIBLE", color: "#10B981", risk: "LOW" },
+    borderline: { title: "BORDERLINE", color: "#F59E0B", risk: "MEDIUM" },
+    unlikely: { title: "HIGH RISK / UNLIKELY", color: "#EF4444", risk: "HIGH" }
   };
 
   const current = verdictStyles[currentVerdict];
@@ -90,44 +90,45 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   };
 
   return (
-    <div className="bg-white mx-auto p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-2xl">
+    <div className="bg-white mx-auto p-[12mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-2xl border border-slate-200">
       {/* Design accents */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[#0B1F3B]/5 rounded-bl-full"></div>
+      <div className="absolute top-0 right-0 w-48 h-48 bg-[#0B1F3B]/5 rounded-bl-full"></div>
       
-      <header className="flex justify-between items-start mb-12 relative z-10 border-b pb-8">
+      <header className="flex justify-between items-start mb-12 relative z-10 border-b-2 border-slate-100 pb-8">
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[#0B1F3B] text-white rounded-lg flex items-center justify-center font-serif text-xl font-black">C</div>
-            <div className="text-[10px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
+            <div className="w-12 h-12 bg-[#0B1F3B] text-white rounded-xl flex items-center justify-center font-black text-2xl">C</div>
+            <div className="text-[12px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
           </div>
-          <h1 className="text-3xl text-navy font-black uppercase tracking-tight mb-1">Audit Report</h1>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date}</p>
+          <h1 className="text-4xl text-navy font-black uppercase tracking-tight mb-1">Audit Report</h1>
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.25em]">ID: {reportId} • Date: {date}</p>
         </div>
-        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 text-right">
-          <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
-          <div className="text-navy font-black text-xl tracking-tighter uppercase">Finalized</div>
-          <div className="text-[9px] text-slate-400 font-bold uppercase mt-1">Tier: {getTierDisplay()}</div>
+        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 text-right shadow-inner">
+          <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
+          <div className="text-navy font-black text-2xl tracking-tighter uppercase">Finalized</div>
+          <div className="text-[10px] text-slate-500 font-bold uppercase mt-1 px-3 py-1 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
         </div>
       </header>
 
       {/* Primary Verdict Card */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative z-10">
-        <div className="md:col-span-2 p-8 bg-slate-50 rounded-[32px] border border-slate-200 flex flex-col justify-center">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] mb-4" style={{ color: current.color }}>Verdict: {current.title}</h2>
-          <p className="text-base font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 relative z-10">
+        <div className="md:col-span-2 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-200 flex flex-col justify-center shadow-sm">
+          <h2 className="text-[12px] font-black uppercase tracking-[0.25em] mb-4" style={{ color: current.color }}>Verdict: {current.title}</h2>
+          <p className="text-lg font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
         </div>
-        <div className="bg-[#0B1F3B] rounded-[32px] p-8 flex flex-col items-center justify-center text-white shadow-xl">
-          <h3 className="text-[10px] text-slate-400 mb-4 font-black uppercase tracking-widest">Risk Factor</h3>
-          <div className="relative w-full h-2 bg-white/10 rounded-full overflow-hidden mb-4">
+        <div className="bg-[#0B1F3B] rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
+          <h3 className="text-[10px] text-slate-400 mb-4 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
+          <div className="relative w-full h-3 bg-white/10 rounded-full overflow-hidden mb-4 shadow-inner">
             <div 
-              className="h-full transition-all duration-1000 ease-out"
+              className="h-full transition-all duration-1000 ease-out shadow-md"
               style={{ 
-                width: currentVerdict === 'likely' ? '30%' : currentVerdict === 'borderline' ? '65%' : '100%',
+                width: currentVerdict === 'likely' ? '25%' : currentVerdict === 'borderline' ? '60%' : '100%',
                 backgroundColor: current.color
               }}
             ></div>
           </div>
-          <span className="text-2xl font-black uppercase tracking-tighter" style={{ color: current.color }}>{current.risk} RISK</span>
+          <span className="text-2xl font-black uppercase tracking-tighter relative z-10" style={{ color: current.color }}>{current.risk} RISK</span>
         </div>
       </section>
 
@@ -139,56 +140,50 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           
           return (
-            <section className="mb-12 bg-accent/5 p-8 rounded-[40px] border-2 border-accent/20">
-              <h3 className="text-caption text-accent mb-6 font-black uppercase tracking-widest">
-                Automated Evidence Gap Analysis
-              </h3>
+            <section className="bg-emerald-50/50 p-10 rounded-[3rem] border-2 border-emerald-100 shadow-sm">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
+                <h3 className="text-[13px] text-navy font-black uppercase tracking-widest">
+                  Evidence Gap Analysis (Professional Plus)
+                </h3>
+              </div>
               
               {/* Identified Gaps */}
               {analysis.gaps.length > 0 ? (
-                <div className="mb-8">
-                  <h4 className="text-small text-navy mb-4 font-black uppercase tracking-tight">
-                    Critical Evidence Gaps Identified:
+                <div className="mb-10">
+                  <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
+                    Critical Issues Detected:
                   </h4>
                   <div className="space-y-3">
                     {analysis.gaps.map((gap, idx) => (
-                      <div key={idx} className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex gap-3 items-start">
-                        <span className="text-rose-600 text-xl flex-shrink-0 mt-0.5">⚠️</span>
-                        <p className="text-small font-bold text-rose-800 leading-tight">{gap}</p>
+                      <div key={idx} className="p-5 bg-white border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
+                        <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
+                        <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl mb-8">
-                  <p className="text-small font-bold text-emerald-800 text-center uppercase tracking-widest">
-                    No critical evidence gaps detected based on your inputs.
+                <div className="p-8 bg-emerald-500 text-white rounded-2xl mb-10 shadow-lg text-center">
+                  <p className="text-[13px] font-black uppercase tracking-[0.2em]">
+                    No critical evidence gaps detected
                   </p>
                 </div>
               )}
               
               {/* Suggested Improvements */}
-              <div className="pt-6 border-t border-accent/20">
-                <h4 className="text-small text-navy mb-4 font-black uppercase tracking-tight">
-                  Personalized Case Improvement Recommendations:
+              <div className="pt-8 border-t border-emerald-100">
+                <h4 className="text-[11px] text-slate-400 mb-4 font-black uppercase tracking-[0.15em]">
+                  Recommended Improvements:
                 </h4>
-                <ul className="space-y-3">
+                <div className="grid grid-cols-1 gap-3">
                   {analysis.improvements.map((improvement, idx) => (
-                    <li key={idx} className="flex gap-3 items-start p-4 bg-white rounded-xl border border-slate-200">
-                      <span className="text-accent font-bold text-lg flex-shrink-0 mt-0.5">→</span>
-                      <p className="text-small font-bold text-slate-700 leading-tight">{improvement}</p>
-                    </li>
+                    <div key={idx} className="flex gap-4 items-start p-5 bg-white rounded-2xl border border-emerald-100 shadow-sm hover:border-emerald-500 transition-colors">
+                      <span className="text-emerald-500 font-black text-xl flex-shrink-0 mt-0.5">→</span>
+                      <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
+                    </div>
                   ))}
-                </ul>
-              </div>
-              
-              {/* Pro Disclaimer */}
-              <div className="mt-8 p-6 bg-navy/5 rounded-2xl border border-navy/10">
-                <p className="text-caption text-navy font-bold italic leading-relaxed">
-                  This automated analysis is based on public immigration rules and your responses. 
-                  Complex cases may have nuances not captured here. Consider professional legal advice 
-                  for cases with significant compliance concerns.
-                </p>
+                </div>
               </div>
             </section>
           );
@@ -197,30 +192,30 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {/* Compliance Matrix - Only for Full tier or higher */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
-            <h3 className="text-xs font-black text-navy uppercase tracking-widest border-l-4 border-accent pl-4 mb-6">Requirement Compliance Matrix</h3>
-            <div className="overflow-hidden border border-slate-200 rounded-2xl">
+            <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Compliance Assessment Matrix</h3>
+            <div className="overflow-hidden border-2 border-slate-100 rounded-[2rem] shadow-sm">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50 border-b border-slate-200">
+                <thead className="bg-slate-50 border-b-2 border-slate-100">
                   <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    <th className="px-6 py-4">Requirement</th>
-                    <th className="px-6 py-4 text-center">Status</th>
-                    <th className="px-6 py-4">Assessment Detail</th>
+                    <th className="px-8 py-5">Requirement</th>
+                    <th className="px-8 py-5 text-center">Status</th>
+                    <th className="px-8 py-5">Assessment Detail</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {getComplianceMatrix().map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-6 py-4 text-navy font-bold uppercase tracking-tight">{row.req}</td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`px-3 py-1 rounded-full text-[9px] font-black ${
-                          row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
-                          row.status === 'WARN' ? 'bg-amber-100 text-amber-700' : 
-                          row.status === 'FAIL' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-400'
+                    <tr key={i} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-8 py-5 text-navy font-black text-[13px] uppercase tracking-tight">{row.req}</td>
+                      <td className="px-8 py-5 text-center">
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black shadow-sm ${
+                          row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
+                          row.status === 'WARN' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 
+                          row.status === 'FAIL' ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-400 border border-slate-200'
                         }`}>
                           {row.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 font-bold text-xs uppercase tracking-tight">{row.detail}</td>
+                      <td className="px-8 py-5 text-slate-500 font-bold text-[12px] uppercase tracking-tight leading-relaxed">{row.detail}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -229,19 +224,19 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </section>
         )}
 
-        {/* Risk Flags & Analysis */}
+        {/* Profile Indicators */}
         <section>
-          <h3 className="text-xs font-black text-navy uppercase tracking-widest border-l-4 border-accent pl-4 mb-6">Profile Sensitivity Indicators</h3>
+          <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Profile Flag Analysis</h3>
           <div className="space-y-4">
             {assessmentData.riskFlags.length > 0 ? assessmentData.riskFlags.map((flag, i) => (
-              <div key={i} className="flex gap-4 p-5 bg-rose-50 border border-rose-100 rounded-2xl items-start">
-                <div className="w-6 h-6 bg-rose-200 rounded-lg flex items-center justify-center text-rose-700 text-sm flex-shrink-0">!</div>
-                <p className="text-xs font-black text-rose-900 uppercase tracking-tight leading-relaxed">{flag}</p>
+              <div key={i} className="flex gap-4 p-6 bg-rose-50 border border-rose-100 rounded-[1.5rem] items-center shadow-inner border-l-4 border-l-rose-500">
+                <div className="w-8 h-8 bg-rose-500 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">!</div>
+                <p className="text-[12px] font-black text-rose-900 uppercase tracking-tight leading-relaxed">{flag}</p>
               </div>
             )) : (
-              <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl flex gap-4 items-center">
-                <div className="w-6 h-6 bg-emerald-200 rounded-lg flex items-center justify-center text-emerald-700 text-sm">✓</div>
-                <p className="text-xs font-black text-emerald-900 uppercase tracking-tight">No critical compliance flags identified in core areas.</p>
+              <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] flex gap-4 items-center shadow-inner border-l-4 border-l-emerald-500">
+                <div className="w-8 h-8 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">✓</div>
+                <p className="text-[12px] font-black text-emerald-900 uppercase tracking-tight">Profile core areas compliant with current public rules.</p>
               </div>
             )}
           </div>
@@ -250,15 +245,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {/* Document Checklist - Only for Full tier or higher */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
-            <h3 className="text-xs font-black text-navy uppercase tracking-widest border-l-4 border-accent pl-4 mb-6">Personalised Document Checklist</h3>
+            <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Personalized Evidence Checklist</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {getDocumentChecklist().map((cat, i) => (
-                <div key={i} className="bg-slate-50 p-6 rounded-[24px] border border-slate-100">
-                  <h4 className="text-[10px] font-black text-navy uppercase tracking-widest mb-4 border-b pb-2">{cat.category}</h4>
-                  <ul className="space-y-2">
+                <div key={i} className="bg-slate-50 p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                  <h4 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] mb-6 border-b-2 border-white pb-3">{cat.category}</h4>
+                  <ul className="space-y-3">
                     {cat.items.map((item, idx) => (
-                      <li key={idx} className="flex gap-3 items-start text-[10px] font-bold text-slate-600 uppercase tracking-tight">
-                        <div className="w-3 h-3 rounded border border-accent mt-0.5 flex-shrink-0"></div>
+                      <li key={idx} className="flex gap-4 items-start text-[11px] font-bold text-slate-600 uppercase tracking-tight leading-relaxed">
+                        <div className="w-4 h-4 rounded border-2 border-emerald-500 mt-0.5 flex-shrink-0 bg-white"></div>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -271,30 +266,31 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {/* Next Steps */}
         <section>
-          <h3 className="text-xs font-black text-navy uppercase tracking-widest border-l-4 border-accent pl-4 mb-6">Recommended Actions Plan</h3>
+          <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Recommended Action Plan</h3>
           <div className="grid grid-cols-1 gap-4">
             {assessmentData.nextSteps.map((step, i) => (
-              <div key={i} className="flex items-center gap-4 p-6 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-navy transition-colors group">
-                <div className="w-8 h-8 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded-xl flex items-center justify-center font-black text-xs transition-colors">
+              <div key={i} className="flex items-center gap-5 p-6 bg-white border-2 border-slate-100 rounded-[1.75rem] shadow-sm hover:border-navy transition-all group hover:translate-x-1">
+                <div className="w-10 h-10 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded-[1rem] flex items-center justify-center font-black text-sm transition-all shadow-sm">
                   {i + 1}
                 </div>
-                <p className="text-xs font-black text-navy uppercase tracking-tight">{step}</p>
+                <p className="text-[13px] font-black text-navy uppercase tracking-tight leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
         </section>
       </div>
 
-      <footer className="mt-auto pt-10 border-t border-slate-100 no-print">
-        <div className="bg-[#0B1F3B] p-8 rounded-[32px] text-white/80 mb-8">
-           <h4 className="text-[10px] text-accent mb-4 font-black uppercase tracking-widest">Important Disclosure</h4>
-           <p className="text-[10px] leading-relaxed font-bold uppercase tracking-tight">
-             This audit is generated by an automated rule-based engine and is not a replacement for qualified legal advice. ClearVisa UK is not a law firm. Accuracy depends entirely on user-submitted information. Only the Home Office can approve or refuse a visa.
+      <footer className="mt-auto pt-12 border-t-2 border-slate-100 no-print">
+        <div className="bg-[#0B1F3B] p-10 rounded-[2.5rem] text-white/80 mb-10 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full"></div>
+           <h4 className="text-[11px] text-emerald-400 mb-5 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
+           <p className="text-[11px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
+             This audit is generated by an automated assessment engine based on public immigration rules. It is NOT legal advice and does not replace the counsel of an OISC-regulated solicitor. Accuracy depends entirely on user inputs. ClearVisa UK is not affiliated with the UK Home Office.
            </p>
         </div>
-        <div className="flex justify-between items-center text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
+        <div className="flex justify-between items-center text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
           <span>© 2026 ClearVisa UK</span>
-          <span>Rule-based automated assessment</span>
+          <span>Security Level: SSL-Verified Automated Assessment</span>
         </div>
       </footer>
     </div>
