@@ -50,7 +50,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const next = () => {
     const val = answers[activeQuestion.id];
-    const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText') 
+    const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText' || activeQuestion.type === 'currency') 
       ? (val !== undefined && val !== null && val !== "")
       : (activeQuestion.type === 'multiSelect')
       ? (Array.isArray(val) && val.length > 0)
@@ -111,7 +111,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id];
-    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText') 
+    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText' || q.type === 'currency') 
       ? (val !== undefined && val !== null && val !== "") 
       : (q.type === 'multiSelect')
       ? (Array.isArray(val) && val.length > 0)
@@ -169,16 +169,64 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
             <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
+      case 'currency':
       case 'number':
+        return (
+          <div className="space-y-6">
+            <input 
+              type="number"
+              min="0"
+              step={q.type === 'currency' ? '100' : '1'}
+              placeholder={q.placeholder || "Enter amount..."}
+              value={val || ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                // ✅ Validate numeric input
+                if (value === '' || !isNaN(Number(value))) {
+                  handleAnswer(value);
+                }
+              }}
+              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]"
+              autoFocus
+            />
+            {q.type === 'currency' && val && (
+              <p className="text-small text-slate-500 font-bold">
+                = £{Number(val).toLocaleString()}
+              </p>
+            )}
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+          </div>
+        );
       case 'shortText':
+        return (
+          <div className="space-y-6">
+            <input 
+              type="text"
+              placeholder={q.placeholder || "Type your answer..."}
+              value={val || ""}
+              maxLength={100} // ✅ Limit short text
+              onChange={(e) => handleAnswer(e.target.value)}
+              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]"
+              autoFocus
+            />
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+          </div>
+        );
       case 'longText':
         return (
           <div className="space-y-6">
-            {q.type === 'longText' ? (
-              <textarea value={val || ""} onChange={(e) => handleAnswer(e.target.value)} placeholder={q.placeholder} className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-[#041229] outline-none text-sm font-semibold min-h-[140px] transition-all" />
-            ) : (
-              <input type={q.type === 'shortText' ? 'text' : 'number'} placeholder={q.placeholder || "Enter details..."} value={val || ""} onChange={(e) => handleAnswer(e.target.value)} className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-[#041229] outline-none text-xl font-bold transition-all text-[#041229]" autoFocus />
-            )}
+            <textarea 
+              value={val || ""} 
+              onChange={(e) => handleAnswer(e.target.value)} 
+              placeholder={q.placeholder} 
+              maxLength={2000} // ✅ Limit long text
+              className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-[#041229] outline-none text-sm font-semibold min-h-[140px] transition-all" 
+            />
+            <div className="flex justify-between items-center px-1">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                {val?.length || 0} / 2000 characters
+              </span>
+            </div>
             <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
