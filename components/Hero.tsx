@@ -80,16 +80,40 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 max-w-[190px] animate-in slide-in-from-left duration-700 delay-300">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-[#2BB24C] text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 shadow-sm">✓</div>
-                  <div>
-                    <span className="text-[12px] font-bold text-[#041229] block leading-none mb-1">Likely Eligible</span>
-                    <span className="text-[10px] text-slate-400 font-medium block leading-tight italic">Based on example answers</span>
+              <div className="absolute -bottom-4 -left-4 bg-white p-5 rounded-2xl shadow-2xl border border-slate-100 min-w-[260px] animate-in slide-in-from-left duration-700 delay-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-[#2BB24C] text-white rounded-full flex items-center justify-center text-sm flex-shrink-0 shadow-sm">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-black text-[#2BB24C] block leading-tight uppercase tracking-tight">Likely Eligible</span>
+                    <span className="text-[10px] text-slate-400 font-bold block leading-tight">Based on example answers</span>
                   </div>
                 </div>
-                <div className="mt-3 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#2BB24C] w-[85%]"></div>
+                
+                <div className="mb-4">
+                  <div className="flex justify-between mb-1.5">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Compliance score</span>
+                    <span className="text-[9px] font-black text-[#2BB24C] uppercase tracking-widest">85%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#2BB24C] w-[85%] transition-all duration-1000 delay-1000"></div>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 border-t border-slate-50 pt-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">No lawyer required to use tool</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Instant result</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Does not submit an application</span>
+                  </div>
                 </div>
               </div>
             </div>

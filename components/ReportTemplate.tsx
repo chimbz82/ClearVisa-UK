@@ -11,6 +11,7 @@ interface ReportTemplateProps {
   answers?: Record<string, any>;
   tier: string;
   onUpgrade?: () => void;
+  onViewLegal?: (type: 'privacy' | 'terms' | 'refunds') => void;
 }
 
 const ReportTemplate: React.FC<ReportTemplateProps> = ({ 
@@ -21,7 +22,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   assessmentData,
   answers = {} as Record<string, any>,
   tier = 'full',
-  onUpgrade
+  onUpgrade,
+  onViewLegal
 }) => {
   const currentVerdict = assessmentData.verdict;
   
@@ -265,9 +267,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 >
                   Upgrade to Professional Plus - £99
                 </button>
-                <p className="text-[9px] text-slate-400 font-medium leading-tight px-1">
-                  By proceeding, you agree to our <a href="/terms" className="underline">Terms</a>, <a href="/privacy" className="underline">Privacy</a>, and <a href="/refunds" className="underline">Refund Policy</a>.
-                </p>
+                <div className="text-[9px] text-slate-400 font-medium leading-tight px-1">
+                  By proceeding, you agree to our{' '}
+                  <button onClick={() => onViewLegal?.('terms')} className="underline">Terms</button>,{' '}
+                  <button onClick={() => onViewLegal?.('privacy')} className="underline">Privacy</button>, and{' '}
+                  <button onClick={() => onViewLegal?.('refunds')} className="underline">Refund Policy</button>.
+                </div>
               </div>
             </div>
           </div>

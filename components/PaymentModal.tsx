@@ -7,12 +7,13 @@ interface PaymentModalProps {
   onClose: () => void;
   onPaymentComplete: (route: string, tier: string) => void;
   selectedTier: PlanId;
+  onNavigateLegal: (view: 'privacy' | 'terms' | 'refunds') => void;
 }
 
 type CheckoutStep = 'select-route' | 'payment';
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete, selectedTier }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete, selectedTier, onNavigateLegal }) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
@@ -61,6 +62,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
     setStep('select-route');
     setSelectedRoute(null);
     onClose();
+  };
+
+  const navigateLegal = (view: 'privacy' | 'terms' | 'refunds') => {
+    onClose();
+    onNavigateLegal(view);
   };
 
   return (
@@ -124,9 +130,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               </div>
               <div className="space-y-3">
                 <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
-                <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our <a href="/terms" className="underline">Terms</a>, <a href="/privacy" className="underline">Privacy</a>, and <a href="/refunds" className="underline">Refund Policy</a>.
-                </p>
+                <div className="text-[10px] text-center text-slate-400 font-medium leading-tight">
+                  By proceeding, you agree to our{' '}
+                  <button type="button" onClick={() => navigateLegal('terms')} className="underline">Terms</button>,{' '}
+                  <button type="button" onClick={() => navigateLegal('privacy')} className="underline">Privacy</button>, and{' '}
+                  <button type="button" onClick={() => navigateLegal('refunds')} className="underline">Refund Policy</button>.
+                </div>
               </div>
             </form>
           )}

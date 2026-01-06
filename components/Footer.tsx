@@ -4,14 +4,15 @@ import { useLanguage } from '../context/LanguageContext';
 interface FooterProps {
   onPrivacyClick: () => void;
   onTermsClick: () => void;
+  onRefundClick: () => void;
   onScrollToSection: (id: string) => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollToSection }) => {
+const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onRefundClick, onScrollToSection }) => {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#041229] text-white pt-16 pb-10 no-print">
+    <footer className="bg-[#041229] text-white pt-16 pb-10 no-print border-t border-white/5">
       <div className="app-container">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div>
@@ -42,7 +43,7 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onScrollT
             <ul className="space-y-4 text-slate-300 text-sm font-medium">
               <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors">Privacy Policy</button></li>
               <li><button onClick={onTermsClick} className="hover:text-white transition-colors">Terms of Use</button></li>
-              <li><a href="/refunds" className="hover:text-white transition-colors">Refund & Payment Policy</a></li>
+              <li><button onClick={onRefundClick} className="hover:text-white transition-colors">Refund & Payment Policy</button></li>
               <li className="pt-2 text-[10px] text-slate-500 leading-tight italic uppercase tracking-wider">
                 Not affiliated with the UK Government or Home Office.
               </li>

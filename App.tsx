@@ -15,6 +15,7 @@ import ReportTemplate from './components/ReportTemplate';
 import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
+import RefundPolicy from './components/RefundPolicy';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -67,18 +68,18 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
-    description: 'For complex or borderline cases that need tighter evidence and narrative.',
+    description: 'For complex or borderline cases where evidence and wording really matter.',
     includedFeatures: [
       'Everything in Professional Audit',
-      'Deeper evidence gap analysis by rule category',
-      'Extra narrative questions to strengthen explanations',
-      'Practical suggestions to upgrade weak documents',
-      'Clear summary to discuss with a solicitor or advisor'
+      'Deeper rule-by-rule gap analysis',
+      'Additional narrative questions to strengthen explanations',
+      'Practical document upgrade suggestions',
+      'Summary written specifically for solicitor/advisor discussion'
     ]
   }
 ];
 
-export type ViewState = 'landing' | 'questionnaire' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms';
+export type ViewState = 'landing' | 'questionnaire' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
 
 const AppContent: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -319,7 +320,7 @@ const AppContent: React.FC = () => {
                   Pay £{plan.priceGBP} & Continue
                 </Button>
                 <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our <a href="/terms" className="underline hover:text-slate-600">Terms of Use</a>, <a href="/privacy" className="underline hover:text-slate-600">Privacy Policy</a>, and <a href="/refunds" className="underline hover:text-slate-600">Refund Policy</a>.
+                  By proceeding, you agree to our <button onClick={() => setViewState('terms')} className="underline hover:text-slate-600">Terms of Use</button>, <button onClick={() => setViewState('privacy')} className="underline hover:text-slate-600">Privacy Policy</button>, and <button onClick={() => setViewState('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
                 </p>
               </div>
               
@@ -354,6 +355,7 @@ const AppContent: React.FC = () => {
                     setSelectedPlan('pro_plus');
                     setIsPaymentModalOpen(true);
                   }}
+                  onViewLegal={(type) => setViewState(type)}
                 />
               )}
             </div>
@@ -361,6 +363,7 @@ const AppContent: React.FC = () => {
         );
       case 'privacy': return <PrivacyPolicy onBack={() => setViewState('landing')} />;
       case 'terms': return <TermsOfUse onBack={() => setViewState('landing')} />;
+      case 'refunds': return <RefundPolicy onBack={() => setViewState('landing')} />;
       default:
         return (
           <div className="no-print">
@@ -381,7 +384,7 @@ const AppContent: React.FC = () => {
               </div>
               <Pricing onStartCheck={(planId) => {
                 handleStartCheck(planId);
-              }} />
+              }} onNavigateLegal={(view) => setViewState(view)} />
               <div className="bg-white">
                 <div className="app-container section-py">
                   <FAQ />
@@ -391,7 +394,12 @@ const AppContent: React.FC = () => {
                 <Legal />
               </div>
             </main>
-            <Footer onPrivacyClick={() => setViewState('privacy')} onTermsClick={() => setViewState('terms')} onScrollToSection={scrollToSection} />
+            <Footer 
+              onPrivacyClick={() => setViewState('privacy')} 
+              onTermsClick={() => setViewState('terms')} 
+              onRefundClick={() => setViewState('refunds')}
+              onScrollToSection={scrollToSection} 
+            />
           </div>
         );
     }
@@ -405,6 +413,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsPaymentModalOpen(false)} 
         onPaymentComplete={handlePaymentSuccess}
         selectedTier={selectedPlan || 'full'}
+        onNavigateLegal={(view) => setViewState(view)}
       />
     </div>
   );
