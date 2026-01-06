@@ -146,27 +146,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           );
         })()}
 
-        {/* Upgrade Call to Action */}
-        {tier === 'full' && (
-          <section className="bg-[#1877F2]/5 p-8 rounded-2xl border border-[#1877F2]/20 no-print">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="w-16 h-16 bg-[#1877F2] rounded-xl flex items-center justify-center text-white text-2xl shadow-md">⚡</div>
-              <div className="flex-grow">
-                <h3 className="text-lg text-[#041229] font-bold mb-2">Upgrade for Gap Analysis</h3>
-                <p className="text-[12px] text-slate-600 font-medium mb-4">
-                  Unlock deep evidence gap detection and personalized improvement suggestions to maximize your success probability.
-                </p>
-                <button 
-                  onClick={onUpgrade} 
-                  className="bg-[#041229] text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-all shadow-sm"
-                >
-                  Upgrade to Professional Plus (£99)
-                </button>
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* Compliance Matrix */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
@@ -235,6 +214,69 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </div>
         </section>
       </div>
+
+      {/* Professional Plus Upgrade Section */}
+      {tier === 'full' && onUpgrade && (
+        <section className="mt-12 bg-gradient-to-br from-[#1877F2]/5 to-[#1877F2]/10 p-10 rounded-[40px] border-2 border-[#1877F2]/30 relative overflow-hidden no-print">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#1877F2]/10 rounded-full blur-3xl"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+            <div className="flex-shrink-0">
+              <div className="w-20 h-20 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+                ⚡
+              </div>
+            </div>
+            
+            <div className="flex-grow">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-[10px] text-[#1877F2] font-black uppercase tracking-widest bg-[#1877F2]/10 px-3 py-1 rounded-full">
+                  UPGRADE AVAILABLE
+                </span>
+              </div>
+              <h3 className="text-xl text-[#041229] font-bold mb-4 uppercase tracking-tight leading-tight">
+                Unlock Evidence Gap Analysis
+              </h3>
+              <p className="text-sm text-slate-700 mb-6 font-medium leading-relaxed">
+                Add automated gap detection, personalized improvement suggestions, and extended narrative questions to strengthen your application. One-time upgrade of £99.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                <div className="flex items-start gap-2">
+                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
+                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                    Evidence Gap Analysis
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
+                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                    Extended Narrative Questions
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
+                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                    Deeper Case Review
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#1877F2] font-bold mt-0.5">✓</span>
+                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                    Personalized Improvements
+                  </span>
+                </div>
+              </div>
+              
+              <button 
+                onClick={onUpgrade}
+                className="bg-[#1877F2] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#1565D8] transition-colors shadow-lg"
+              >
+                Upgrade to Professional Plus - £99
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       <footer className="mt-auto pt-8 border-t border-slate-100 no-print">
         <div className="bg-[#041229] p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden">
