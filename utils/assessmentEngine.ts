@@ -1,20 +1,30 @@
-
 import { AssessmentResult } from '../types';
 
 export function runAssessment(route: string, answers: Record<string, any>): AssessmentResult {
   const flags: string[] = [];
   let score = 5; // Start with neutral-positive baseline
 
+  // ✅ NEW: Validate required answers exist
+  if (!answers['visa_route'] || !answers['nationality']) {
+    return {
+      verdict: 'unlikely',
+      riskLevel: 'HIGH',
+      riskFlags: ['INCOMPLETE DATA - Critical information missing'],
+      summary: 'Unable to complete assessment due to missing core information.',
+      nextSteps: ['Return to questionnaire and complete all required fields.']
+    };
+  }
+
   // --- Core Eligibility & Suitability ---
-  if (answers.criminal_records === true) {
+  if (answers['criminal_records'] === true) {
     flags.push("CRIMINAL HISTORY - Potential Suitability Grounds for Refusal.");
     score -= 10;
   }
-  if (answers.overstays_detail === true) {
+  if (answers['overstays_detail'] === true) {
     flags.push("PREVIOUS OVERSTAY - Significant barrier for switching or re-entry.");
     score -= 8;
   }
-  if (answers.previous_refusals === true) {
+  if (answers['previous_refusals'] === true) {
     flags.push("PREVIOUS REFUSAL - Case will trigger extra scrutiny for suitability.");
     score -= 4;
   }
@@ -22,42 +32,42 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
   // --- Route Specifics ---
   if (route === 'Spouse Visa') {
     // Financial (Appendix FM)
-    if (answers.income_band === 'under_29k') {
+    if (answers['income_band'] === 'under_29k') {
       flags.push("INCOME BELOW THRESHOLD - Current £29,000 baseline not met.");
       score -= 5;
     }
     
     // Relationship
-    const relEvidence = answers.rel_evidence || [];
+    const relEvidence = answers['rel_evidence'] || [];
     if (relEvidence.length > 0 && relEvidence.length < 3) {
       flags.push("WEAK RELATIONSHIP EVIDENCE - Low volume of cohabitation proof selected.");
       score -= 2;
     }
 
-    if (answers.living_arrangement === 'separate') {
+    if (answers['living_arrangement'] === 'separate') {
       flags.push("LIVING APART - High risk of 'Genuineness' scrutiny by UKVI.");
       score -= 3;
     }
     
-    if (answers.english_test === 'no') {
+    if (answers['english_test'] === 'no') {
       flags.push("ENGLISH LANGUAGE - No valid SELT certificate indicated.");
       score -= 3;
     }
   }
 
   if (route === 'Skilled Worker Visa') {
-    const salary = parseFloat(answers.sw_salary_exact || "0");
-    if (salary > 0 && salary < 38700 && !answers.shortage_occupation) {
+    const salary = parseFloat(answers['sw_salary_exact'] || "0");
+    if (salary > 0 && salary < 38700 && !answers['shortage_occupation']) {
       flags.push("SALARY BELOW NEW THRESHOLD - General £38,700 requirement not met.");
       score -= 5;
     }
     
-    if (answers.sponsor_license === 'no') {
+    if (answers['sponsor_license'] === 'no') {
       flags.push("NO SPONSOR LICENCE - Employer unable to issue valid Certificate of Sponsorship.");
       score -= 10;
     }
 
-    if (answers.job_offer === false) {
+    if (answers['job_offer'] === false) {
       flags.push("NO FORMAL JOB OFFER - Application is considered premature.");
       score -= 5;
     }
