@@ -26,9 +26,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   const currentVerdict = assessmentData.verdict;
   
   const verdictStyles = {
-    likely: { title: "LIKELY ELIGIBLE", color: "#10B981", risk: "LOW" },
-    borderline: { title: "BORDERLINE", color: "#F59E0B", risk: "MEDIUM" },
-    unlikely: { title: "HIGH RISK / UNLIKELY", color: "#EF4444", risk: "HIGH" }
+    likely: { title: "LIKELY ELIGIBLE", color: "#16A34A", risk: "LOW" },
+    borderline: { title: "BORDERLINE", color: "#D97706", risk: "MEDIUM" },
+    unlikely: { title: "HIGH RISK / UNLIKELY", color: "#DC2626", risk: "HIGH" }
   };
 
   const current = verdictStyles[currentVerdict];
@@ -54,91 +54,89 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   };
 
   return (
-    <div className="bg-white mx-auto p-[12mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-2xl border border-slate-200">
+    <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
       {/* Floating Badge for Enhanced Analysis */}
       {tier === 'humanReview' && (
-        <div className="absolute top-4 right-4 bg-accent text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest z-50 shadow-lg">
+        <div className="absolute top-4 right-4 bg-[#1877F2] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest z-50 shadow-md">
           ⚡ Enhanced Analysis
         </div>
       )}
 
       {/* Design accents */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-[#0B1F3B]/5 rounded-bl-full"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#041229]/5 rounded-bl-full"></div>
       
-      <header className="flex justify-between items-start mb-12 relative z-10 border-b-2 border-slate-100 pb-8">
+      <header className="flex justify-between items-start mb-10 relative z-10 border-b border-slate-100 pb-6">
         <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-[#0B1F3B] text-white rounded-xl flex items-center justify-center font-black text-2xl">C</div>
-            <div className="text-[12px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 bg-[#041229] text-white rounded flex items-center justify-center font-black text-xl">C</div>
+            <div className="text-[11px] leading-tight text-[#041229] font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
           </div>
-          <h1 className="text-4xl text-navy font-black uppercase tracking-tight mb-1">Audit Report</h1>
-          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.25em]">ID: {reportId} • Date: {date}</p>
+          <h1 className="text-3xl text-[#041229] font-bold tracking-tight mb-1 uppercase">Audit Report</h1>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date}</p>
         </div>
-        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 text-right shadow-inner">
-          <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
-          <div className="text-navy font-black text-2xl tracking-tighter uppercase">Finalized</div>
-          <div className="text-[10px] text-slate-500 font-bold uppercase mt-1 px-3 py-1 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-right">
+          <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
+          <div className="text-[#041229] font-black text-xl tracking-tight uppercase">Finalized</div>
+          <div className="text-[9px] text-slate-500 font-bold uppercase mt-1 px-2 py-0.5 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
         </div>
       </header>
 
       {/* Primary Verdict Card */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 relative z-10">
-        <div className="md:col-span-2 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-200 flex flex-col justify-center shadow-sm">
-          <h2 className="text-[12px] font-black uppercase tracking-[0.25em] mb-4" style={{ color: current.color }}>Verdict: {current.title}</h2>
-          <p className="text-lg font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 relative z-10">
+        <div className="md:col-span-2 p-6 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center">
+          <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-3" style={{ color: current.color }}>Verdict: {current.title}</h2>
+          <p className="text-base font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
         </div>
-        <div className="bg-[#0B1F3B] rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
-          <h3 className="text-[10px] text-slate-400 mb-4 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
-          <div className="relative w-full h-3 bg-white/10 rounded-full overflow-hidden mb-4 shadow-inner">
+        <div className="bg-[#041229] rounded-2xl p-6 flex flex-col items-center justify-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-bl-full"></div>
+          <h3 className="text-[9px] text-slate-400 mb-3 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
+          <div className="relative w-full h-2 bg-white/10 rounded-full overflow-hidden mb-3 shadow-inner">
             <div 
-              className="h-full transition-all duration-1000 ease-out shadow-md"
+              className="h-full transition-all duration-1000 ease-out"
               style={{ 
                 width: currentVerdict === 'likely' ? '25%' : currentVerdict === 'borderline' ? '60%' : '100%',
                 backgroundColor: current.color
               }}
             ></div>
           </div>
-          <span className="text-2xl font-black uppercase tracking-tighter relative z-10" style={{ color: current.color }}>{current.risk} RISK</span>
+          <span className="text-xl font-black uppercase tracking-tight relative z-10" style={{ color: current.color }}>{current.risk} RISK</span>
         </div>
       </section>
 
       {/* Detailed Content */}
-      <div className="space-y-12 mb-12 flex-grow">
+      <div className="space-y-10 mb-10 flex-grow">
         
         {/* Professional Plus Evidence Gap Analysis */}
         {tier === 'humanReview' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
-            <section className="bg-emerald-50/20 p-8 rounded-[40px] border border-emerald-100 mb-12">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center text-lg shadow-md">📊</div>
-                <h3 className="text-[13px] text-navy font-black uppercase tracking-widest">
-                  Personalised Evidence Gap Analysis
+            <section className="bg-[#1877F2]/5 p-6 rounded-2xl border border-[#1877F2]/20 mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-[#1877F2] text-white rounded flex items-center justify-center text-sm shadow-sm">📊</div>
+                <h3 className="text-[12px] text-[#041229] font-bold uppercase tracking-widest">
+                  Evidence Gap Analysis
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 gap-6">
-                {/* Identified Gaps */}
-                <div className="space-y-4">
-                  <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Identified Issues</h4>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-3">
+                  <h4 className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Identified Issues</h4>
                   {analysis.gaps.map((gap, idx) => (
-                    <div key={idx} className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex gap-4 items-start shadow-sm border-l-4 border-l-rose-500">
-                      <span className="text-rose-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
-                      <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{gap}</p>
+                    <div key={idx} className="p-4 bg-rose-50 border border-rose-100 rounded-xl flex gap-3 items-start border-l-4 border-l-rose-500">
+                      <span className="text-rose-500 text-base flex-shrink-0 mt-0.5">⚠️</span>
+                      <p className="text-[12px] font-bold text-slate-700 leading-relaxed">{gap}</p>
                     </div>
                   ))}
-                  {analysis.gaps.length === 0 && <p className="text-small text-slate-400 italic px-2">No critical gaps detected.</p>}
+                  {analysis.gaps.length === 0 && <p className="text-[11px] text-slate-400 italic px-1">No critical gaps detected.</p>}
                 </div>
                 
-                {/* Suggested Improvements */}
-                <div className="space-y-4 pt-4 border-t border-emerald-100">
-                  <h4 className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] px-2">Recommended Improvements</h4>
-                  <ul className="space-y-3">
+                <div className="space-y-3 pt-4 border-t border-[#1877F2]/10">
+                  <h4 className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Recommended Improvements</h4>
+                  <ul className="space-y-2">
                     {analysis.improvements.map((improvement, idx) => (
-                      <li key={idx} className="flex gap-4 items-start p-5 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-sm transition-colors border-l-4 border-l-emerald-500">
-                        <span className="text-emerald-500 font-black text-xl flex-shrink-0 mt-0.5">→</span>
-                        <p className="text-[13px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
+                      <li key={idx} className="flex gap-3 items-start p-4 bg-emerald-50 rounded-xl border border-emerald-100 border-l-4 border-l-emerald-500">
+                        <span className="text-emerald-500 font-black text-base flex-shrink-0 mt-0.5">→</span>
+                        <p className="text-[12px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
                       </li>
                     ))}
                   </ul>
@@ -148,48 +146,19 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           );
         })()}
 
-        {/* Professional → Professional Plus Upgrade */}
+        {/* Upgrade Call to Action */}
         {tier === 'full' && (
-          <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-10 rounded-[40px] border-2 border-accent/30 no-print shadow-lg">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-              <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
-                  ⚡
-                </div>
-              </div>
-              
+          <section className="bg-[#1877F2]/5 p-8 rounded-2xl border border-[#1877F2]/20 no-print">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="w-16 h-16 bg-[#1877F2] rounded-xl flex items-center justify-center text-white text-2xl shadow-md">⚡</div>
               <div className="flex-grow">
-                <div className="mb-3">
-                  <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-accent/20">
-                    UPGRADE AVAILABLE
-                  </span>
-                </div>
-                <h3 className="text-h3 text-navy mb-4 uppercase tracking-tight font-black">
-                  Add Gap Analysis for £99
-                </h3>
-                <p className="text-[13px] text-slate-700 mb-6 font-bold leading-relaxed uppercase tracking-tight">
-                  Unlock automated evidence gap detection, personalized improvement 
-                  suggestions, and extended narrative questions to strengthen your case.
+                <h3 className="text-lg text-[#041229] font-bold mb-2">Upgrade for Gap Analysis</h3>
+                <p className="text-[12px] text-slate-600 font-medium mb-4">
+                  Unlock deep evidence gap detection and personalized improvement suggestions to maximize your success probability.
                 </p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                  <div className="flex items-start gap-2">
-                    <span className="text-accent font-black">✓</span>
-                    <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
-                      Evidence Gap Analysis
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-accent font-black">✓</span>
-                    <span className="text-[11px] text-slate-700 font-black uppercase tracking-tighter">
-                      Extended Narrative Review
-                    </span>
-                  </div>
-                </div>
-                
                 <button 
                   onClick={onUpgrade} 
-                  className="bg-navy text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl active:scale-95"
+                  className="bg-[#041229] text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-all shadow-sm"
                 >
                   Upgrade to Professional Plus (£99)
                 </button>
@@ -201,22 +170,22 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         {/* Compliance Matrix */}
         {(tier === 'full' || tier === 'humanReview') && (
           <section>
-            <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Compliance Assessment Matrix</h3>
-            <div className="overflow-hidden border-2 border-slate-100 rounded-[2rem] shadow-sm">
-              <table className="w-full text-left text-sm border-collapse">
-                <thead className="bg-slate-50 border-b-2 border-slate-100">
-                  <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    <th className="px-8 py-5">Requirement</th>
-                    <th className="px-8 py-5 text-center">Status</th>
-                    <th className="px-8 py-5">Assessment Detail</th>
+            <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
+            <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    <th className="px-6 py-4">Requirement</th>
+                    <th className="px-6 py-4 text-center">Status</th>
+                    <th className="px-6 py-4">Assessment Detail</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {getComplianceMatrix().map((row, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-8 py-5 text-navy font-black text-[13px] uppercase tracking-tight">{row.req}</td>
-                      <td className="px-8 py-5 text-center">
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black inline-block min-w-[60px] ${
+                      <td className="px-6 py-4 text-[#041229] font-bold tracking-tight">{row.req}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black inline-block min-w-[50px] ${
                           row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
                           row.status === 'WARN' ? 'bg-amber-100 text-amber-700' : 
                           row.status === 'FAIL' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-400'
@@ -224,7 +193,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                           {row.status}
                         </span>
                       </td>
-                      <td className="px-8 py-5 text-slate-500 font-bold text-[12px] uppercase tracking-tight leading-relaxed">{row.detail}</td>
+                      <td className="px-6 py-4 text-slate-500 font-medium leading-relaxed">{row.detail}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -235,17 +204,17 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {/* Risk Flags */}
         <section>
-          <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Profile Flag Analysis</h3>
-          <div className="space-y-4">
+          <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Profile Flag Analysis</h3>
+          <div className="space-y-3">
             {assessmentData.riskFlags.length > 0 ? assessmentData.riskFlags.map((flag, i) => (
-              <div key={i} className="flex gap-4 p-6 bg-rose-50 border border-rose-100 rounded-[1.5rem] items-center shadow-inner border-l-4 border-l-rose-500">
-                <div className="w-8 h-8 bg-rose-500 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">!</div>
-                <p className="text-[12px] font-black text-rose-900 uppercase tracking-tight leading-relaxed">{flag}</p>
+              <div key={i} className="flex gap-3 p-4 bg-rose-50 border border-rose-100 rounded-xl items-center border-l-4 border-l-rose-500">
+                <div className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 shadow-sm">!</div>
+                <p className="text-[11px] font-bold text-rose-900 leading-relaxed uppercase tracking-tight">{flag}</p>
               </div>
             )) : (
-              <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] flex gap-4 items-center shadow-inner border-l-4 border-l-emerald-500">
-                <div className="w-8 h-8 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">✓</div>
-                <p className="text-[12px] font-black text-emerald-900 uppercase tracking-tight">Profile core areas compliant with current public rules.</p>
+              <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex gap-3 items-center border-l-4 border-l-emerald-500">
+                <div className="w-6 h-6 bg-emerald-500 text-white rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 shadow-sm">✓</div>
+                <p className="text-[11px] font-bold text-emerald-900 uppercase tracking-tight">Core areas compliant with current public rules.</p>
               </div>
             )}
           </div>
@@ -253,31 +222,31 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {/* Next Steps */}
         <section>
-          <h3 className="text-[11px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-4 mb-6">Recommended Action Plan</h3>
-          <div className="grid grid-cols-1 gap-4">
+          <h3 className="text-[10px] font-black text-[#041229] uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Recommended Action Plan</h3>
+          <div className="grid grid-cols-1 gap-3">
             {assessmentData.nextSteps.map((step, i) => (
-              <div key={i} className="flex items-center gap-5 p-6 bg-white border-2 border-slate-100 rounded-[1.75rem] shadow-sm hover:border-navy transition-all group hover:translate-x-1">
-                <div className="w-10 h-10 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded-[1rem] flex items-center justify-center font-black text-sm transition-all shadow-sm">
+              <div key={i} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm group hover:border-[#041229] transition-all">
+                <div className="w-8 h-8 bg-slate-100 text-[#041229] group-hover:bg-[#041229] group-hover:text-white rounded flex items-center justify-center font-black text-[11px] transition-all shadow-sm">
                   {i + 1}
                 </div>
-                <p className="text-[13px] font-black text-navy uppercase tracking-tight leading-relaxed">{step}</p>
+                <p className="text-[12px] font-bold text-[#041229] uppercase tracking-tight leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
         </section>
       </div>
 
-      <footer className="mt-auto pt-12 border-t-2 border-slate-100 no-print">
-        <div className="bg-[#0B1F3B] p-10 rounded-[2.5rem] text-white/80 mb-10 relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full"></div>
-           <h4 className="text-[11px] text-emerald-400 mb-5 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
-           <p className="text-[11px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
-             This audit is generated by an automated assessment engine based on public immigration rules. It is NOT legal advice and does not replace the counsel of an OISC-regulated solicitor. Accuracy depends entirely on user inputs. ClearVisa UK is not affiliated with the UK Home Office.
+      <footer className="mt-auto pt-8 border-t border-slate-100 no-print">
+        <div className="bg-[#041229] p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
+           <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
+           <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
+             Not legal advice. Accuracy depends on user inputs. ClearVisa UK is not affiliated with the UK Home Office. Final decisions made by UKVI.
            </p>
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
+        <div className="flex justify-between items-center text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
           <span>© 2026 ClearVisa UK</span>
-          <span>Security Level: SSL-Verified Automated Assessment</span>
+          <span>Security Level: SSL-Verified Automated Audit</span>
         </div>
       </footer>
     </div>

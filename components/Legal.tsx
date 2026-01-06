@@ -12,12 +12,12 @@ const Legal: React.FC = () => {
   ];
 
   return (
-    <section className="section-py bg-slate-50 border-t border-slate-100">
+    <section className="py-16 bg-white border-t border-slate-100">
       <div className="app-container">
         <div className="max-w-3xl mx-auto">
-          <div className="app-card p-6 sm:p-8 border-l-4 border-l-[#1877F2]">
-            <h3 className="text-base font-bold text-[#07162A] mb-5 uppercase tracking-wider">Important Information</h3>
-            <div className="space-y-4 text-slate-500 text-xs leading-relaxed font-medium">
+          <div className="app-card p-8 border-l-4 border-l-[#1877F2]">
+            <h3 className="text-lg font-bold text-[#041229] mb-6 uppercase tracking-wider">Important Information</h3>
+            <div className="space-y-4 text-slate-500 text-sm leading-relaxed font-medium">
               {items.map((item, idx) => (
                 <p key={idx} className="flex items-start gap-3">
                   <span className="text-[#1877F2] font-black">•</span>
