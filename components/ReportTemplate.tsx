@@ -2,6 +2,7 @@ import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
 import { PlanId } from '../App';
+import { triggerReportPdfDownload } from '../utils/downloadPdf';
 
 interface ReportTemplateProps {
   applicantName?: string;
@@ -58,10 +59,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     }
   };
 
-  const handleDownload = () => {
-    window.open('/sample-report.pdf', '_blank');
-  };
-
   const renderUpgradeSection = () => {
     if (paidPlan === 'pro_plus') return null;
 
@@ -83,54 +80,38 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     }
 
     return (
-      <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-12 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
+      <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-10 rounded-[2.5rem] border-2 border-accent/30 relative overflow-hidden no-print">
         <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
         
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
           <div className="flex-shrink-0">
-            <div className="w-20 h-20 bg-accent text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+            <div className="w-16 h-16 bg-accent text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">
               ⚡
             </div>
           </div>
           
           <div className="flex-grow">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
                 {paidPlan === 'basic' ? 'Expand Analysis' : 'Recommended for complex cases'}
               </span>
             </div>
-            <h3 className="text-2xl font-bold text-navy mb-4 uppercase tracking-tight">
+            <h3 className="text-xl font-bold text-navy mb-3 uppercase tracking-tight">
               {heading}
             </h3>
-            <p className="text-body text-slate-700 mb-8 font-medium leading-relaxed max-w-xl">
+            <p className="text-sm text-slate-700 mb-6 font-medium leading-relaxed max-w-xl">
               {subheading}
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-              <div className="flex items-start gap-3">
-                <span className="text-accent font-bold">✓</span>
-                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                  Deeper Gap Analysis
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-accent font-bold">✓</span>
-                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                  Extra Narrative Questions
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-accent font-bold">✓</span>
-                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                  Upgrade Weak Documents
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-accent font-bold">✓</span>
-                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                  Solicitor-Ready Summary
-                </span>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 mb-8">
+              {["Deeper Gap Analysis", "Extra Narrative Questions", "Upgrade Weak Documents", "Solicitor-Ready Summary"].map(feat => (
+                <div key={feat} className="flex items-start gap-2">
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
+                    {feat}
+                  </span>
+                </div>
+              ))}
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -138,9 +119,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 <button 
                   key={opt.tier}
                   onClick={() => onUpgrade?.(opt.tier)}
-                  className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
+                  className="bg-accent text-white px-6 py-3.5 rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
                 >
-                  Upgrade to {opt.label} – Pay £{opt.priceExtra} extra
+                  {opt.label} – Pay £{opt.priceExtra} extra
                 </button>
               ))}
             </div>
@@ -166,31 +147,31 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       <div className="absolute top-0 right-0 w-32 h-32 bg-navy/5 rounded-bl-full"></div>
       
-      <header className="flex justify-between items-start mb-10 relative z-10 border-b border-slate-100 pb-6">
+      <header className="flex justify-between items-start mb-8 relative z-10 border-b border-slate-100 pb-4">
         <div>
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-navy text-white rounded flex items-center justify-center font-black text-xl">C</div>
-            <div className="text-[11px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-navy text-white rounded flex items-center justify-center font-black text-lg">C</div>
+            <div className="text-[10px] leading-tight text-navy font-black uppercase tracking-widest">ClearVisa UK<br/>Eligibility Audit</div>
           </div>
-          <h1 className="text-3xl text-navy font-bold tracking-tight mb-1 uppercase">Audit Report</h1>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date}</p>
+          <h1 className="text-2xl text-navy font-bold tracking-tight mb-1 uppercase">Audit Report</h1>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date}</p>
         </div>
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-right">
-          <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
-          <div className="text-navy font-black text-xl tracking-tight uppercase">Finalized</div>
-          <div className="text-[9px] text-slate-500 font-bold uppercase mt-1 px-2 py-0.5 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
+        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-right">
+          <div className="text-[8px] text-slate-400 font-black uppercase tracking-widest mb-1">Status</div>
+          <div className="text-navy font-black text-lg tracking-tight uppercase">Finalized</div>
+          <div className="text-[8px] text-slate-500 font-bold uppercase mt-1 px-2 py-0.5 bg-white border border-slate-200 rounded-full inline-block">Tier: {getTierDisplay()}</div>
         </div>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 relative z-10">
-        <div className="md:col-span-2 p-6 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center">
-          <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-3" style={{ color: current.color }}>Verdict: {current.title}</h2>
-          <p className="text-base font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 relative z-10">
+        <div className="md:col-span-2 p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] mb-2" style={{ color: current.color }}>Verdict: {current.title}</h2>
+          <p className="text-sm font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
         </div>
-        <div className="bg-navy rounded-2xl p-6 flex flex-col items-center justify-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-bl-full"></div>
-          <h3 className="text-[9px] text-slate-400 mb-3 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
-          <div className="relative w-full h-2 bg-white/10 rounded-full overflow-hidden mb-3 shadow-inner">
+        <div className="bg-navy rounded-2xl p-5 flex flex-col items-center justify-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-12 h-12 bg-white/5 rounded-bl-full"></div>
+          <h3 className="text-[8px] text-slate-400 mb-2 font-black uppercase tracking-[0.2em] relative z-10">Risk Factor</h3>
+          <div className="relative w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-2 shadow-inner">
             <div 
               className="h-full transition-all duration-1000 ease-out"
               style={{ 
@@ -199,42 +180,36 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
               }}
             ></div>
           </div>
-          <span className="text-xl font-black uppercase tracking-tight relative z-10" style={{ color: current.color }}>{current.risk} RISK</span>
+          <span className="text-lg font-black uppercase tracking-tight relative z-10" style={{ color: current.color }}>{current.risk} RISK</span>
         </div>
       </section>
 
-      <div className="space-y-10 mb-10 flex-grow">
-        
+      <div className="space-y-8 mb-8 flex-grow">
         {tier === 'pro_plus' && (() => {
           const analysis = analyzeEvidenceGaps(answers, visaRoute);
           return (
-            <section className="bg-accent/5 p-6 rounded-2xl border border-accent/20 mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-accent text-white rounded flex items-center justify-center text-sm shadow-sm">📊</div>
-                <h3 className="text-[12px] text-navy font-bold uppercase tracking-widest">
+            <section className="bg-accent/5 p-5 rounded-2xl border border-accent/20">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 bg-accent text-white rounded flex items-center justify-center text-xs shadow-sm">📊</div>
+                <h3 className="text-[11px] text-navy font-bold uppercase tracking-widest">
                   Evidence Gap Analysis
                 </h3>
               </div>
-              
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-3">
-                  <h4 className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Identified Issues</h4>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-2">
+                  <h4 className="text-[8px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Identified Issues</h4>
                   {analysis.gaps.map((gap, idx) => (
-                    <div key={idx} className="p-4 bg-rose-50 border border-rose-100 rounded-xl flex gap-3 items-start border-l-4 border-l-rose-500">
-                      <span className="text-rose-500 text-base flex-shrink-0 mt-0.5">⚠️</span>
-                      <p className="text-[12px] font-bold text-slate-700 leading-relaxed">{gap}</p>
+                    <div key={idx} className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex gap-3 items-start border-l-4 border-l-rose-500">
+                      <p className="text-[11px] font-bold text-slate-700 leading-relaxed">{gap}</p>
                     </div>
                   ))}
-                  {analysis.gaps.length === 0 && <p className="text-[11px] text-slate-400 italic px-1">No critical gaps detected.</p>}
                 </div>
-                
-                <div className="space-y-3 pt-4 border-t border-accent/10">
-                  <h4 className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Recommended Improvements</h4>
-                  <ul className="space-y-2">
+                <div className="space-y-2 pt-3 border-t border-accent/10">
+                  <h4 className="text-[8px] text-slate-400 font-black uppercase tracking-[0.15em] px-1">Recommended Improvements</h4>
+                  <ul className="space-y-1.5">
                     {analysis.improvements.map((improvement, idx) => (
-                      <li key={idx} className="flex gap-3 items-start p-4 bg-emerald-50 rounded-xl border border-emerald-100 border-l-4 border-l-emerald-500">
-                        <span className="text-emerald-500 font-black text-base flex-shrink-0 mt-0.5">→</span>
-                        <p className="text-[12px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
+                      <li key={idx} className="flex gap-2 items-start p-3 bg-emerald-50 rounded-xl border border-emerald-100 border-l-4 border-l-emerald-500">
+                        <p className="text-[11px] font-bold text-slate-700 leading-relaxed">{improvement}</p>
                       </li>
                     ))}
                   </ul>
@@ -246,22 +221,22 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
         {(tier === 'full' || tier === 'pro_plus') && (
           <section>
-            <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Compliance Assessment Matrix</h3>
+            <h3 className="text-[9px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-2 mb-4">Compliance Assessment Matrix</h3>
             <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full text-left text-[10px] border-collapse">
                 <thead className="bg-slate-50 border-b border-slate-200">
-                  <tr className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    <th className="px-6 py-4">Requirement</th>
-                    <th className="px-6 py-4 text-center">Status</th>
-                    <th className="px-6 py-4">Assessment Detail</th>
+                  <tr className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+                    <th className="px-4 py-2.5">Requirement</th>
+                    <th className="px-4 py-2.5 text-center">Status</th>
+                    <th className="px-4 py-2.5">Assessment Detail</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {getComplianceMatrix().map((row, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 text-navy font-bold tracking-tight">{row.req}</td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black inline-block min-w-[50px] ${
+                      <td className="px-4 py-2.5 text-navy font-bold">{row.req}</td>
+                      <td className="px-4 py-2.5 text-center">
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black inline-block min-w-[45px] ${
                           row.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
                           row.status === 'WARN' ? 'bg-amber-100 text-amber-700' : 
                           row.status === 'FAIL' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-400'
@@ -269,7 +244,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                           {row.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 font-medium leading-relaxed">{row.detail}</td>
+                      <td className="px-4 py-2.5 text-slate-500 font-medium">{row.detail}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -279,31 +254,14 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         )}
 
         <section>
-          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Profile Flag Analysis</h3>
-          <div className="space-y-3">
-            {assessmentData.riskFlags.length > 0 ? assessmentData.riskFlags.map((flag, i) => (
-              <div key={i} className="flex gap-3 p-4 bg-rose-50 border border-rose-100 rounded-xl items-center border-l-4 border-l-rose-500">
-                <div className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 shadow-sm">!</div>
-                <p className="text-[11px] font-bold text-rose-900 leading-relaxed uppercase tracking-tight">{flag}</p>
-              </div>
-            )) : (
-              <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex gap-3 items-center border-l-4 border-l-emerald-500">
-                <div className="w-6 h-6 bg-emerald-500 text-white rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 shadow-sm">✓</div>
-                <p className="text-[11px] font-bold text-emerald-900 uppercase tracking-tight">Core areas compliant with current public rules.</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-3 mb-5">Recommended Action Plan</h3>
-          <div className="grid grid-cols-1 gap-3">
+          <h3 className="text-[9px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-emerald-500 pl-2 mb-4">Recommended Action Plan</h3>
+          <div className="grid grid-cols-1 gap-2">
             {assessmentData.nextSteps.map((step, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm group hover:border-navy transition-all">
-                <div className="w-8 h-8 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded flex items-center justify-center font-black text-[11px] transition-all shadow-sm">
+              <div key={i} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl shadow-sm group hover:border-navy transition-all">
+                <div className="w-6 h-6 bg-slate-100 text-navy group-hover:bg-navy group-hover:text-white rounded flex items-center justify-center font-black text-[10px] transition-all">
                   {i + 1}
                 </div>
-                <p className="text-[12px] font-bold text-navy uppercase tracking-tight leading-relaxed">{step}</p>
+                <p className="text-[11px] font-bold text-navy uppercase tracking-tight">{step}</p>
               </div>
             ))}
           </div>
@@ -314,12 +272,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       <footer className="mt-auto pt-4 border-t border-slate-100 no-print pb-4">
         <div 
-          onClick={handleDownload}
+          onClick={triggerReportPdfDownload}
           className="bg-navy p-4 rounded-xl text-white/80 mb-4 relative overflow-hidden cursor-pointer hover:bg-navy/90 transition-colors"
         >
-           <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
-           <h4 className="text-[9px] text-emerald-400 mb-2 font-black uppercase tracking-[0.2em]">Download PDF Summary</h4>
-           <p className="text-[9px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
+           <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-bl-full"></div>
+           <h4 className="text-[9px] text-emerald-400 mb-1.5 font-black uppercase tracking-[0.2em]">Download PDF Summary</h4>
+           <p className="text-[8px] leading-relaxed font-bold uppercase tracking-widest text-white/50">
              Not legal advice. ClearVisa UK is not a law firm. Accuracy depends on user inputs. Final decisions made exclusively by UKVI.
            </p>
         </div>

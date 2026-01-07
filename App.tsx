@@ -21,6 +21,7 @@ import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
 import { QUESTIONS } from './data/questions';
+import { triggerReportPdfDownload } from './utils/downloadPdf';
 
 export type PlanId = 'basic' | 'full' | 'pro_plus';
 
@@ -96,16 +97,13 @@ const AppContent: React.FC = () => {
       answers,
       selectedPlan,
       paidPlan,
-      viewState: viewState === 'questionnaire' ? 'questionnaire' : 
-                 viewState === 'quickVerdict' ? 'quickVerdict' :
-                 viewState === 'paywall' ? 'paywall' :
-                 viewState === 'report' ? 'report' : 'landing'
+      viewState: (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(viewState)) ? viewState : 'landing'
     };
     localStorage.setItem('clearvisaState', JSON.stringify(state));
   }, [answers, selectedPlan, paidPlan, viewState]);
 
   useEffect(() => {
-    // BUG 2 FIX: Handle legal deep links for target="_blank" without losing report state
+    // Handle deep links for legal pages without breaking main app state
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view') as ViewState;
     if (viewParam && ['privacy', 'terms', 'refunds'].includes(viewParam)) {
@@ -152,19 +150,12 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      let tier: PlanId = 'basic';
-      if (paidPlan) {
-        tier = paidPlan;
-      }
+      let tier: PlanId = paidPlan || 'basic';
       
       if (!paidPlan) {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
-      if (selectedPlan === 'basic') {
-        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
-      }
-
       return q.showIf({ tier, route, answers });
     });
   };
@@ -240,10 +231,6 @@ const AppContent: React.FC = () => {
     setIsUpgrading(false);
     window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
-  };
-
-  const handleDownload = () => {
-    window.open('/sample-report.pdf', '_blank');
   };
 
   const renderContent = () => {
@@ -354,8 +341,8 @@ const AppContent: React.FC = () => {
                 <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
-                <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
-                <Button onClick={handleDownload} variant="navy" size="sm">Download PDF</Button>
+                <Button onClick={() => { localStorage.removeItem('clearvisaState'); setViewState('landing'); }} variant="outline" size="sm">Exit</Button>
+                <Button onClick={triggerReportPdfDownload} variant="navy" size="sm">Download PDF</Button>
               </div>
             </div>
             <div id="report-print-root">
