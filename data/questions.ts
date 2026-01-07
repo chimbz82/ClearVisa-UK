@@ -1,101 +1,71 @@
 import { QuestionConfig } from '../types';
 
 export const QUESTIONS: QuestionConfig[] = [
-  // --- SECTION 1: BACKGROUND ---
-  { id: 'nationality', section: 'Background', label: 'What is your current nationality?', type: 'shortText', showIf: () => true },
-  { id: 'dual_nationality', section: 'Background', label: 'Do you hold any other citizenships or dual nationalities?', type: 'boolean', showIf: () => true },
-  { id: 'dob', section: 'Background', label: 'What is your full date of birth?', type: 'date', showIf: () => true },
-  { id: 'marital_status', section: 'Background', label: 'What is your current legal marital status?', type: 'singleSelect', options: [
-      { value: 'single', label: 'Single' },
-      { value: 'married', label: 'Married' },
-      { value: 'civil_partnership', label: 'Civil Partnership' },
-      { value: 'unmarried_partner', label: 'Unmarried Partner (2+ years cohabitation)' },
-      { value: 'divorced', label: 'Divorced / Dissolved' }
-    ], showIf: () => true },
-  { id: 'dependants_count', section: 'Background', label: 'How many dependent children do you have?', type: 'number', showIf: () => true },
-  { id: 'current_residence', section: 'Background', label: 'In which country do you currently reside?', type: 'shortText', showIf: () => true },
-  { id: 'prev_uk_residence', section: 'Background', label: 'Have you ever lived in the United Kingdom previously?', type: 'boolean', showIf: () => true },
-  { id: 'overstay_history', section: 'Background', label: 'Have you ever overstayed a visa in the UK or any other country?', type: 'boolean', showIf: () => true },
-  { id: 'refusal_history', section: 'Background', label: 'Have you ever been refused a visa or entry to any country?', type: 'boolean', showIf: () => true },
-  { id: 'deportation_history', section: 'Background', label: 'Have you ever been deported, removed, or required to leave a country?', type: 'boolean', showIf: () => true },
+  // --- FREE PRE-CHECK (1-12) ---
+  { id: 'visa_route', section: 'Initial', label: 'Which UK visa route are you assessing?', type: 'singleSelect', options: [{ value: 'spouse', label: 'Spouse / Partner' }, { value: 'skilled', label: 'Skilled Worker' }], showIf: () => true },
+  { id: 'nationality', section: 'Initial', label: 'What is your current nationality?', type: 'shortText', showIf: () => true },
+  { id: 'marital_status', section: 'Initial', label: 'What is your legal marital status?', type: 'singleSelect', options: [{ value: 'single', label: 'Single' }, { value: 'married', label: 'Married' }, { value: 'civil', label: 'Civil Partnership' }, { value: 'unmarried', label: 'Unmarried Partner (2+ yrs)' }], showIf: () => true },
+  { id: 'inside_uk', section: 'Initial', label: 'Are you currently inside the UK?', type: 'boolean', showIf: () => true },
+  { id: 'partner_uk_status', section: 'Initial', label: 'What is your partner’s UK status?', type: 'singleSelect', options: [{ value: 'british', label: 'British Citizen' }, { value: 'settled', label: 'Settled (ILR/EUSS)' }, { value: 'refugee', label: 'Refugee' }, { value: 'none', label: 'Not in UK' }], showIf: (ctx) => ctx.route === 'spouse' },
+  { id: 'sponsor_income', section: 'Initial', label: 'Approximate gross annual income of sponsor?', type: 'currency', showIf: (ctx) => ctx.route === 'spouse' },
+  { id: 'sw_salary', section: 'Initial', label: 'What is the offered annual salary?', type: 'currency', showIf: (ctx) => ctx.route === 'skilled' },
+  { id: 'refusal_history', section: 'Initial', label: 'Have you ever been refused a visa for any country?', type: 'boolean', showIf: () => true },
+  { id: 'criminal_offence', section: 'Initial', label: 'Do you have any criminal convictions or cautions?', type: 'boolean', showIf: () => true },
+  { id: 'overstay_history', section: 'Initial', label: 'Have you ever overstayed a visa in the UK?', type: 'boolean', showIf: () => true },
+  { id: 'english_test_passed', section: 'Initial', label: 'Have you passed an approved English test?', type: 'boolean', showIf: () => true },
+  { id: 'acc_arranged', section: 'Initial', label: 'Is UK accommodation already arranged?', type: 'boolean', showIf: () => true },
 
-  // --- SECTION 2: CURRENT STATUS ---
-  { id: 'inside_uk', section: 'Status', label: 'Are you currently physically present inside the UK?', type: 'boolean', showIf: () => true },
-  { id: 'current_visa_title', section: 'Status', label: 'What is the specific title of your current UK visa?', type: 'shortText', showIf: (ctx) => ctx.answers.inside_uk === true },
-  { id: 'visa_expiry_date', section: 'Status', label: 'When does your current leave to remain expire?', type: 'date', showIf: (ctx) => ctx.answers.inside_uk === true },
-  { id: 'breach_history', section: 'Status', label: 'Have you ever breached the conditions of a UK visa?', type: 'boolean', showIf: () => true },
-  { id: 'illegal_work_history', section: 'Status', label: 'Have you ever worked without valid permission in the UK?', type: 'boolean', showIf: () => true },
-  { id: 'visa_route', section: 'Status', label: 'Which UK visa route are you assessing today?', type: 'singleSelect', options: [
-      { value: 'spouse', label: 'Spouse / Partner Route' },
-      { value: 'skilled', label: 'Skilled Worker Route' }
-    ], showIf: () => true },
+  // --- FULL AUDIT (PAID ONLY - 13+) ---
+  // Background
+  { id: 'dual_nationality', section: 'Background', label: 'Do you hold any other citizenships?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'dob', section: 'Background', label: 'What is your date of birth?', type: 'date', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'passport_validity', section: 'Background', label: 'Does your passport have at least 6 months validity?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'prev_uk_visa_titles', section: 'Background', label: 'List your previous UK visa types (if any)', type: 'shortText', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'current_visa_expiry', section: 'Background', label: 'When does your current leave expire?', type: 'date', showIf: (ctx) => ctx.answers.inside_uk === true && ctx.tier !== 'free' },
+  { id: 'ni_number', section: 'Background', label: 'Do you have a UK National Insurance number?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
 
-  // --- SECTION 3: RELATIONSHIP / EMPLOYMENT ---
-  { id: 'partner_nationality', section: 'Relationship', label: 'What is your partner’s nationality?', type: 'shortText', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'partner_uk_status', section: 'Relationship', label: 'What is your partner’s UK immigration status?', type: 'singleSelect', options: [
-      { value: 'british', label: 'British Citizen' },
-      { value: 'settled', label: 'Settled Status (ILR / EUSS)' },
-      { value: 'refugee', label: 'Refugee Status' },
-      { value: 'other', label: 'Other' }
-    ], showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'rel_duration', section: 'Relationship', label: 'How long have you been in a subsisting relationship?', type: 'shortText', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'is_legally_joined', section: 'Relationship', label: 'Are you legally married or in a registered civil partnership?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'cohabitation_proof', section: 'Relationship', label: 'Do you have official evidence of living together?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'children_together', section: 'Relationship', label: 'Do you have any biological or legally adopted children together?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'meeting_frequency', section: 'Relationship', label: 'How often have you physically met in the last 2 years?', type: 'shortText', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'joint_finances', section: 'Relationship', label: 'Do you share any joint bank accounts or financial commitments?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'prev_marriage_history', section: 'Relationship', label: 'Have either of you been previously married?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'subsistence_evidence', section: 'Relationship', label: 'Do you have records of communication for the periods spent apart?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
+  // Relationship (Spouse Only)
+  { id: 'rel_meeting_date', section: 'Relationship', label: 'When did you first meet in person?', type: 'date', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'wedding_date', section: 'Relationship', label: 'What was the date of your legal marriage?', type: 'date', showIf: (ctx) => ctx.answers.marital_status === 'married' && ctx.tier !== 'free' },
+  { id: 'cohab_start_date', section: 'Relationship', label: 'When did you start living together?', type: 'date', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'joint_accounts', section: 'Relationship', label: 'Do you have joint bank accounts?', type: 'boolean', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'joint_tenancy', section: 'Relationship', label: 'Are both names on a tenancy or mortgage?', type: 'boolean', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'subsistence_proof', section: 'Relationship', label: 'Do you have chat logs covering periods apart?', type: 'boolean', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'children_together', section: 'Relationship', label: 'Do you have biological children together?', type: 'boolean', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'partner_prev_marriage', section: 'Relationship', label: 'Has your partner been married before?', type: 'boolean', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'meeting_venue', section: 'Relationship', label: 'Where was your marriage ceremony held?', type: 'shortText', showIf: (ctx) => ctx.answers.marital_status === 'married' && ctx.tier !== 'free' },
+  { id: 'rel_future_plans', section: 'Relationship', label: 'Briefly describe your future plans in the UK', type: 'longText', showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
 
-  { id: 'sw_job_offer', section: 'Relationship', label: 'Do you have a formal job offer from a UK-based employer?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-  { id: 'sw_sponsor_license', section: 'Relationship', label: 'Does the employer hold a valid A-rated Sponsor License?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-  { id: 'sw_cos_assigned', section: 'Relationship', label: 'Has a Certificate of Sponsorship (CoS) already been assigned?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-  { id: 'sw_job_soc_code', section: 'Relationship', label: 'Do you know the 4-digit SOC occupation code for the role?', type: 'shortText', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-  { id: 'sw_isl_role', section: 'Relationship', label: 'Is the role on the Immigration Salary List?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
+  // Finances
+  { id: 'sponsor_emp_type', section: 'Finances', label: 'Sponsor employment type?', type: 'singleSelect', options: [{ value: 'paye', label: 'Salaried (PAYE)' }, { value: 'self', label: 'Self-Employed' }, { value: 'director', label: 'Director' }], showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'free' },
+  { id: 'sponsor_emp_length', section: 'Finances', label: 'Has sponsor been in role for 6+ months?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'bank_stmt_6m', section: 'Finances', label: 'Do you have 6 full months of bank statements?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'payslips_6m', section: 'Finances', label: 'Do you have 6 matching payslips?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'employer_letter', section: 'Finances', label: 'Can you get a formal employer letter?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'cash_savings_amt', section: 'Finances', label: 'Total cash savings held?', type: 'currency', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'savings_held_6m', section: 'Finances', label: 'Have savings been held for 6+ months?', type: 'boolean', showIf: (ctx) => ctx.answers.cash_savings_amt > 0 && ctx.tier !== 'free' },
+  { id: 'p60_available', section: 'Finances', label: 'Is the most recent P60 available?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'secondary_income', section: 'Finances', label: 'Any secondary income sources?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'benefits_receipt', section: 'Finances', label: 'Is the sponsor on any UK benefits?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'unearned_income', section: 'Finances', label: 'Any dividends or rental income?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'financial_maintenance_cert', section: 'Finances', label: 'Will sponsor certify maintenance?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
 
-  // --- SECTION 4: FINANCES ---
-  { id: 'sponsor_income_source', section: 'Finances', label: 'What is the primary source of the sponsor’s income?', type: 'singleSelect', options: [
-      { value: 'employment', label: 'Employment (PAYE)' },
-      { value: 'self_employed', label: 'Self-Employment / Director' },
-      { value: 'savings', label: 'Cash Savings' },
-      { value: 'pension', label: 'Pension Income' },
-      { value: 'other', label: 'Other' }
-    ], showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'sponsor_annual_income', section: 'Finances', label: 'What is the sponsor’s total gross annual income?', type: 'currency', showIf: (ctx) => ctx.answers.visa_route === 'spouse' && ctx.answers.sponsor_income_source !== 'savings' },
-  { id: 'employment_length', section: 'Finances', label: 'Has the sponsor been with their current employer for 6 months or more?', type: 'boolean', showIf: (ctx) => ctx.answers.sponsor_income_source === 'employment' },
-  { id: 'multiple_employers', section: 'Finances', label: 'Does the sponsor rely on income from multiple employers?', type: 'boolean', showIf: (ctx) => ctx.answers.sponsor_income_source === 'employment' },
-  { id: 'cash_savings_total', section: 'Finances', label: 'What is the total amount of cash savings held?', type: 'currency', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'savings_held_period', section: 'Finances', label: 'Have these savings been held for at least 6 months?', type: 'boolean', showIf: (ctx) => ctx.answers.cash_savings_total > 0 },
-  { id: 'savings_source', section: 'Finances', label: 'Can you provide evidence of the source of these savings?', type: 'boolean', showIf: (ctx) => ctx.answers.cash_savings_total > 0 },
-  { id: 'uk_benefits_receipt', section: 'Finances', label: 'Does the sponsor receive any UK public funds?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'third_party_support', section: 'Finances', label: 'Do you receive regular financial support from a third party?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
-  { id: 'income_stability', section: 'Finances', label: 'Is the sponsor’s income expected to continue?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'spouse' },
+  // Suitability & History
+  { id: 'nhs_debt', section: 'Suitability', label: 'Do you owe £500+ to the NHS?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'litigation_history', section: 'Suitability', label: 'Are you involved in any court cases?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'pending_prosecution', section: 'Suitability', label: 'Any pending criminal charges?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'false_representation', section: 'Suitability', label: 'Ever used false docs with Home Office?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'terrorist_views', section: 'Suitability', label: 'Ever expressed extremist views?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'travel_history_10yr', section: 'Suitability', label: 'Can you list all travel in last 10 years?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'deportation_order', section: 'Suitability', label: 'Ever been deported from any country?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'public_good_assessment', section: 'Suitability', label: 'Presence ever considered not for public good?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
 
-  { id: 'sw_salary_offered', section: 'Finances', label: 'What is the gross annual salary specified on the CoS?', type: 'currency', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-  { id: 'sw_maintenance_cert', section: 'Finances', label: 'Will the sponsor certify maintenance on the CoS?', type: 'boolean', showIf: (ctx) => ctx.answers.visa_route === 'skilled' },
-
-  // --- SECTION 5: ACCOMMODATION ---
-  { id: 'acc_arranged', section: 'Accommodation', label: 'Do you have specific accommodation arranged in the UK?', type: 'boolean', showIf: () => true },
-  { id: 'acc_type', section: 'Accommodation', label: 'What type of accommodation will you be residing in?', type: 'singleSelect', options: [
-      { value: 'owned', label: 'Owned' },
-      { value: 'rented', label: 'Private Rented' },
-      { value: 'family', label: 'Living with Family/Friends' }
-    ], showIf: (ctx) => ctx.answers.acc_arranged === true },
-  { id: 'acc_exclusive_use', section: 'Accommodation', label: 'Will you and your family have exclusive use of at least one bedroom?', type: 'boolean', showIf: (ctx) => ctx.answers.acc_arranged === true },
-  { id: 'acc_overcrowding', section: 'Accommodation', label: 'Will the property be overcrowded under UK housing rules?', type: 'boolean', showIf: (ctx) => ctx.answers.acc_arranged === true },
-  { id: 'acc_landlord_permission', section: 'Accommodation', label: 'Do you have written permission from the owner to reside there?', type: 'boolean', showIf: (ctx) => ctx.answers.acc_type === 'rented' || ctx.answers.acc_type === 'family' },
-
-  // --- SECTION 6: SUITABILITY ---
-  { id: 'criminal_offence', section: 'Suitability', label: 'Have you ever been convicted of a criminal offence?', type: 'boolean', showIf: () => true },
-  { id: 'pending_prosecution', section: 'Suitability', label: 'Do you have any pending criminal prosecutions against you?', type: 'boolean', showIf: () => true },
-  { id: 'false_docs_history', section: 'Suitability', label: 'Have you ever used false documents with the Home Office?', type: 'boolean', showIf: () => true },
-  { id: 'nhs_debt', section: 'Suitability', label: 'Do you owe any outstanding debt of £500 or more to the NHS?', type: 'boolean', showIf: () => true },
-  { id: 'public_good_ban', section: 'Suitability', label: 'Have you ever been told your presence in the UK is not conducive to the public good?', type: 'boolean', showIf: () => true },
-
-  // --- SECTION 7: ENGLISH LANGUAGE ---
-  { id: 'english_test_passed', section: 'English Language', label: 'Have you passed a Secure English Language Test at the required level?', type: 'boolean', showIf: () => true },
-  { id: 'english_test_provider', section: 'English Language', label: 'Which provider conducted your English test?', type: 'shortText', showIf: (ctx) => ctx.answers.english_test_passed === true },
-  { id: 'english_degree_exemption', section: 'English Language', label: 'Do you hold a degree taught in English recognized by Ecctis?', type: 'boolean', showIf: (ctx) => ctx.answers.english_test_passed === false },
-  { id: 'english_nationality_exemption', section: 'English Language', label: 'Are you a national of a majority English-speaking country?', type: 'boolean', showIf: (ctx) => ctx.answers.english_test_passed === false },
-  { id: 'english_age_exemption', section: 'English Language', label: 'Are you aged 65 or over, or exempt due to a medical condition?', type: 'boolean', showIf: () => true }
+  // Accommodation & English
+  { id: 'acc_property_type', section: 'Accommodation', label: 'Property type (House/Flat)?', type: 'shortText', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'acc_bedrooms', section: 'Accommodation', label: 'Number of bedrooms in property?', type: 'number', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'acc_other_occupants', section: 'Accommodation', label: 'Total people living in property?', type: 'number', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'acc_owner_permission', section: 'Accommodation', label: 'Do you have owner permission to stay?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'english_test_provider', section: 'English', label: 'English test provider (IELTS/PTE)?', type: 'shortText', showIf: (ctx) => ctx.answers.english_test_passed === true && ctx.tier !== 'free' },
+  { id: 'degree_taught_english', section: 'English', label: 'Is your degree taught in English?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
+  { id: 'ecctis_verified', section: 'English', label: 'Has degree been Ecctis verified?', type: 'boolean', showIf: (ctx) => ctx.answers.degree_taught_english === true && ctx.tier !== 'free' }
 ];

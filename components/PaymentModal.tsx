@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PLANS, PlanId } from '../App';
 import Button from './Button';
@@ -21,7 +22,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
   const plan = PLANS.find(p => p.id === selectedTier) || PLANS.find(p => p.id === 'full')!;
   
+  // Added 'free' property to match PlanId definition
   const basePrices: Record<PlanId, number> = {
+    free: 0,
     basic: 29,
     full: 79,
     pro_plus: 99
