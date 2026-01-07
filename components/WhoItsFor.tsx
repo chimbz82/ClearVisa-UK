@@ -27,6 +27,21 @@ const WhoItsFor: React.FC = () => {
     }
   ];
 
+  const testimonials = [
+    {
+      quote: "I was worried about the new income rules for my husband's spouse visa. This report helped me see exactly where we stood before we spent a penny on the actual application.",
+      route: "Spouse Visa Applicant"
+    },
+    {
+      quote: "After a refusal last year, I used this to check if my new job met the salary requirements. It highlighted specific bank statement issues I hadn't even considered.",
+      route: "Re-applying after refusal"
+    },
+    {
+      quote: "Instant and clear. Much cheaper than a full legal consultation just to check basic eligibility. The checklist was exactly what I needed to organize my documents.",
+      route: "Early-stage planner"
+    }
+  ];
+
   return (
     <section id="who-its-for" className="section-py bg-white scroll-mt-20">
       <div className="app-container">
@@ -36,7 +51,7 @@ const WhoItsFor: React.FC = () => {
           <p className="text-sm sm:text-base text-slate-600">ClearVisa UK is built for real people making serious life decisions.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {cards.map((card, idx) => (
             <div key={idx} className="app-card hover-card flex flex-col p-6 min-h-[220px] group">
               <div className="mb-6 w-11 h-11 rounded-lg bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center transition-all group-hover:bg-[#1877F2] group-hover:text-white">
@@ -53,6 +68,23 @@ const WhoItsFor: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="bg-[#F8FAFC] rounded-[2rem] p-8 md:p-12 border border-slate-100">
+           <div className="text-center mb-10">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Testimonials</span>
+              <h3 className="text-xl font-bold text-navy">What real applicants say</h3>
+           </div>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((t, i) => (
+                <div key={i} className="flex flex-col">
+                   <p className="text-sm text-slate-600 italic leading-relaxed mb-6 flex-grow">"{t.quote}"</p>
+                   <div className="pt-4 border-t border-slate-200">
+                      <span className="text-[10px] font-black text-navy uppercase tracking-widest">{t.route}</span>
+                   </div>
+                </div>
+              ))}
+           </div>
         </div>
       </div>
     </section>

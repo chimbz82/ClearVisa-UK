@@ -68,7 +68,7 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
-    description: 'For complex or borderline cases where evidence and wording really matter.',
+    description: 'Ideal for previous refusals and borderline cases where evidence and wording really matter.',
     includedFeatures: [
       'Everything in Professional Audit',
       'Deeper rule-by-rule gap analysis',

@@ -12,10 +12,17 @@ const WhatYouGet: React.FC = () => {
     "PDF report you can download and keep"
   ];
 
+  const whyChoose = [
+    { title: "Zero Guesswork", desc: "Map yourself against actual public Home Office rules with automated logic." },
+    { title: "Risk Awareness", desc: "Identify 'red flags' before you submit and lose thousands in visa fees." },
+    { title: "Complete Preparation", desc: "Get a personalised checklist for your evidence before you apply." },
+    { title: "Peace of Mind", desc: "Know your compliance score in minutes, not weeks." }
+  ];
+
   return (
     <section className="section-py bg-slate-50">
       <div className="app-container">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center mb-20">
           <div className="mb-12 lg:mb-0">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#07162A] mb-4">
               What your ClearVisa UK report includes
@@ -83,6 +90,20 @@ const WhatYouGet: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <div>
+           <div className="text-center mb-10">
+              <h2 className="text-2xl font-bold text-navy mb-4">Why people choose ClearVisa UK</h2>
+           </div>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {whyChoose.map((item, i) => (
+                <div key={i} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                   <h4 className="text-base font-bold text-navy mb-2">{item.title}</h4>
+                   <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+           </div>
         </div>
       </div>
     </section>

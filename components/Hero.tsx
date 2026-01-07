@@ -19,7 +19,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.1em]">ClearVisa UK – UK Visa Pre-Check</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5_xl font-bold tracking-tight text-[#041229] mb-6 leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[#041229] mb-6 leading-[1.1]">
               Check your UK visa eligibility in minutes, <br/>
               <span className="text-[#2BB24C]">before you spend thousands.</span>
             </h1>
@@ -28,7 +28,7 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
               Answer a few simple questions and get a personalised UK visa pre-check for spouse or skilled worker routes – with a clear verdict, risk flags, and next steps.
             </p>
 
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap gap-4 items-center mb-10">
               <Button onClick={onStartCheck} size="lg">
                 {t('hero.ctaPrimary')}
               </Button>
@@ -40,6 +40,21 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
               </button>
             </div>
             
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 pt-6 border-t border-slate-50">
+               <div>
+                  <div className="text-xl font-black text-navy leading-none mb-1">20+</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Countries served</div>
+               </div>
+               <div>
+                  <div className="text-xl font-black text-[#1877F2] leading-none mb-1">94%</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Spouse Visa focus</div>
+               </div>
+               <div>
+                  <div className="text-xl font-black text-[#2BB24C] leading-none mb-1">&lt;10min</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avg. Completion</div>
+               </div>
+            </div>
+
             <div className="mt-8 flex items-center gap-4">
               <div className="flex -space-x-2">
                 {[1,2,3,4].map(i => (

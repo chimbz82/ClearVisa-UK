@@ -11,6 +11,14 @@ interface PricingProps {
 const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
   const { t } = useLanguage();
 
+  const comparison = [
+    { feature: "Eligibility Verdict", cv: "✓ Instant", diy: "Guesswork", solicitor: "✓ Professional" },
+    { feature: "Compliance Score", cv: "✓ Automated", diy: "✕ No", solicitor: "✓ Professional" },
+    { feature: "Evidence Audit", cv: "✓ Detailed", diy: "✕ No", solicitor: "✓ Full" },
+    { feature: "Time Cost", cv: "10 Minutes", diy: "Weeks", solicitor: "Days/Weeks" },
+    { feature: "Financial Cost", cv: "£29 - £99", diy: "Free", solicitor: "£800 - £3000+" }
+  ];
+
   return (
     <section id="pricing" className="section-py bg-[#F5F7FB] scroll-mt-20">
       <div className="app-container">
@@ -20,7 +28,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
           <p className="text-sm sm:text-base text-slate-600 font-medium">No subscriptions. No hidden fees. Pay once per pre-check.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-20">
           {PLANS.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
             const isFull = plan.id === 'full';
@@ -51,7 +59,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     <span className="text-[11px] text-slate-400 font-black uppercase tracking-widest">once</span>
                   </div>
                   <p className="text-xs text-slate-600 font-bold leading-relaxed min-h-[48px]">
-                    {isProPlus ? "For complex or borderline cases where evidence and wording really matter." : plan.description}
+                    {isProPlus ? "Ideal for previous refusals and borderline cases where evidence and wording really matter." : plan.description}
                   </p>
                 </div>
                 
@@ -84,12 +92,19 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                   >
                     {isProPlus ? 'Choose Professional Plus' : `Choose ${plan.name}`}
                   </Button>
-                  <div className="mt-5 text-center space-y-2">
+                  <div className="mt-5 text-center space-y-3">
                     {isProPlus && (
-                      <p className="text-[10px] text-[#1877F2] font-black uppercase tracking-tight mb-2">
+                      <p className="text-[10px] text-[#1877F2] font-black uppercase tracking-tight">
                         MOST RECOMMENDED FOR SPOUSE VISAS AND PREVIOUS REFUSALS
                       </p>
                     )}
+                    
+                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                       <span className="text-[8px] font-bold text-slate-400 uppercase">✓ Secure Stripe checkout</span>
+                       <span className="text-[8px] font-bold text-slate-400 uppercase">✓ One-time payment</span>
+                       <span className="text-[8px] font-bold text-slate-400 uppercase">✓ Instant access</span>
+                    </div>
+
                     <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
                       SECURE STRIPE CHECKOUT
                     </p>
@@ -104,6 +119,40 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
               </div>
             );
           })}
+        </div>
+
+        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 max-w-4xl mx-auto">
+           <div className="text-center mb-10">
+              <h3 className="text-xl font-bold text-navy">Compare your options</h3>
+              <p className="text-sm text-slate-500 font-medium">How we compare to DIY and traditional legal services.</p>
+           </div>
+           <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                 <thead>
+                    <tr className="border-b border-slate-100">
+                       <th className="py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">Decision Factor</th>
+                       <th className="py-4 text-[11px] font-black text-[#1877F2] uppercase tracking-widest text-center">ClearVisa Report</th>
+                       <th className="py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">DIY Forums</th>
+                       <th className="py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Solicitor</th>
+                    </tr>
+                 </thead>
+                 <tbody className="divide-y divide-slate-50">
+                    {comparison.map((row, i) => (
+                      <tr key={i}>
+                         <td className="py-5 text-xs font-bold text-navy">{row.feature}</td>
+                         <td className="py-5 text-xs font-bold text-[#1877F2] text-center">{row.cv}</td>
+                         <td className="py-5 text-xs font-medium text-slate-500 text-center">{row.diy}</td>
+                         <td className="py-5 text-xs font-medium text-slate-500 text-center">{row.solicitor}</td>
+                      </tr>
+                    ))}
+                 </tbody>
+              </table>
+           </div>
+           <div className="mt-8 pt-8 border-t border-slate-100 text-center">
+              <p className="text-[10px] text-slate-400 italic font-medium">
+                 Note: ClearVisa UK is an automated pre-check tool. It is not a law firm and cannot provide legal advice or represent you. Final decisions are made by the Home Office.
+              </p>
+           </div>
         </div>
       </div>
     </section>
