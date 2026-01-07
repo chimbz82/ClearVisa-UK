@@ -24,7 +24,7 @@ interface ReportTemplateProps {
 const ReportTemplate: React.FC<ReportTemplateProps> = ({ 
   applicantName = "Applicant", 
   visaRoute, 
-  reportId = `CV-${Math.floor(100000 + Math.random() * 900000)}`,
+  reportId = `CV-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
   date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
   assessmentData,
   answers = {} as Record<string, any>,
