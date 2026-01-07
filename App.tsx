@@ -23,7 +23,9 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import RiskNotice from './components/RiskNotice';
-import { PlanId, getQuestionLimit } from './config/pricingConfig';
+
+// PATCH 1: PlanId and pricing helpers now imported from single source of truth
+import { PLANS_ARRAY, PLANS, PlanId, getQuestionLimit } from './config/pricingConfig';
 
 export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
