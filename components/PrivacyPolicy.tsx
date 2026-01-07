@@ -21,94 +21,116 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
             
             <header className="border-b border-slate-100 pb-8">
               <h1 className="text-3xl font-extrabold text-navy uppercase tracking-tight mb-2">Privacy Policy</h1>
-              <p className="font-semibold text-slate-400 text-sm uppercase tracking-widest">ClearVisa UK • UK GDPR Compliant • Last Updated: January 2026</p>
+              <p className="font-semibold text-slate-400 text-sm uppercase tracking-widest">Last updated: January 2026</p>
             </header>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">1. Introduction & Data Controller</h2>
-              <p>ClearVisa UK ("we", "us", or "our") is committed to protecting your privacy. This policy explains how we handle your personal data in compliance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
-              <p><strong>Data Controller:</strong> ClearVisa UK<br />
-              <strong>Contact Email:</strong> <a href="mailto:clearvisauk@protonmail.com" className="text-accent font-bold">clearvisauk@protonmail.com</a></p>
+              <p className="text-sm leading-relaxed">
+                ClearVisa UK (“we”, “us”, “our”) is committed to protecting your privacy. This Privacy
+                Policy explains how we collect, use, and protect your personal data when you use our
+                Service.
+              </p>
+              <p className="text-sm">
+                <strong>Data Controller:</strong> ClearVisa UK<br />
+                <strong>Contact:</strong> <a href="mailto:clearvisauk@protonmail.com" className="text-accent font-bold">clearvisauk@protonmail.com</a>
+              </p>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">2. Lawful Basis for Processing</h2>
-              <p>We process your data under the following lawful bases:</p>
+              <p className="text-sm leading-relaxed">We process your personal data on the following lawful bases:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Performance of a Contract:</strong> To provide the automated eligibility assessment and report you have requested.</li>
-                <li><strong>Legitimate Interests:</strong> To maintain the security of our platform, prevent fraud, and improve our assessment logic.</li>
-                <li><strong>Consent:</strong> For non-essential cookies and marketing communications (where applicable).</li>
+                <li><strong>Contract:</strong> To provide the eligibility assessment and report you request.</li>
+                <li><strong>Legitimate Interests:</strong> To operate, secure, and improve our Service and understand usage patterns.</li>
+                <li><strong>Consent:</strong> Where required, for optional communications you choose to receive.</li>
+                <li><strong>Legal Obligation:</strong> To comply with tax, accounting, and anti-fraud requirements.</li>
               </ul>
+              <div className="mt-4 p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <h4 className="text-[10px] font-black text-navy uppercase tracking-widest mb-2">Special category & sensitive data</h4>
+                <p className="text-xs text-slate-500 font-medium">
+                  Your answers may include information relating to criminal history, immigration history,
+                  family life, and financial position. You choose whether to provide this data. We only use
+                  it to generate your eligibility assessment and associated report.
+                </p>
+              </div>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">3. Information We Collect</h2>
-              <p>To provide an accurate pre-check, we collect the following information provided by you in our questionnaire:</p>
+              <p className="text-sm">We may collect the following categories of data:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Identity Data:</strong> Nationality, date of birth, and marital status.</li>
-                <li><strong>Financial Data:</strong> Income amounts, employment status, and savings figures.</li>
-                <li><strong>Immigration History:</strong> Previous visas, travel history, refusals, overstays, or deportations.</li>
-                <li><strong>Suitability Data:</strong> Information regarding criminal convictions or health-related debts.</li>
-                <li><strong>Technical Data:</strong> IP address, browser type, and usage patterns (via cookies).</li>
+                <li><strong>Identity data:</strong> Name, nationality, date of birth, marital status.</li>
+                <li><strong>Contact data:</strong> Email address and limited contact details.</li>
+                <li><strong>Case data:</strong> Your answers to the eligibility questions, including immigration, employment, financial, accommodation, and relationship information.</li>
+                <li><strong>Technical data:</strong> IP address, browser type, device identifiers, and basic usage analytics.</li>
+                <li><strong>Payment data:</strong> Limited transaction details processed via our payment provider (we do not store full card numbers).</li>
               </ul>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">4. How We Use Your Data</h2>
-              <p>Your data is used exclusively to:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Generate your automated eligibility verdict and risk report.</li>
-                <li>Process your payment securely via our third-party provider (Stripe).</li>
-                <li>Provide customer support when you contact us via email.</li>
-                <li>Improve our rules-based logic to reflect changes in UK immigration guidance.</li>
+                <li>To generate your automated eligibility verdict and risk profile;</li>
+                <li>To produce and deliver your audit report and checklists;</li>
+                <li>To provide customer support when you contact us;</li>
+                <li>To maintain and improve the performance and security of our Service; and</li>
+                <li>To comply with our legal and regulatory obligations.</li>
               </ul>
-              <p className="text-sm font-bold text-navy italic">Note: We do not sell your personal data to third parties or share it with the Home Office / UKVI.</p>
+              <p className="text-sm italic font-bold text-navy">
+                We do NOT sell your personal data and we do not share it with the UK Home Office or UKVI unless required by law.
+              </p>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">5. Data Retention</h2>
-              <p>We keep your data only for as long as necessary:</p>
+              <p className="text-sm">We retain your data only for as long as necessary for the purposes described above:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Assessment Data:</strong> Your questionnaire answers and generated reports are stored for <strong>12 months</strong> to allow you to access and upgrade your report.</li>
-                <li><strong>Payment Records:</strong> Transaction details are retained for <strong>7 years</strong> to comply with UK financial and tax reporting obligations.</li>
-                <li><strong>Email Correspondence:</strong> Retained for 2 years after our last interaction.</li>
+                <li><strong>Assessment data and generated reports:</strong> Typically retained for up to 12 months.</li>
+                <li><strong>Payment records and invoices:</strong> Retained for up to 7 years.</li>
+                <li><strong>Support communications:</strong> Retained for up to 2 years.</li>
               </ul>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">6. Third-Party Processors</h2>
-              <p>We use trusted third-party services to operate:</p>
+              <p className="text-sm">We use trusted third-party providers to help deliver the Service, such as:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Stripe:</strong> Payment processing. We do not store your full card details on our own servers.</li>
-                <li><strong>ProtonMail:</strong> Secure, encrypted email communication.</li>
-                <li><strong>Hosting:</strong> Encrypted servers located within the UK/EU.</li>
+                <li>Payment processors (Stripe) for secure card payments;</li>
+                <li>Hosting and infrastructure providers (AWS/Vercel) for secure data storage;</li>
+                <li>Basic analytics tools to understand how the Service is used.</li>
               </ul>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">7. Your Rights</h2>
-              <p>Under UK GDPR, you have the following rights:</p>
+              <p className="text-sm">Under UK data protection law, you have rights including:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Right of Access:</strong> Request a copy of the data we hold about you.</li>
-                <li><strong>Right to Rectification:</strong> Ask us to correct inaccurate information.</li>
-                <li><strong>Right to Erasure (Right to be Forgotten):</strong> Request that we delete your personal data.</li>
-                <li><strong>Right to Restrict Processing:</strong> Limit how we use your data in specific circumstances.</li>
+                <li>The right to access your personal data;</li>
+                <li>The right to request correction of inaccurate data;</li>
+                <li>The right to request deletion of data;</li>
+                <li>The right to restrict or object to certain types of processing.</li>
               </ul>
-              <p className="text-sm">To exercise these rights, please contact us at <span className="font-bold">clearvisauk@protonmail.com</span>.</p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold text-navy">8. Complaints</h2>
-              <p>If you have concerns about our data handling, you have the right to lodge a complaint with the <strong>Information Commissioner's Office (ICO)</strong>, the UK's supervisory authority for data protection (www.ico.org.uk).</p>
+              <h2 className="text-xl font-bold text-navy">8. Security</h2>
+              <p className="text-sm leading-relaxed">
+                We take reasonable technical and organisational measures to protect your data, including
+                encrypted connections, restricted access, and secure hosting.
+              </p>
             </section>
 
-            <section className="space-y-4 border-t border-slate-100 pt-8">
-              <h2 className="text-xl font-bold text-navy">9. Cookies Summary</h2>
-              <p className="text-sm">We use essential cookies to manage your questionnaire session and secure your payment. We use limited analytics cookies to understand site traffic. You can manage your preferences through your browser settings.</p>
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold text-navy">9. Complaints</h2>
+              <p className="text-sm leading-relaxed">
+                If you have concerns about how we handle your data, please contact us first. You also have
+                the right to lodge a complaint with the UK Information Commissioner’s Office (ICO).
+              </p>
             </section>
 
             <footer className="text-[10px] text-slate-400 uppercase font-black tracking-[0.3em] pt-12">
-              © 2026 CLEARVISA UK • DATA PRIVACY PROTECTED
+              © 2026 CLEARVISA UK • LONDON • PRIVACY PROTECTED
             </footer>
           </div>
         </div>
