@@ -112,6 +112,11 @@ const App: React.FC = () => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
+    
+    // Store the route they selected
+    setAnswers({ visa_route: route === 'Spouse Visa' ? 'spouse' : 'skilled' });
+    
+    // Start full questionnaire from beginning
     setViewState('full-check');
   };
 
