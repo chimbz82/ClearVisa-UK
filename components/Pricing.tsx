@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import Button from './Button';
 import { PLANS } from '../App';
 
 interface PricingProps {
@@ -68,16 +67,13 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                 </div>
 
                 <div className="mt-auto p-8 pt-0">
-                  <Button 
+                  <button 
                     onClick={() => onStartCheck(plan.id)}
-                    fullWidth
-                    variant={isProPlus ? 'secondary' : isFull ? 'primary' : 'outline'}
-                    size="lg"
-                    className="py-4 shadow-lg mb-6 uppercase font-black tracking-widest"
+                    className="w-full py-4 bg-navy text-white rounded-xl font-bold uppercase tracking-wide hover:bg-navy/90 transition-colors"
                   >
                     Choose {plan.name}
-                  </Button>
-                  <div className="text-center space-y-3">
+                  </button>
+                  <div className="text-center space-y-3 mt-6">
                     <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">✓ Secure Stripe checkout</span>
                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">✓ No hidden fees</span>
