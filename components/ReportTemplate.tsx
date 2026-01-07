@@ -3,6 +3,7 @@ import { AssessmentResult, QuestionConfig } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
 import { PlanId } from '../App';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
+import Button from './Button';
 
 interface ReportTemplateProps {
   applicantName?: string;
@@ -31,17 +32,16 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   onViewLegal,
   visibleQuestionsList
 }) => {
-  const isBasic = tier === 'basic';
   const isAudit = tier === 'full' || tier === 'pro_plus';
   const isPlus = tier === 'pro_plus';
 
-  const currentVerdict = assessmentData.verdict;
   const verdictStyles = {
     likely: { title: "LOW RISK / LIKELY ELIGIBLE", color: "#16A34A", risk: "LOW", bg: "bg-emerald-50", border: "border-emerald-200" },
     borderline: { title: "MEDIUM RISK / BORDERLINE", color: "#D97706", risk: "MEDIUM", bg: "bg-amber-50", border: "border-amber-200" },
     unlikely: { title: "HIGH RISK / UNLIKELY", color: "#DC2626", risk: "HIGH", bg: "bg-rose-50", border: "border-rose-200" }
   };
-  const current = verdictStyles[currentVerdict];
+  
+  const current = verdictStyles[assessmentData.verdict] || verdictStyles.borderline;
   const gapAnalysis = analyzeEvidenceGaps(answers, visaRoute);
 
   return (
@@ -68,7 +68,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             </div>
             <div className="space-y-1">
               <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">AUDIT TIER</p>
-              <p className="text-xs font-black text-accent">{tier.toUpperCase()}</p>
+              <p className="text-xs font-black text-accent">{tier.toUpperCase().replace('_', ' ')}</p>
             </div>
             <div className="space-y-1">
               <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">FILE STATUS</p>
@@ -82,12 +82,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
            <span className="text-[10px] text-slate-500 font-black uppercase block mb-2 tracking-widest">Compliance Profile</span>
            <span className="text-3xl font-black uppercase tracking-tighter block mb-1" style={{ color: current.color }}>{current.risk} RISK</span>
            <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden mt-4">
-              <div className={`h-full ${currentVerdict === 'likely' ? 'bg-emerald-500 w-[90%]' : currentVerdict === 'borderline' ? 'bg-amber-500 w-[50%]' : 'bg-rose-500 w-[15%]'}`}></div>
+              <div className={`h-full transition-all duration-1000 ${assessmentData.verdict === 'likely' ? 'bg-emerald-500 w-[90%]' : assessmentData.verdict === 'borderline' ? 'bg-amber-500 w-[50%]' : 'bg-rose-500 w-[15%]'}`}></div>
            </div>
         </div>
       </header>
 
-      {/* 2. EXECUTIVE VERDICT PANEL */}
+      {/* 2. EXECUTIVE SUMMARY PANEL */}
       <section className="mb-14">
         <div className="bg-slate-50 p-10 rounded-lg border border-slate-200 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-5">
@@ -170,7 +170,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 5. STRATEGIC REMEDIATION (PRO PLUS) */}
+      {/* 5. STRATEGIC REMEDIATION (PRO PLUS ONLY) */}
       {isPlus && (
         <section className="mb-16 bg-navy rounded-lg p-12 text-white relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-80 h-80 bg-accent/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
@@ -230,6 +230,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
         <div className="mt-12 text-[8px] text-slate-300 font-black uppercase tracking-[0.4em]">
            CLEARVISA UK • LONDON • 2026
+        </div>
+
+        <div className="mt-12 no-print">
+          <Button onClick={triggerReportPdfDownload} variant="navy" className="uppercase font-black tracking-widest">
+            Download PDF Report
+          </Button>
         </div>
       </footer>
     </div>

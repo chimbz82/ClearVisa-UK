@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -86,7 +85,6 @@ export const PLANS: PlanConfig[] = [
 
 export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'upgradePricing' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
 
-// Fixed missing default export and completed the component logic
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
@@ -119,7 +117,6 @@ const App: React.FC = () => {
     setAnswers(finalAnswers);
     setViewState('analyzing');
     
-    // Logic for generating assessment
     setTimeout(() => {
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers);
       setAssessmentResult(result);
@@ -194,9 +191,9 @@ const App: React.FC = () => {
         return assessmentResult ? (
           <div className="pt-24 pb-20 px-6 bg-slate-50 min-h-screen">
              <div className="max-w-[210mm] mx-auto space-y-8 no-print">
-               <div className="flex justify-between items-center no-print">
+               <div className="flex justify-between items-center no-print mb-8">
                  <Button variant="outline" onClick={() => setViewState('landing')}>Back to Home</Button>
-                 <Button onClick={triggerReportPdfDownload}>Download PDF Report</Button>
+                 <Button onClick={triggerReportPdfDownload} variant="navy" className="uppercase font-black tracking-widest">Download PDF</Button>
                </div>
              </div>
              <div className="mt-8">
