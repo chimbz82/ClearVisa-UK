@@ -4,8 +4,8 @@ import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
 import { PlanId, PLANS } from '../App';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import Button from './Button';
-import { ComplianceMatrix } from './ComplianceMatrix';
 import { DocumentChecklist } from './DocumentChecklist';
+import { ComplianceMatrix } from './ComplianceMatrix';
 
 interface ReportTemplateProps {
   applicantName?: string;
@@ -34,7 +34,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   onViewLegal,
   visibleQuestionsList
 }) => {
-  const isBasic = paidPlan === 'basic';
+  const isBasic = paidPlan === 'basic' || !paidPlan;
   const isFull = paidPlan === 'full';
   const isProPlus = paidPlan === 'pro_plus';
 
@@ -48,7 +48,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   const gapAnalysis = analyzeEvidenceGaps(answers, visaRoute);
 
   return (
-    <div className="bg-white mx-auto p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative font-sans text-left shadow-2xl border border-slate-100 rounded-sm">
+    <div className="bg-white mx-auto p-[15mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative font-sans text-left shadow-2xl border border-slate-100 rounded-sm">
       
       {/* 1. UPGRADE STRIP (NO-PRINT) */}
       {!isProPlus && (
@@ -110,7 +110,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       </header>
 
       {/* 3. EXECUTIVE SUMMARY */}
-      <section className="mb-16">
+      <section className="mb-12">
         <div className="bg-slate-50 p-12 rounded-[2.5rem] border border-slate-200/50 shadow-inner">
           <h2 className="text-[12px] font-black uppercase tracking-[0.5em] mb-10 text-slate-400 text-center">Executive Compliance Verdict</h2>
           <div className="space-y-8">
@@ -123,31 +123,43 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       </section>
 
       {/* 4. QUESTIONS ANSWERED SUMMARY - ALL TIERS */}
-      <div className="bg-slate-50 p-10 rounded-[2rem] border-2 border-slate-100 mb-16 shadow-sm">
-        <h3 className="text-[12px] font-black text-navy mb-8 uppercase tracking-[0.4em] border-b border-slate-200 pb-4">
-          Audit Submission Summary
+      <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 mb-8">
+        <h3 className="text-lg font-bold text-navy mb-4 uppercase">
+          Questions Answered Summary
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           {visibleQuestionsList.map((q, idx) => (
-            <div key={idx} className="text-[10px] font-bold text-slate-600 flex items-center gap-3">
-              <span className="text-emerald-600 text-lg">✓</span>
-              <span className="uppercase tracking-tight leading-tight">{q.label}</span>
+            <div key={idx} className="text-xs font-medium text-slate-600 flex items-start gap-2">
+              <span className="text-emerald-600">✓</span>
+              <span>{q.label}</span>
             </div>
           ))}
         </div>
-        <p className="text-[9px] font-black text-slate-400 mt-10 pt-6 border-t border-slate-200 uppercase tracking-widest">
-          Total compliance data points audited: {visibleQuestionsList.length}
+        <p className="text-xs text-slate-500 mt-4 pt-4 border-t border-slate-200">
+          Total data points collected: {visibleQuestionsList.length}
         </p>
       </div>
 
-      {/* 5. COMPLIANCE MATRIX (PROFESSIONAL+) */}
-      {(isFull || isProPlus) && (
-        <ComplianceMatrix answers={answers} visaRoute={visaRoute} />
+      {/* 5. DOCUMENT CHECKLIST - PROFESSIONAL & PRO PLUS */}
+      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+        <DocumentChecklist 
+          answers={answers}
+          visaRoute={visaRoute}
+          tier={paidPlan}
+        />
+      )}
+      
+      {/* 6. COMPLIANCE MATRIX - PROFESSIONAL & PRO PLUS */}
+      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+        <ComplianceMatrix 
+          answers={answers}
+          visaRoute={visaRoute}
+        />
       )}
 
-      {/* 6. SECTION SCORES (PROFESSIONAL+) */}
-      {(isFull || isProPlus) && (
-        <section className="mb-16 mt-16">
+      {/* 7. SECTION SCORES - PROFESSIONAL & PRO PLUS */}
+      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+        <section className="mt-16 mb-16">
           <h3 className="text-[12px] font-black text-navy uppercase tracking-[0.5em] mb-10 border-b border-slate-100 pb-4">Detailed Criteria breakdown</h3>
           <div className="overflow-hidden border border-slate-200 rounded-3xl shadow-sm">
             <table className="w-full text-left text-[12px] border-collapse">
@@ -179,14 +191,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 7. DOCUMENT CHECKLIST (PROFESSIONAL+) */}
-      {(isFull || isProPlus) && (
-        <DocumentChecklist answers={answers} visaRoute={visaRoute} tier={paidPlan || 'basic'} />
-      )}
-
-      {/* 8. GAPS & ACTIONS (PROFESSIONAL+) */}
-      {(isFull || isProPlus) && (
-        <section className="mb-16 mt-16">
+      {/* 8. GAPS & ACTIONS - PROFESSIONAL & PRO PLUS */}
+      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+        <section className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="p-12 border-t-8 border-rose-500 rounded-3xl bg-slate-50 shadow-sm">
               <h4 className="text-[11px] font-black text-navy uppercase tracking-widest mb-10 border-b border-slate-200 pb-5">Evidence Gaps Identified</h4>
@@ -214,23 +221,125 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 9. STRATEGIC REMEDIATION (PRO PLUS ONLY) */}
-      {isProPlus && (
-        <section className="mb-20 bg-navy rounded-[3rem] p-16 text-white shadow-2xl relative overflow-hidden mt-16">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
-          <h3 className="text-[12px] font-black text-accent uppercase tracking-[0.6em] mb-14 text-center">Strategic remediation guidance</h3>
-          <div className="space-y-12">
-            {assessmentData.remediationSteps?.map((step, i) => (
-              <div key={i} className="flex gap-10 border-b border-white/5 pb-10 last:border-0">
-                 <span className="text-5xl font-black text-accent/20 select-none">0{i+1}</span>
-                 <div className="space-y-4">
-                    <p className="text-[11px] font-black text-white uppercase tracking-[0.25em]">{step.issue}</p>
-                    <p className="text-base font-medium text-slate-300 leading-relaxed italic border-l-4 border-accent/40 pl-8">"{step.resolution}"</p>
-                 </div>
-              </div>
-            ))}
+      {/* 9. PRO PLUS EXCLUSIVE SECTION */}
+      {paidPlan === 'pro_plus' && (
+        <div className="mt-12 p-10 bg-gradient-to-br from-accent/5 to-accent/10 rounded-3xl border-2 border-accent/20">
+          <div className="flex items-center gap-3 mb-8">
+            <span className="text-3xl">⚡</span>
+            <h3 className="text-2xl font-black text-navy uppercase tracking-tight">
+              Professional Plus Insights
+            </h3>
           </div>
-        </section>
+          
+          {/* Action Plan */}
+          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm">
+            <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
+              Solicitor-Style Action Plan
+            </h4>
+            <ol className="space-y-6">
+              <li className="flex gap-5">
+                <span className="flex-shrink-0 w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-sm font-black">1</span>
+                <div>
+                  <p className="text-[13px] font-black text-slate-700 mb-2 uppercase tracking-tight">Immediate Actions (Week 1)</p>
+                  <ul className="text-xs text-slate-500 space-y-2 ml-4 font-bold">
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Open joint bank account if missing</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Book SELT test if not passed</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Request employer letter on official letterhead</li>
+                  </ul>
+                </div>
+              </li>
+              <li className="flex gap-5">
+                <span className="flex-shrink-0 w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-sm font-black">2</span>
+                <div>
+                  <p className="text-[13px] font-black text-slate-700 mb-2 uppercase tracking-tight">Evidence Collection (Weeks 2-4)</p>
+                  <ul className="text-xs text-slate-500 space-y-2 ml-4 font-bold">
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Gather 6 months original payslips and bank statements</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Obtain utility bills in both names for same address</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Compile detailed relationship timeline with dated photos</li>
+                  </ul>
+                </div>
+              </li>
+              <li className="flex gap-5">
+                <span className="flex-shrink-0 w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-sm font-black">3</span>
+                <div>
+                  <p className="text-[13px] font-black text-slate-700 mb-2 uppercase tracking-tight">Final Review (Week 5)</p>
+                  <ul className="text-xs text-slate-500 space-y-2 ml-4 font-bold">
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Cross-check all documents against Appendix FM-SE</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Review covering letter for consistency</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-slate-300 rounded-full"></span>Finalize and book visa appointment</li>
+                  </ul>
+                </div>
+              </li>
+            </ol>
+          </div>
+          
+          {/* Evidence Strengthening */}
+          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm">
+            <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
+              Evidence Strengthening
+            </h4>
+            
+            {assessmentData.verdict !== 'likely' ? (
+              <div className="space-y-5">
+                <div className="p-5 bg-amber-50 border-l-4 border-amber-500 rounded-xl">
+                  <p className="text-[11px] font-black text-amber-900 mb-2 uppercase tracking-widest">⚠️ Priority Compliance Issues:</p>
+                  <p className="text-xs text-amber-800 font-bold leading-relaxed">
+                    Based on your audit, we recommend focusing on these specific remediation steps to lower your risk profile.
+                  </p>
+                </div>
+                
+                {assessmentData.riskFlags.map((flag, idx) => (
+                  <div key={idx} className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-[12px] font-black text-slate-700 mb-3 uppercase tracking-tight">{flag}</p>
+                    <p className="text-xs text-slate-500 font-bold leading-relaxed">
+                      <span className="text-navy uppercase tracking-widest text-[9px] block mb-1">Strategically Remediate:</span>
+                      {flag.includes('INCOME') && 'Review Category B or D routes. Combine secondary income sources or document 6 months of cash savings exceeding £16,000 threshold to supplement salary.'}
+                      {flag.includes('HISTORY') || flag.includes('REFUSAL') && 'Submit a formal Subject Access Request (SAR) to UKVI. Address caseworker notes from previous refusals line-by-line in a dedicated covering letter.'}
+                      {flag.includes('EVIDENCE') || flag.includes('RELATIONSHIP') && 'Strengthen cohabitation evidence by sourcing joint council tax bills, insurance policies, or formal witness statements from professional third parties.'}
+                      {!flag.includes('INCOME') && !flag.includes('REFUSAL') && !flag.includes('RELATIONSHIP') && 'Consult with a qualified solicitor to prepare a robust legal representation letter addressing this specific concern.'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <p className="text-xs text-emerald-800 font-bold leading-relaxed">
+                  Your profile is strong. To maintain this status, ensure all photocopies are high-resolution and all bank statements are either original or stamped by the issuing branch as per Appendix FM-SE requirements.
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {/* Templates */}
+          <div className="bg-white p-8 rounded-2xl shadow-sm">
+            <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
+              Critical Document Templates
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <p className="text-[11px] font-black text-slate-700 mb-3 uppercase tracking-widest">Employer Letter Guide</p>
+                <div className="space-y-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-tight">
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Employee name and role</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Gross annual salary</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Length of employment</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Date salary last changed</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Official company signature</p>
+                </div>
+              </div>
+              
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <p className="text-[11px] font-black text-slate-700 mb-3 uppercase tracking-widest">Relationship Timeline</p>
+                <div className="space-y-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-tight">
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>First meeting details</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Dates of in-person visits</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Engagement/Wedding dates</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Cohabitation milestones</p>
+                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Current living arrangements</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 10. FULL AUDIT LOG (ALL TIERS) */}
