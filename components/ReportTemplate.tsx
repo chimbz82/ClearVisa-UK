@@ -1,6 +1,7 @@
 import React from 'react';
 import { AssessmentResult } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
+import { PlanId } from '../App';
 
 interface ReportTemplateProps {
   applicantName?: string;
@@ -10,6 +11,7 @@ interface ReportTemplateProps {
   assessmentData: AssessmentResult;
   answers?: Record<string, any>;
   tier: string;
+  paidPlan: PlanId | null;
   onUpgrade?: () => void;
   onViewLegal?: (type: 'privacy' | 'terms' | 'refunds') => void;
 }
@@ -22,6 +24,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   assessmentData,
   answers = {} as Record<string, any>,
   tier = 'full',
+  paidPlan,
   onUpgrade,
   onViewLegal
 }) => {
@@ -56,8 +59,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   };
 
   const handleDownload = () => {
-    window.open('/public/sample-report.pdf', '_blank');
+    window.open('/sample-report.pdf', '_blank');
   };
+
+  // BUG 1 FIX: Logic for incremental upgrade price
+  const isUpgradingFromProfessional = paidPlan === 'full';
+  const upgradePrice = isUpgradingFromProfessional ? 20 : 99;
 
   return (
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
@@ -213,7 +220,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       </div>
 
-      {tier === 'full' && onUpgrade && (
+      {(tier === 'full' || tier === 'basic') && onUpgrade && (
         <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-12 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
           
@@ -234,7 +241,9 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 Upgrade to Professional Plus
               </h3>
               <p className="text-body text-slate-700 mb-8 font-medium leading-relaxed max-w-xl">
-                Best for complex histories, refusals risk, or borderline evidence. Unlock deeper evidence gap analysis and practical suggests to strengthen your application.
+                {isUpgradingFromProfessional 
+                  ? "You’ve already unlocked the Professional Audit (£79). Pay £20 extra to upgrade to Professional Plus for deeper analysis."
+                  : "Best for complex histories, refusals risk, or borderline evidence. Unlock deeper evidence gap analysis and practical suggests to strengthen your application."}
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -269,13 +278,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                   onClick={onUpgrade}
                   className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
                 >
-                  Upgrade to Professional Plus - £99
+                  {isUpgradingFromProfessional 
+                    ? `Upgrade to Professional Plus – pay £20 extra` 
+                    : `Upgrade to Professional Plus – £99`}
                 </button>
                 <div className="text-[9px] text-slate-400 font-medium leading-tight px-1">
                   By proceeding, you agree to our{' '}
-                  <button onClick={() => onViewLegal?.('terms')} className="underline">Terms</button>,{' '}
-                  <button onClick={() => onViewLegal?.('privacy')} className="underline">Privacy</button>, and{' '}
-                  <button onClick={() => onViewLegal?.('refunds')} className="underline">Refund Policy</button>.
+                  <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a>,{' '}
+                  <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy</a>, and{' '}
+                  <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline">Refund Policy</a>.
                 </div>
               </div>
             </div>

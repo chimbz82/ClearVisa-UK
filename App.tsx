@@ -88,23 +88,31 @@ const AppContent: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
+  const [paidPlan, setPaidPlan] = useState<PlanId | null>(null);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   useEffect(() => {
     const state = {
       answers,
       selectedPlan,
-      isPaid,
+      paidPlan,
       viewState: viewState === 'questionnaire' ? 'questionnaire' : 
                  viewState === 'quickVerdict' ? 'quickVerdict' :
                  viewState === 'paywall' ? 'paywall' :
                  viewState === 'report' ? 'report' : 'landing'
     };
     localStorage.setItem('clearvisaState', JSON.stringify(state));
-  }, [answers, selectedPlan, isPaid, viewState]);
+  }, [answers, selectedPlan, paidPlan, viewState]);
 
   useEffect(() => {
+    // BUG 2 FIX: Handle legal deep links for target="_blank" without losing report state
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('view') as ViewState;
+    if (viewParam && ['privacy', 'terms', 'refunds'].includes(viewParam)) {
+      setViewState(viewParam);
+      return;
+    }
+
     const saved = localStorage.getItem('clearvisaState');
     if (saved) {
       try {
@@ -112,7 +120,7 @@ const AppContent: React.FC = () => {
         if (state.answers && Object.keys(state.answers).length > 0) {
           setAnswers(state.answers);
           setSelectedPlan(state.selectedPlan);
-          setIsPaid(state.isPaid);
+          setPaidPlan(state.paidPlan);
           if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
             setViewState(state.viewState);
             if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
@@ -144,13 +152,12 @@ const AppContent: React.FC = () => {
       const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
                     answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
       
-      let tier: 'basic' | 'full' | 'pro_plus' = 'basic';
-      if (isPaid) {
-        if (selectedPlan === 'pro_plus') tier = 'pro_plus';
-        else if (selectedPlan === 'full') tier = 'full';
+      let tier: PlanId = 'basic';
+      if (paidPlan) {
+        tier = paidPlan;
       }
       
-      if (!isPaid) {
+      if (!paidPlan) {
         return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
       }
       
@@ -164,7 +171,7 @@ const AppContent: React.FC = () => {
 
   const handleStartCheck = (planId?: PlanId) => {
     setAnswers({});
-    setIsPaid(false);
+    setPaidPlan(null);
     setIsUpgrading(false);
     setSelectedPlan(planId || null);
     setViewState('questionnaire');
@@ -189,10 +196,12 @@ const AppContent: React.FC = () => {
   };
 
   const handlePaymentSuccess = (route: string, tier: string) => {
-    setIsPaid(true);
+    // Update paid plan state
+    const planId = tier as PlanId;
+    setPaidPlan(planId);
     setIsPaymentModalOpen(false);
     
-    if (selectedPlan === 'basic') {
+    if (planId === 'basic') {
       const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
       const result = runAssessment(routeKey, answers);
       setAssessmentResult(result);
@@ -216,7 +225,7 @@ const AppContent: React.FC = () => {
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
     setIsLoadingReport(false);
-    localStorage.removeItem('clearvisaState');
+    // Do not remove state so user can resume after paywall
     window.scrollTo(0, 0);
   };
 
@@ -236,7 +245,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleDownload = () => {
-    window.open('/public/sample-report.pdf', '_blank');
+    window.open('/sample-report.pdf', '_blank');
   };
 
   const renderContent = () => {
@@ -247,9 +256,9 @@ const AppContent: React.FC = () => {
             <Header onStartCheck={() => handleStartCheck()} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <div className="pt-24 pb-12 app-container">
               <Questionnaire 
-                onComplete={isPaid ? handleFullAssessmentComplete : handleQuickCheckComplete} 
+                onComplete={paidPlan ? handleFullAssessmentComplete : handleQuickCheckComplete} 
                 onCancel={() => setViewState('landing')} 
-                isPaid={isPaid}
+                isPaid={!!paidPlan}
                 isUpgrading={isUpgrading}
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
@@ -328,7 +337,7 @@ const AppContent: React.FC = () => {
                   Pay £{plan.priceGBP} & Continue
                 </Button>
                 <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our <button onClick={() => setViewState('terms')} className="underline hover:text-slate-600">Terms of Use</button>, <button onClick={() => setViewState('privacy')} className="underline hover:text-slate-600">Privacy Policy</button>, and <button onClick={() => setViewState('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
+                  By proceeding, you agree to our <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Terms of Use</a>, <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Privacy Policy</a>, and <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Refund Policy</a>.
                 </p>
               </div>
               
@@ -344,7 +353,7 @@ const AppContent: React.FC = () => {
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card shadow-xl">
               <div className="text-left">
                 <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Your Audit is Ready</h3>
-                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === selectedPlan)?.name.toUpperCase() || 'AUDIT'}</p>
+                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
@@ -357,7 +366,8 @@ const AppContent: React.FC = () => {
                   visaRoute={answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa'} 
                   assessmentData={assessmentResult!}
                   answers={answers}
-                  tier={selectedPlan || 'full'}
+                  tier={paidPlan || 'full'}
+                  paidPlan={paidPlan}
                   onUpgrade={() => {
                     setIsUpgrading(true);
                     setSelectedPlan('pro_plus');
@@ -405,6 +415,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsPaymentModalOpen(false)} 
         onPaymentComplete={handlePaymentSuccess}
         selectedTier={selectedPlan || 'full'}
+        paidPlan={paidPlan}
         onNavigateLegal={(view) => setViewState(view)}
       />
     </div>
