@@ -17,6 +17,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import AnalysisLoader from './components/AnalysisLoader';
+import UpgradePricingScreen from './components/UpgradePricingScreen';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult, QuestionConfig } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -82,7 +83,7 @@ export const PLANS: PlanConfig[] = [
   }
 ];
 
-export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
+export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'upgradePricing' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
 
 const AppContent: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -95,7 +96,7 @@ const AppContent: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   useEffect(() => {
-    if (['questionnaire', 'analyzing', 'quickVerdict', 'paywall', 'report'].includes(viewState)) {
+    if (['questionnaire', 'analyzing', 'upgradePricing', 'paywall', 'report'].includes(viewState)) {
       const state = { answers, selectedPlan, paidPlan, viewState };
       localStorage.setItem('clearvisaState', JSON.stringify(state));
     }
@@ -110,9 +111,9 @@ const AppContent: React.FC = () => {
           setAnswers(state.answers);
           setSelectedPlan(state.selectedPlan);
           setPaidPlan(state.paidPlan);
-          if (['questionnaire', 'analyzing', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
+          if (['questionnaire', 'analyzing', 'upgradePricing', 'paywall', 'report'].includes(state.viewState)) {
             setViewState(state.viewState);
-            if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
+            if (state.viewState === 'report' || state.viewState === 'upgradePricing') {
               const routeKey = state.answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
               setAssessmentResult(runAssessment(routeKey, state.answers));
             }
@@ -163,13 +164,9 @@ const AppContent: React.FC = () => {
     const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     setAssessmentResult(runAssessment(routeKey, answers));
     
-    if (isActuallyAnUpgrade) {
-        setViewState('questionnaire');
-    } else {
-        setViewState('report');
-        setIsLoadingReport(true);
-        setTimeout(() => setIsLoadingReport(false), 2000);
-    }
+    setViewState('report');
+    setIsLoadingReport(true);
+    setTimeout(() => setIsLoadingReport(false), 2000);
     window.scrollTo(0, 0);
   };
 
@@ -179,15 +176,8 @@ const AppContent: React.FC = () => {
     setAssessmentResult(runAssessment(routeKey, collectedAnswers));
     
     setViewState('analyzing');
-    // Actual logic analysis is near-instant, but we show the analysis loader for value perception
     setTimeout(() => {
-      if (paidPlan) {
-          setViewState('report');
-          setIsLoadingReport(true);
-          setTimeout(() => setIsLoadingReport(false), 1500);
-      } else {
-          setViewState('quickVerdict');
-      }
+      setViewState('upgradePricing');
       window.scrollTo(0, 0);
     }, 2800);
   };
@@ -226,31 +216,20 @@ const AppContent: React.FC = () => {
             <AnalysisLoader />
           </div>
         );
-      case 'quickVerdict':
+      case 'upgradePricing':
         return (
-          <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
-            <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
-              <div className="mb-8 text-center">
-                <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
-                  assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
-                  assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
-                }`}>
-                  {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
-                </div>
-                <h2 className="text-h2 mb-2 text-navy uppercase">Eligibility Preview</h2>
-                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">PRE-CHECK VERDICT: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
-              </div>
-              <p className="text-small text-slate-600 leading-relaxed font-bold mb-8 text-center uppercase tracking-tight">
-                Audit analysis complete. Unlock your full professional report to see the 50+ compliance factors audited and get your personalized document checklist.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
-                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
-                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2 uppercase font-black tracking-widest">Professional Plus (£99)</Button>
-              </div>
-              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">Cancel Assessment</button>
-            </div>
-          </div>
+          <UpgradePricingScreen 
+            assessmentResult={assessmentResult!}
+            onSelectPlan={(planId) => {
+              setSelectedPlan(planId);
+              setViewState('paywall');
+            }}
+            onViewFree={() => {
+              setPaidPlan('basic');
+              setViewState('report');
+            }}
+            onNavigateLegal={(view) => setViewState(view)}
+          />
         );
       case 'paywall':
         const plan = PLANS.find(p => p.id === (selectedPlan || 'full'))!;
@@ -259,8 +238,8 @@ const AppContent: React.FC = () => {
             <div className="max-w-[600px] w-full app-card border border-slate-200 p-10">
               <div className="text-center mb-8">
                 <span className="text-[11px] text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
-                <h2 className="text-h2 mb-2 text-navy uppercase tracking-tighter">Unlock Your Audit</h2>
-                <p className="text-body text-slate-600 font-bold uppercase tracking-tight">Instant access to your professional immigration audit report.</p>
+                <h2 className="text-h2 mb-2 text-navy uppercase tracking-tighter">Secure Your Report</h2>
+                <p className="text-body text-slate-600 font-bold uppercase tracking-tight">Access the finalized compliance analysis for your visa route.</p>
               </div>
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
@@ -272,7 +251,7 @@ const AppContent: React.FC = () => {
                 </ul>
               </div>
               <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth className="uppercase font-black tracking-widest">Pay £{plan.priceGBP} & View Report</Button>
-              <button onClick={() => setViewState('quickVerdict')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">Go back</button>
+              <button onClick={() => setViewState('upgradePricing')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest text-center">Back to selection</button>
             </div>
           </div>
         );
@@ -281,11 +260,11 @@ const AppContent: React.FC = () => {
           <div className="bg-slate-100 min-h-screen py-12 px-4 relative">
             <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 app-card shadow-2xl">
               <div className="text-left">
-                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Audit Generated Successfully</h3>
+                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Official Compliance Audit</h3>
                 <p className="text-small text-slate-500 font-bold uppercase tracking-widest">TIER: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
-                <Button onClick={handleExitReport} variant="outline" size="sm" className="uppercase font-black">Exit</Button>
+                <Button onClick={handleExitReport} variant="outline" size="sm" className="uppercase font-black">Close</Button>
                 <Button onClick={triggerReportPdfDownload} variant="navy" size="sm" className="uppercase font-black tracking-widest">Download PDF</Button>
               </div>
             </div>

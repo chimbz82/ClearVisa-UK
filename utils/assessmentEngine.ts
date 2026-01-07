@@ -4,164 +4,125 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
   const flags: string[] = [];
   const sectionScores: SectionScore[] = [];
   
-  // --- Category: Personal & Identity (Section A) ---
-  let personalScore = 100;
-  let personalStatus: SectionScore['status'] = 'PASS';
-  if (answers['refused_visa'] === true) {
-    flags.push("PREVIOUS REFUSAL - Non-disclosure or poor explanation can lead to a 10-year ban under Paragraph 320(7b).");
-    personalScore = 70;
-    personalStatus = 'WARN';
-  }
-  if (answers['overstayed_visa'] === true || answers['deported_removed'] === true) {
-    flags.push("ADVERSE HISTORY - Previous overstaying or deportation is a high-risk factor for refusal.");
-    personalScore = Math.min(personalScore, 40);
-    personalStatus = 'FAIL';
+  // --- Section 1: History & Suitability ---
+  let historyScore = 100;
+  let historyStatus: SectionScore['status'] = 'PASS';
+  if (answers['overstay_history'] === true || answers['deportation_history'] === true) {
+    historyScore = 20;
+    historyStatus = 'FAIL';
+    flags.push("ADVERSE IMMIGRATION HISTORY: Previous overstaying or deportation represents high mandatory refusal risk.");
+  } else if (answers['refusal_history'] === true) {
+    historyScore = 70;
+    historyStatus = 'WARN';
+    flags.push("PRIOR REFUSAL DETECTED: Disclosing this is mandatory. UKVI will cross-reference your record.");
   }
   sectionScores.push({
-    name: 'Identity & History',
-    score: personalScore,
-    status: personalStatus,
-    risk: personalScore < 50 ? 'HIGH' : personalScore < 85 ? 'MEDIUM' : 'LOW',
-    detail: personalScore === 100 ? 'Clean immigration history verified.' : 'Historical adverse factors detected.'
+    name: 'History & Background',
+    score: historyScore,
+    status: historyStatus,
+    risk: historyScore < 50 ? 'HIGH' : historyScore < 90 ? 'MEDIUM' : 'LOW',
+    detail: historyStatus === 'PASS' ? 'Immigration history appears clear of major red flags.' : 'Significant adverse events detected in immigration record.'
   });
 
-  // --- Category: Financial Requirement (Section D) ---
-  let financialScore = 100;
-  let financialStatus: SectionScore['status'] = 'PASS';
-  const method = answers['visa_route'];
+  // --- Section 2: Financial Requirement ---
+  let finScore = 100;
+  let finStatus: SectionScore['status'] = 'PASS';
+  const visaType = answers['visa_route'];
   const income = Number(answers['sponsor_annual_income'] || 0);
-  const swSalary = Number(answers['sw_salary_exact'] || 0);
+  const swSalary = Number(answers['sw_salary_offered'] || 0);
 
-  if (method === 'spouse') {
-    if (income < 29000 && answers['sponsor_benefits'] !== true) {
-      financialScore = 20;
-      financialStatus = 'FAIL';
-      flags.push("FINANCIAL THRESHOLD - Current £29,000 gross annual requirement not met for Spouse route.");
+  if (visaType === 'spouse') {
+    if (answers['uk_benefits_receipt'] === true) {
+      finScore = 100;
+      finStatus = 'INFO';
+      flags.push("BENEFIT EXEMPTION: 'Adequate Maintenance' rules may apply instead of standard £29k threshold.");
+    } else if (income < 29000 && (Number(answers['cash_savings_total']) < 88500)) {
+      finScore = 30;
+      finStatus = 'FAIL';
+      flags.push("FINANCIAL SHORTFALL: Current income/savings do not meet the £29,000 threshold requirement.");
     }
-    if (answers['sponsor_emp_length'] === 'under_6m') {
-      flags.push("EMPLOYMENT DURATION - Employment under 6 months requires Category B evidence (12 months history).");
-      financialScore = Math.min(financialScore, 60);
-      financialStatus = 'WARN';
-    }
-  } else if (method === 'skilled') {
-    if (swSalary > 0 && swSalary < 38700 && answers['sw_shortage'] !== true) {
-      financialScore = 60;
-      financialStatus = 'WARN';
-      flags.push("SALARY RISK - Below £38,700 standard threshold for Skilled Worker route.");
-    }
-    if (answers['sw_cos_assigned'] === false) {
-      financialScore = 0;
-      financialStatus = 'FAIL';
-      flags.push("MISSING SPONSORSHIP - A Certificate of Sponsorship is mandatory.");
+  } else if (visaType === 'skilled') {
+    if (swSalary < 38700 && answers['sw_isl_role'] === false) {
+      finScore = 60;
+      finStatus = 'WARN';
+      flags.push("SALARY THRESHOLD: Salary below the standard £38,700 benchmark requires specific ISL or new entrant credits.");
     }
   }
   sectionScores.push({
-    name: 'Financial Compliance',
-    score: financialScore,
-    status: financialStatus,
-    risk: financialScore < 50 ? 'HIGH' : financialScore < 90 ? 'MEDIUM' : 'LOW',
-    detail: financialStatus === 'PASS' ? 'Aligns with current financial thresholds.' : 'Critical shortfall against specified income rules.'
+    name: 'Financial Requirement',
+    score: finScore,
+    status: finStatus,
+    risk: finScore < 50 ? 'HIGH' : finScore < 90 ? 'MEDIUM' : 'LOW',
+    detail: finStatus === 'PASS' ? 'Financial declarations align with standard thresholds.' : 'Evidence of financial shortfall against mandatory rules.'
   });
 
-  // --- Category: Relationship (Section C - Spouse only) ---
-  if (method === 'spouse') {
-    let relScore = 100;
-    let relStatus: SectionScore['status'] = 'PASS';
-    if (answers['person_meetings'] === 'never' || answers['person_meetings'] === 'rare') {
-      relScore = 40;
-      relStatus = 'WARN';
-      flags.push("GENUINENESS RISK - Lack of in-person meetings triggers high caseworker scrutiny.");
-    }
-    if (answers['is_married'] === false && answers['cohabitation_length'] !== 'over_2') {
-      relScore = 20;
-      relStatus = 'FAIL';
-      flags.push("UNMARRIED PARTNER RULES - 2 years continuous cohabitation is usually required.");
-    }
-    sectionScores.push({
-      name: 'Relationship Genuineness',
-      score: relScore,
-      status: relStatus,
-      risk: relScore < 70 ? 'MEDIUM' : 'LOW',
-      detail: relStatus === 'PASS' ? 'Relationship markers meet standard requirements.' : 'Evidence of subsistence is currently weak.'
-    });
-  }
-
-  // --- Category: Suitability (Section F) ---
+  // --- Section 3: Suitability & Character ---
   let suitScore = 100;
   let suitStatus: SectionScore['status'] = 'PASS';
-  if (answers['criminal_convictions'] === true || answers['pending_charges'] === true) {
-    suitScore = 20;
+  if (answers['criminal_offence'] === true || answers['pending_prosecution'] === true) {
+    suitScore = 10;
     suitStatus = 'FAIL';
-    flags.push("SUITABILITY - Criminal history triggers mandatory or discretionary refusal.");
+    flags.push("SUITABILITY BARRIER: Criminal history may trigger mandatory refusal under Part 9 of the rules.");
   }
-  if (answers['nhs_debt_500'] === true) {
+  if (answers['nhs_debt'] === true) {
     suitScore = Math.min(suitScore, 40);
     suitStatus = 'WARN';
-    flags.push("NHS DEBT - Debts over £500 are standard grounds for refusal.");
+    flags.push("NHS DEBT: Unpaid healthcare debt over £500 is standard grounds for visa refusal.");
   }
   sectionScores.push({
-    name: 'Suitability & Character',
+    name: 'Character & Suitability',
     score: suitScore,
     status: suitStatus,
     risk: suitScore < 50 ? 'HIGH' : 'LOW',
-    detail: suitStatus === 'PASS' ? 'No character issues identified.' : 'Serious suitability barriers found.'
+    detail: suitStatus === 'PASS' ? 'No adverse suitability markers identified.' : 'Serious suitability or criminality barriers found.'
   });
 
-  // --- Category: English Language (Section G) ---
+  // --- Section 4: English Language ---
   let engScore = 100;
   let engStatus: SectionScore['status'] = 'PASS';
-  if (answers['english_test_taken'] === false && answers['english_exempt'] === false && answers['degree_english'] === false) {
+  if (answers['english_test_passed'] === false && answers['english_degree_exemption'] === false && answers['english_nationality_exemption'] === false && answers['english_age_exemption'] === false) {
     engScore = 0;
     engStatus = 'FAIL';
-    flags.push("ENGLISH LANGUAGE - Requirement not yet met through test, degree, or exemption.");
+    flags.push("ENGLISH PROFICIENCY: No valid evidence of meeting the language requirement was provided.");
   }
   sectionScores.push({
     name: 'English Language',
     score: engScore,
     status: engStatus,
     risk: engScore < 50 ? 'HIGH' : 'LOW',
-    detail: engStatus === 'PASS' ? 'Language requirement met.' : 'English proficiency evidence missing.'
+    detail: engStatus === 'PASS' ? 'Requirement appears satisfied via test or exemption.' : 'Mandatory language proficiency evidence is missing.'
   });
 
-  // --- Overall Calculations ---
+  // --- Overall Calculation ---
   const avgScore = sectionScores.reduce((acc, s) => acc + s.score, 0) / sectionScores.length;
   let verdict: AssessmentResult['verdict'] = 'likely';
-  let riskLevel: AssessmentResult['riskLevel'] = 'LOW';
-  
-  if (avgScore < 50) {
-    verdict = 'unlikely';
-    riskLevel = 'HIGH';
-  } else if (avgScore < 85) {
-    verdict = 'borderline';
-    riskLevel = 'MEDIUM';
-  }
+  if (avgScore < 55) verdict = 'unlikely';
+  else if (avgScore < 88) verdict = 'borderline';
 
-  const result: AssessmentResult = {
+  return {
     verdict,
-    riskLevel,
+    riskLevel: avgScore < 55 ? 'HIGH' : avgScore < 88 ? 'MEDIUM' : 'LOW',
     riskFlags: flags,
-    summary: verdict === 'likely' ? 'Based on your audit, your profile aligns with core public eligibility criteria.' : 
-             verdict === 'borderline' ? 'You meet several core criteria, but identified risk flags suggest significant caseworker scrutiny.' : 
-             'Significant eligibility barriers were found. Submitting an application now carries a high risk of refusal.',
+    summary: verdict === 'likely' ? 
+      'Your profile indicates a strong alignment with the core eligibility criteria for your chosen route.' : 
+      verdict === 'borderline' ? 
+      'You meet several core requirements, however, the identified risk flags suggest your case will undergo significant caseworker scrutiny.' : 
+      'Significant eligibility barriers have been detected. An application submitted in your current state carries a very high probability of refusal.',
     nextSteps: [
-      "Gather 6 months of original bank statements showing salary credit.",
-      "Obtain a formal letter from the sponsor's employer on headed paper.",
-      "Check TB test requirements.",
-      "Prepare a minimum of 10-15 high-quality photos across the relationship duration."
+      "Gather 6 months of original bank statements matching your payslips exactly.",
+      "Ensure the sponsor's employer provides a letter on official headed paper.",
+      "Check tuberculosis (TB) test requirements for your country of residence.",
+      "Compile a chronological timeline of your relationship with physical proof of meetings."
     ],
     sectionScores,
     remediationSteps: [
-      { issue: 'Refusal History', resolution: 'Submit a Subject Access Request (SAR) to UKVI to get your previous file before drafting your new cover letter.' },
-      { issue: 'Income Shortfall', resolution: 'Investigate combining salary with non-employment income (pensions, dividends) or specific cash savings.' },
-      { issue: 'Cohabitation Evidence', resolution: 'If living separately, ensure you provide evidence of financial support (e.g., bank transfers) and frequent travel to see each other.' },
-      { issue: 'NHS Debt', resolution: 'Pay the debt in full and obtain a clearance letter before submitting the visa application.' }
+      { issue: 'Immigration History', resolution: 'Submit a Subject Access Request (SAR) to the Home Office to get your full file before applying.' },
+      { issue: 'Financial Shortfall', resolution: 'Investigate combining employment income with non-employment sources or specified cash savings.' },
+      { issue: 'NHS Debt', resolution: 'Pay the debt in full and obtain a clearance letter from the NHS trust before submitting the visa application.' }
     ],
     sampleWording: [
-      { section: 'Cover Letter Opening', text: '“I am writing to support the application of [Applicant Name] for a Spouse Visa. I confirm that I am a British Citizen/Settled person and meet the financial requirements via...”' },
-      { section: 'Relationship Wording', text: '“Despite living in different countries for [Period], we have maintained a subsisting relationship through [Methods], spending over [Number] hours on video calls as evidenced by Annex 3...”' },
-      { section: 'Addressing History', text: '“Regarding the previous refusal in [Year], I wish to clarify that [Reason]. Since then, my circumstances have changed significantly, specifically [Details]...”' }
+      { section: 'Cover Letter (Relationship)', text: '“We have maintained a genuine and subsisting relationship through regular communication via [Platform] and visits on [Dates], as evidenced by Annex 4.”' },
+      { section: 'Financial (Explanation)', text: '“My sponsor meets the financial requirement through Category A employment, earning a gross annual salary of £[Amount] as confirmed by the enclosed payslips.”' }
     ]
   };
-
-  return result;
 }
