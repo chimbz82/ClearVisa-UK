@@ -16,65 +16,60 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
     const docs: string[] = [];
     
     // Core Identity (All Tiers)
-    docs.push('Valid current passport (at least 6 months validity)');
-    docs.push('Completed online visa application form copy');
-    docs.push('Two identical passport-sized photographs (45mm x 35mm)');
+    docs.push('Valid passport (6+ months validity)');
+    docs.push('Completed visa application form');
+    docs.push('Passport-sized photographs (45mm x 35mm)');
     
     if (tier === 'basic') {
-      docs.push('... Upgrade to Full Audit for personalised documents ...');
+      docs.push('... Upgrade to Professional Audit for route-specific checklist ...');
       return docs;
     }
     
-    // Route Specific Logic
     if (visaRoute === 'Spouse Visa') {
-      docs.push('Original marriage certificate or civil partnership certificate');
+      docs.push('Marriage certificate or civil partnership certificate');
       
       if (answers.joint_tenancy) {
-        docs.push('✓ Signed joint tenancy agreement or mortgage deed');
+        docs.push('✓ Joint tenancy agreement or mortgage');
       } else {
-        docs.push('⚠️ Evidence of accommodation (Land Registry or Landlord Letter) - RECOMMENDED');
+        docs.push('⚠️ Joint tenancy agreement (RECOMMENDED)');
       }
       
       if (answers.joint_accounts) {
-        docs.push('✓ Last 6 months of joint bank account statements');
+        docs.push('✓ Joint bank account statements (6 months)');
       } else {
-        docs.push('⚠️ Alternative evidence of financial interdependence (utility bills) - REQUIRED');
+        docs.push('⚠️ Joint bank statements - MISSING');
       }
       
       if (answers.sponsor_emp_type === 'paye') {
-        docs.push('Sponsor: 6 months of original, consecutive payslips');
-        docs.push('Sponsor: 6 months of matching bank statements showing salary entry');
-        docs.push('Sponsor: Formal Employer Letter on company letterhead');
-        docs.push('Sponsor: Most recent P60 document');
-      } else if (answers.sponsor_emp_type === 'self') {
-        docs.push('Sponsor: Full Unaudited Accounts for recent financial year');
-        docs.push('Sponsor: SA302 from HMRC or tax calculation');
-        docs.push('Sponsor: Business bank statements (12 months)');
+        docs.push('Sponsor: 6 months payslips');
+        docs.push('Sponsor: 6 months bank statements');
+        docs.push('Sponsor: Employer letter on letterhead');
+        docs.push('Sponsor: P60 for recent tax year');
       }
       
       if (answers.english_test_passed) {
-        docs.push('✓ SELT certificate at CEFR A1 (or higher) from approved provider');
+        docs.push('✓ SELT certificate (IELTS/PTE)');
       } else {
-        docs.push('⚠️ SELT certificate - URGENTLY REQUIRED');
+        docs.push('⚠️ SELT certificate - REQUIRED');
       }
       
-      docs.push('Accommodation inspection report (for properties with multiple occupants)');
+      docs.push('Accommodation evidence (inspection report)');
     }
     
     if (visaRoute === 'Skilled Worker') {
-      docs.push('Valid Certificate of Sponsorship (CoS) reference number');
-      docs.push('Formal Job Offer Letter on employer letterhead');
+      docs.push('Certificate of Sponsorship reference');
+      docs.push('Job offer letter on letterhead');
       
       if (answers.criminal_record_cert) {
-        docs.push('⚠️ Criminal record certificate(s) for relevant countries');
+        docs.push('⚠️ Criminal record certificate (required)');
       }
       
       if (answers.atas_certificate_required) {
-        docs.push('⚠️ Valid ATAS certificate from Foreign & Commonwealth Office');
+        docs.push('⚠️ ATAS certificate (required)');
       }
       
-      docs.push('Proof of English language proficiency (Degree or SELT)');
-      docs.push('Personal bank statements showing maintenance funds (90 consecutive days)');
+      docs.push('Proof of English language');
+      docs.push('Maintenance funds proof (90 days)');
     }
     
     return docs;

@@ -122,12 +122,30 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       </section>
 
-      {/* 4. COMPLIANCE MATRIX (PROFESSIONAL+) */}
+      {/* 4. QUESTIONS ANSWERED SUMMARY - ALL TIERS */}
+      <div className="bg-slate-50 p-10 rounded-[2rem] border-2 border-slate-100 mb-16 shadow-sm">
+        <h3 className="text-[12px] font-black text-navy mb-8 uppercase tracking-[0.4em] border-b border-slate-200 pb-4">
+          Audit Submission Summary
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {visibleQuestionsList.map((q, idx) => (
+            <div key={idx} className="text-[10px] font-bold text-slate-600 flex items-center gap-3">
+              <span className="text-emerald-600 text-lg">✓</span>
+              <span className="uppercase tracking-tight leading-tight">{q.label}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-[9px] font-black text-slate-400 mt-10 pt-6 border-t border-slate-200 uppercase tracking-widest">
+          Total compliance data points audited: {visibleQuestionsList.length}
+        </p>
+      </div>
+
+      {/* 5. COMPLIANCE MATRIX (PROFESSIONAL+) */}
       {(isFull || isProPlus) && (
         <ComplianceMatrix answers={answers} visaRoute={visaRoute} />
       )}
 
-      {/* 5. SECTION SCORES (PROFESSIONAL+) */}
+      {/* 6. SECTION SCORES (PROFESSIONAL+) */}
       {(isFull || isProPlus) && (
         <section className="mb-16 mt-16">
           <h3 className="text-[12px] font-black text-navy uppercase tracking-[0.5em] mb-10 border-b border-slate-100 pb-4">Detailed Criteria breakdown</h3>
@@ -161,12 +179,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 6. DOCUMENT CHECKLIST (PROFESSIONAL+) */}
+      {/* 7. DOCUMENT CHECKLIST (PROFESSIONAL+) */}
       {(isFull || isProPlus) && (
         <DocumentChecklist answers={answers} visaRoute={visaRoute} tier={paidPlan || 'basic'} />
       )}
 
-      {/* 7. GAPS & ACTIONS (PROFESSIONAL+) */}
+      {/* 8. GAPS & ACTIONS (PROFESSIONAL+) */}
       {(isFull || isProPlus) && (
         <section className="mb-16 mt-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -196,7 +214,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 8. STRATEGIC REMEDIATION (PRO PLUS ONLY) */}
+      {/* 9. STRATEGIC REMEDIATION (PRO PLUS ONLY) */}
       {isProPlus && (
         <section className="mb-20 bg-navy rounded-[3rem] p-16 text-white shadow-2xl relative overflow-hidden mt-16">
           <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
@@ -215,7 +233,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 9. AUDIT LOG (ALL TIERS) */}
+      {/* 10. FULL AUDIT LOG (ALL TIERS) */}
       <section className="pt-24 border-t-4 border-slate-100 page-break-before">
         <h3 className="text-[12px] font-black text-navy uppercase tracking-[0.5em] mb-16 text-center">Full Audit Submission Record</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-12 px-10">
