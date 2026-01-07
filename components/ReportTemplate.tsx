@@ -104,7 +104,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 mb-8">
-              {["Deeper Gap Analysis", "Extra Narrative Questions", "Upgrade Weak Documents", "Solicitor-Ready Summary"].map(feat => (
+              {[
+                "Deeper Evidence Gap Analysis",
+                "Extra Narrative Questions",
+                "Practical Document Upgrade Suggestions",
+                "Solicitor-Ready Summary"
+              ].map(feat => (
                 <div key={feat} className="flex items-start gap-2">
                   <span className="text-accent font-bold">✓</span>
                   <span className="text-[10px] text-slate-700 font-bold uppercase tracking-tight">
@@ -121,15 +126,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                   onClick={() => onUpgrade?.(opt.tier)}
                   className="bg-accent text-white px-6 py-3.5 rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
                 >
-                  {opt.label} – Pay £{opt.priceExtra} extra
+                  {opt.label} – pay £{opt.priceExtra} extra
                 </button>
               ))}
             </div>
             <div className="text-[9px] text-slate-400 font-medium leading-tight px-1 mt-4">
               By proceeding, you agree to our{' '}
-              <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a>,{' '}
-              <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy</a>, and{' '}
-              <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline">Refund Policy</a>.
+              <button onClick={() => onViewLegal?.('terms')} className="underline hover:text-slate-600">Terms</button>,{' '}
+              <button onClick={() => onViewLegal?.('privacy')} className="underline hover:text-slate-600">Privacy</button>, and{' '}
+              <button onClick={() => onViewLegal?.('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
             </div>
           </div>
         </div>
@@ -270,7 +275,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       {renderUpgradeSection()}
 
-      <footer className="mt-auto pt-4 border-t border-slate-100 no-print pb-4">
+      <footer className="mt-auto pt-6 border-t border-slate-100 no-print">
         <div 
           onClick={triggerReportPdfDownload}
           className="bg-navy p-4 rounded-xl text-white/80 mb-4 relative overflow-hidden cursor-pointer hover:bg-navy/90 transition-colors"
@@ -281,7 +286,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
              Not legal advice. ClearVisa UK is not a law firm. Accuracy depends on user inputs. Final decisions made exclusively by UKVI.
            </p>
         </div>
-        <div className="flex justify-between items-center text-[8px] text-slate-400 font-black uppercase tracking-[0.2em]">
+        <div className="flex justify-between items-center text-[8px] text-slate-400 font-black uppercase tracking-[0.2em] pb-2">
           <span>© 2026 ClearVisa UK</span>
           <span>Security Level: SSL-Verified Automated Audit</span>
         </div>

@@ -93,17 +93,20 @@ const AppContent: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   useEffect(() => {
-    const state = {
-      answers,
-      selectedPlan,
-      paidPlan,
-      viewState: (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(viewState)) ? viewState : 'landing'
-    };
-    localStorage.setItem('clearvisaState', JSON.stringify(state));
+    // We only want to save "active" session states to localStorage
+    if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(viewState)) {
+      const state = {
+        answers,
+        selectedPlan,
+        paidPlan,
+        viewState
+      };
+      localStorage.setItem('clearvisaState', JSON.stringify(state));
+    }
   }, [answers, selectedPlan, paidPlan, viewState]);
 
   useEffect(() => {
-    // Handle deep links for legal pages without breaking main app state
+    // Handle deep links for legal pages via URL without breaking the main app flow
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view') as ViewState;
     if (viewParam && ['privacy', 'terms', 'refunds'].includes(viewParam)) {
@@ -161,8 +164,12 @@ const AppContent: React.FC = () => {
   };
 
   const handleStartCheck = (planId?: PlanId) => {
-    setAnswers({});
-    setPaidPlan(null);
+    // Only clear if we are NOT in a report
+    if (viewState !== 'report') {
+      setAnswers({});
+      setPaidPlan(null);
+      localStorage.removeItem('clearvisaState');
+    }
     setIsUpgrading(false);
     setSelectedPlan(planId || null);
     setViewState('questionnaire');
@@ -191,16 +198,18 @@ const AppContent: React.FC = () => {
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
     
-    if (planId === 'basic') {
-      const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-      const result = runAssessment(routeKey, answers);
-      setAssessmentResult(result);
+    const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    const result = runAssessment(routeKey, answers);
+    setAssessmentResult(result);
+
+    if (planId === 'basic' || isUpgrading) {
       setViewState('report');
       setIsLoadingReport(true);
       setTimeout(() => setIsLoadingReport(false), 2000);
     } else {
       setViewState('questionnaire');
     }
+    setIsUpgrading(false);
     window.scrollTo(0, 0);
   };
 
@@ -219,7 +228,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleFullAssessmentComplete = (collectedAnswers: Record<string, any>) => {
-    const finalAnswers = isUpgrading ? { ...answers, ...collectedAnswers } : collectedAnswers;
+    const finalAnswers = { ...answers, ...collectedAnswers };
     setAnswers(finalAnswers);
     
     const routeKey = finalAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
@@ -231,6 +240,15 @@ const AppContent: React.FC = () => {
     setIsUpgrading(false);
     window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
+  };
+
+  const handleExitReport = () => {
+    localStorage.removeItem('clearvisaState');
+    setAnswers({});
+    setPaidPlan(null);
+    setSelectedPlan(null);
+    setViewState('landing');
+    window.scrollTo(0, 0);
   };
 
   const renderContent = () => {
@@ -341,7 +359,7 @@ const AppContent: React.FC = () => {
                 <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
-                <Button onClick={() => { localStorage.removeItem('clearvisaState'); setViewState('landing'); }} variant="outline" size="sm">Exit</Button>
+                <Button onClick={handleExitReport} variant="outline" size="sm">Exit</Button>
                 <Button onClick={triggerReportPdfDownload} variant="navy" size="sm">Download PDF</Button>
               </div>
             </div>
@@ -364,9 +382,9 @@ const AppContent: React.FC = () => {
             </div>
           </div>
         );
-      case 'privacy': return <PrivacyPolicy onBack={() => setViewState('landing')} />;
-      case 'terms': return <TermsOfUse onBack={() => setViewState('landing')} />;
-      case 'refunds': return <RefundPolicy onBack={() => setViewState('landing')} />;
+      case 'privacy': return <PrivacyPolicy onBack={() => setViewState(paidPlan ? 'report' : 'landing')} />;
+      case 'terms': return <TermsOfUse onBack={() => setViewState(paidPlan ? 'report' : 'landing')} />;
+      case 'refunds': return <RefundPolicy onBack={() => setViewState(paidPlan ? 'report' : 'landing')} />;
       default:
         return (
           <div className="no-print bg-white">

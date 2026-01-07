@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { triggerReportPdfDownload } from '../utils/downloadPdf';
 
 const WhatYouGet: React.FC = () => {
   const { t } = useLanguage();
@@ -18,10 +19,6 @@ const WhatYouGet: React.FC = () => {
     { title: "Complete Preparation", desc: "Get a personalised checklist for your evidence before you apply." },
     { title: "Peace of Mind", desc: "Know your compliance score in minutes, not weeks." }
   ];
-
-  const handleDownload = () => {
-    window.open('/public/sample-report.pdf', '_blank');
-  };
 
   return (
     <section className="py-12 lg:py-16 bg-slate-50">
@@ -87,7 +84,7 @@ const WhatYouGet: React.FC = () => {
                   </div>
 
                   <div 
-                    onClick={handleDownload}
+                    onClick={triggerReportPdfDownload}
                     className="flex items-center justify-between bg-success text-white px-5 py-4 rounded-2xl shadow-xl cursor-pointer hover:bg-success/90 transition-all active:scale-[0.98]"
                   >
                     <span className="text-xs font-black uppercase tracking-widest">Download PDF Report</span>

@@ -13,7 +13,7 @@ const RefundPolicy: React.FC<RefundPolicyProps> = ({ onBack }) => {
           className="mb-8 flex items-center gap-2 text-navy font-bold hover:text-accent transition-colors no-print"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-          Back to Home
+          Back to previous screen
         </button>
         
         <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-100">

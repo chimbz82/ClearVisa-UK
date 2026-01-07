@@ -21,7 +21,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
   const plan = PLANS.find(p => p.id === selectedTier) || PLANS.find(p => p.id === 'full')!;
   
-  // BUG 1 FIX: Calculate upgrade amount correctly
   const basePrices: Record<PlanId, number> = {
     basic: 29,
     full: 79,
@@ -122,14 +121,16 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                 </div>
               )}
               <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-                <p className="text-[10px] text-slate-400 mb-2 uppercase font-bold tracking-widest leading-none">{plan.name} {isUpgrade && "(Upgrade)"}</p>
+                <p className="text-[10px] text-slate-400 mb-2 uppercase font-bold tracking-widest leading-none">
+                  {isUpgrade ? `Upgrade from ${PLANS.find(p => p.id === paidPlan)?.name} to ${plan.name}` : plan.name}
+                </p>
                 <div className="flex justify-between items-center">
                   <h4 className="text-sm font-bold text-[#07162A]">{selectedRoute} Route</h4>
                   <p className="text-lg font-bold text-[#07162A]">£{paymentAmount}</p>
                 </div>
                 {isUpgrade && (
                   <p className="text-[9px] text-slate-400 mt-2 italic font-bold">
-                    Paying incremental difference from previous £{basePrices[paidPlan!]} purchase.
+                    Upgrade from {PLANS.find(p => p.id === paidPlan)?.name} to {plan.name} – total charged now: £{paymentAmount}
                   </p>
                 )}
               </div>
@@ -144,9 +145,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                 <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
                 <div className="text-[10px] text-center text-slate-400 font-medium leading-tight">
                   By proceeding, you agree to our{' '}
-                  <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a>,{' '}
-                  <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy</a>, and{' '}
-                  <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline">Refund Policy</a>.
+                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline">Terms</button>,{' '}
+                  <button type="button" onClick={() => onNavigateLegal('privacy')} className="underline">Privacy</button>, and{' '}
+                  <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline">Refund Policy</button>.
                 </div>
               </div>
             </form>
