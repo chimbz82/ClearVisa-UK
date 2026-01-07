@@ -45,10 +45,17 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     {plan.id === 'basic' ? 'BUDGET' : isFull ? 'RECOMMENDED' : 'DEEP AUDIT'}
                   </span>
                   
-                  <h3 className="text-xl font-black text-navy mb-1 uppercase tracking-tight">{plan.name}</h3>
-                  <div className="flex items-baseline gap-2 my-5">
-                    <span className={`text-4xl font-black text-navy ${isProPlus ? 'text-accent' : ''}`}>£{plan.priceGBP}</span>
-                    <span className="text-[11px] text-slate-400 font-black uppercase tracking-widest">once</span>
+                  <div className="mb-8">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 block">
+                      {plan.name}
+                    </span>
+                    <span className="text-xs text-slate-500 block mb-2 font-bold uppercase tracking-tight">
+                      {plan.questionCountLabel}
+                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-black text-navy">£{plan.priceGBP}</span>
+                      <span className="text-[11px] text-slate-400 font-black uppercase tracking-widest ml-1">once</span>
+                    </div>
                   </div>
                   <p className="text-[13px] text-slate-600 font-bold leading-relaxed min-h-[48px]">
                     {plan.description}
@@ -56,7 +63,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                 </div>
                 
                 <div className="flex-grow p-8 pt-4 border-t border-slate-50">
-                  <p className="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest">{plan.questionCountLabel}</p>
+                  <p className="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest">Included Features</p>
                   <ul className="space-y-4 mb-4">
                     {plan.features.map((feat, i) => (
                       <li key={i} className="flex items-start gap-3.5 text-[13px] text-slate-700 font-bold leading-tight tracking-tight">
@@ -72,7 +79,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     onClick={() => onStartCheck(plan.id)}
                     className="w-full py-4 bg-navy text-white rounded-xl font-bold uppercase tracking-wide hover:bg-navy/90 transition-colors"
                   >
-                    Choose {plan.name}
+                    Choose {plan.shortName}
                   </button>
                   <div className="text-center space-y-3 mt-6">
                     <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">

@@ -27,7 +27,10 @@ import RiskNotice from './components/RiskNotice';
 // PATCH 1: PlanId and pricing helpers now imported from single source of truth
 import { PLANS_ARRAY, PLANS, PlanId, getQuestionLimit } from './config/pricingConfig';
 
+// PlanId now imported from pricingConfig
 export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
+
+// PLANS imported from pricingConfig
 
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -193,7 +196,6 @@ const App: React.FC = () => {
           onPaymentComplete={handlePaymentComplete}
           selectedTier={selectedPlan}
           paidPlan={paidPlan}
-          currentRoute={selectedRoute}
           onNavigateLegal={setViewState}
         />
       </div>

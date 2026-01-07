@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlanId, PLANS, getUpgradePrice, getUpgradeLabel, isValidUpgrade } from '../config/pricingConfig';
+import { PLANS, getUpgradePrice, getUpgradeLabel, isValidUpgrade, PlanId } from '../config/pricingConfig';
 import Button from './Button';
 
 interface PaymentModalProps {
@@ -8,7 +8,6 @@ interface PaymentModalProps {
   onPaymentComplete: (route: string, tier: string) => void;
   selectedTier: PlanId;
   paidPlan: PlanId | null;
-  currentRoute?: string;
   onNavigateLegal: (view: any) => void;
 }
 
@@ -21,7 +20,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onPaymentComplete, 
   selectedTier, 
   paidPlan, 
-  currentRoute,
   onNavigateLegal 
 }) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
@@ -38,8 +36,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      if (isUpgrade && currentRoute) {
-        setSelectedRoute(currentRoute);
+      if (isUpgrade) {
         setStep('payment');
       } else {
         setStep('select-route');
@@ -47,18 +44,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       }
       setStatus('idle');
     }
-  }, [isOpen, isUpgrade, currentRoute]);
+  }, [isOpen, isUpgrade]);
 
   useEffect(() => {
     if (status === 'success') {
       const timer = setTimeout(() => {
-        const routeName = selectedRoute || currentRoute || 'Spouse Visa';
+        const routeName = selectedRoute || 'Spouse Visa';
         onPaymentComplete?.(routeName, selectedTier);
         onClose?.();
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [status, onPaymentComplete, onClose, selectedRoute, selectedTier, currentRoute]);
+  }, [status, onPaymentComplete, onClose, selectedRoute, selectedTier]);
 
   if (!isOpen) return null;
 
@@ -66,18 +63,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   if (paidPlan === selectedTier) {
     return (
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-navy/80 backdrop-blur-md" onClick={onClose} />
-        <div className="relative bg-white max-w-md w-full rounded-[2.5rem] p-10 text-center shadow-2xl animate-in fade-in zoom-in duration-300">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-          </div>
-          <h3 className="text-xl font-black text-navy uppercase mb-4 tracking-tight">Active Plan</h3>
-          <p className="text-sm font-bold text-slate-500 mb-8 uppercase tracking-tight leading-relaxed">
+        <div className="absolute inset-0 bg-navy/60 backdrop-blur-sm" onClick={onClose} />
+        <div className="relative bg-white max-w-md w-full rounded-2xl p-8 text-center shadow-xl">
+          <h3 className="text-xl font-bold text-navy mb-4">Current Plan</h3>
+          <p className="text-slate-600 mb-6 font-medium">
             You already have the {targetPlan.name} plan active.
           </p>
-          <Button onClick={onClose} fullWidth variant="navy" size="lg" className="uppercase font-black tracking-widest">
+          <button 
+            onClick={onClose}
+            className="w-full px-6 py-3 bg-navy text-white rounded-lg font-bold uppercase tracking-widest text-xs"
+          >
             Close
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -86,18 +83,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   if (!upgradeValid || paymentAmount === null) {
     return (
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-navy/80 backdrop-blur-md" onClick={onClose} />
-        <div className="relative bg-white max-w-md w-full rounded-[2.5rem] p-10 text-center shadow-2xl animate-in fade-in zoom-in duration-300">
-          <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          </div>
-          <h3 className="text-xl font-black text-navy uppercase mb-4 tracking-tight">Invalid Selection</h3>
-          <p className="text-sm font-bold text-slate-500 mb-8 uppercase tracking-tight leading-relaxed">
+        <div className="absolute inset-0 bg-navy/60 backdrop-blur-sm" onClick={onClose} />
+        <div className="relative bg-white max-w-md w-full rounded-2xl p-8 text-center shadow-xl">
+          <h3 className="text-xl font-bold text-navy mb-4">Invalid Upgrade</h3>
+          <p className="text-slate-600 mb-6 font-medium">
             Cannot downgrade from {paidPlan ? PLANS[paidPlan].name : 'current plan'}.
           </p>
-          <Button onClick={onClose} fullWidth variant="navy" size="lg" className="uppercase font-black tracking-widest">
+          <button 
+            onClick={onClose}
+            className="w-full px-6 py-3 bg-navy text-white rounded-lg font-bold uppercase tracking-widest text-xs"
+          >
             Close
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -167,26 +164,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           {status === 'idle' && step === 'payment' && (
             <form onSubmit={handleMockPayment} className="space-y-6">
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                <p className="text-[10px] text-slate-400 mb-2 uppercase font-black tracking-[0.2em]">
+                <p className="text-[10px] text-slate-400 mb-4 uppercase font-black tracking-[0.2em]">
                   {isUpgrade ? 'UPGRADE ORDER SUMMARY' : 'ORDER SUMMARY'}
                 </p>
-                {isUpgrade && paidPlan && (
-                  <p className="text-xs text-slate-500 mb-3 font-bold uppercase tracking-tight">
-                    Upgrading from {PLANS[paidPlan].name}
-                  </p>
-                )}
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-sm font-black text-navy uppercase tracking-tight">{targetPlan.name}</h4>
-                  <p className="text-2xl font-black text-navy">£{paymentAmount}</p>
+                  <h4 className="text-sm font-bold text-navy">{targetPlan.name}</h4>
+                  <p className="text-lg font-bold text-navy">£{paymentAmount}</p>
                 </div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                  Route: {selectedRoute || currentRoute} • {isUpgrade ? 'One-time upgrade' : 'One-time fee'}
-                </p>
                 {isUpgrade && (
-                  <p className="text-[10px] text-slate-500 font-black mt-3 pt-3 border-t border-slate-200 uppercase tracking-widest">
+                  <p className="text-xs text-slate-500 font-bold mt-2">
                     Total charged now: £{paymentAmount}
                   </p>
                 )}
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">
+                  Route: {selectedRoute || 'Active Route'} • {isUpgrade ? 'One-time upgrade' : 'One-time fee'}
+                </p>
               </div>
               
               <div className="space-y-4">
@@ -209,11 +201,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-black leading-tight uppercase tracking-[0.2em]">
                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
                    Secure Stripe Checkout • encrypted
-                </div>
-                <div className="text-[9px] text-center text-slate-300 font-bold leading-tight uppercase tracking-tight border-t border-slate-50 pt-4">
-                  By paying, you agree to our{' '}
-                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline hover:text-navy">Terms</button> and{' '}
-                  <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline hover:text-navy">Refund Policy</button>.
                 </div>
               </div>
             </form>

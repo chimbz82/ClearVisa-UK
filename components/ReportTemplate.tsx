@@ -1,7 +1,7 @@
 import React from 'react';
 import { AssessmentResult, QuestionConfig } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
-import { PlanId, PLANS } from '../config/pricingConfig';
+import { PlanId, PLANS, getAvailableUpgrades, isValidUpgrade } from '../config/pricingConfig';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import Button from './Button';
 import { DocumentChecklist } from './DocumentChecklist';
@@ -51,21 +51,31 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     <div className="bg-white mx-auto p-[15mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative font-sans text-left shadow-2xl border border-slate-100 rounded-sm">
       
       {/* 1. UPGRADE STRIP (NO-PRINT) */}
-      {!isProPlus && (
-        <div className="no-print mb-10 p-8 bg-navy text-white rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-6">
+      {paidPlan && paidPlan !== 'pro_plus' && (
+        <div className="no-print mb-8 p-6 bg-navy text-white rounded-xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-left">
-            <h4 className="text-base font-black uppercase tracking-widest mb-2">Upgrade your Audit depth</h4>
-            <p className="text-[12px] font-bold text-slate-400 uppercase tracking-tight">Unlock personalized document checklists and solicitor remediation steps.</p>
+            <h4 className="text-sm font-black uppercase tracking-widest mb-1">
+              Upgrade Available
+            </h4>
+            <p className="text-xs font-medium text-slate-300">
+              Unlock deeper analysis and additional guidance
+            </p>
           </div>
-          <div className="flex gap-4">
-             {isBasic && (
-               <button onClick={() => onUpgrade?.('full')} className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[11px] font-black uppercase tracking-widest border border-white/20 transition-all">
-                 Full Audit (+£50)
-               </button>
-             )}
-             <button onClick={() => onUpgrade?.('pro_plus')} className="px-6 py-3 bg-accent hover:bg-accent/90 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg transition-all">
-               Pro Plus (+£{isBasic ? '70' : '20'})
-             </button>
+          <div className="flex gap-3">
+            {paidPlan === 'basic' && (
+              <button 
+                onClick={() => onUpgrade?.('full')} 
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-black uppercase tracking-widest border border-white/20 transition-all"
+              >
+                Professional (+£50)
+              </button>
+            )}
+            <button 
+              onClick={() => onUpgrade?.('pro_plus')} 
+              className="px-4 py-2 bg-accent hover:bg-accent/90 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg transition-all"
+            >
+              Pro Plus (+£{paidPlan === 'basic' ? '70' : '20'})
+            </button>
           </div>
         </div>
       )}
