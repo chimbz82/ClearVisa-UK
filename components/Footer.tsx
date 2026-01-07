@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -5,10 +6,11 @@ interface FooterProps {
   onPrivacyClick: () => void;
   onTermsClick: () => void;
   onRefundClick: () => void;
+  onRiskNoticeClick: () => void;
   onScrollToSection: (id: string) => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onRefundClick, onScrollToSection }) => {
+const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onRefundClick, onRiskNoticeClick, onScrollToSection }) => {
   const { t } = useLanguage();
 
   return (
@@ -41,6 +43,7 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onRefundC
           <div>
             <h4 className="font-black text-[10px] uppercase tracking-[0.25em] text-accent mb-4">Legal</h4>
             <ul className="space-y-2 text-slate-300 text-[13px] font-bold">
+              <li><button onClick={onRiskNoticeClick} className="text-rose-400 hover:text-white transition-colors uppercase tracking-tight">Legal Disclaimer & Risk Notice</button></li>
               <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors uppercase tracking-tight">Privacy Policy</button></li>
               <li><button onClick={onTermsClick} className="hover:text-white transition-colors uppercase tracking-tight">Terms of Use</button></li>
               <li><button onClick={onRefundClick} className="hover:text-white transition-colors uppercase tracking-tight">Refund & Payment Policy</button></li>

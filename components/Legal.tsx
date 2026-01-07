@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface LegalProps {
-  onNavigateLegal?: (view: 'privacy' | 'terms' | 'refunds') => void;
+  onNavigateLegal?: (view: 'privacy' | 'terms' | 'refunds' | 'risk-notice') => void;
 }
 
 const Legal: React.FC<LegalProps> = ({ onNavigateLegal }) => {
@@ -29,7 +30,14 @@ const Legal: React.FC<LegalProps> = ({ onNavigateLegal }) => {
             ))}
           </div>
 
-          <div className="pt-8 border-t border-slate-200 flex flex-wrap gap-4 sm:gap-10 justify-center">
+          <div className="pt-8 border-t border-slate-200 flex flex-wrap gap-4 sm:gap-8 justify-center">
+            <button 
+              onClick={() => onNavigateLegal?.('risk-notice')} 
+              className="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-navy transition-colors flex items-center gap-2 group"
+            >
+              Legal Disclaimer & Risk Notice
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </button>
             <button 
               onClick={() => onNavigateLegal?.('terms')} 
               className="text-xs font-black text-accent uppercase tracking-widest hover:text-navy transition-colors flex items-center gap-2 group"

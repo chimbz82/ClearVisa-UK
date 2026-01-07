@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -16,6 +17,7 @@ import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
+import RiskNotice from './components/RiskNotice';
 import AnalysisLoader from './components/AnalysisLoader';
 import UpgradePricingScreen from './components/UpgradePricingScreen';
 import { runAssessment } from './utils/assessmentEngine';
@@ -83,7 +85,7 @@ export const PLANS: PlanConfig[] = [
   }
 ];
 
-export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'upgradePricing' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
+export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'upgradePricing' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -214,6 +216,8 @@ const App: React.FC = () => {
         return <TermsOfUse onBack={() => setViewState('landing')} />;
       case 'refunds':
         return <RefundPolicy onBack={() => setViewState('landing')} />;
+      case 'risk-notice':
+        return <RiskNotice onBack={() => setViewState('landing')} />;
       default:
         return null;
     }
@@ -232,11 +236,12 @@ const App: React.FC = () => {
         <main>
           {renderView()}
         </main>
-        {(viewState === 'landing' || viewState === 'privacy' || viewState === 'terms' || viewState === 'refunds') && (
+        {(viewState === 'landing' || viewState === 'privacy' || viewState === 'terms' || viewState === 'refunds' || viewState === 'risk-notice') && (
           <Footer 
             onPrivacyClick={() => setViewState('privacy')}
             onTermsClick={() => setViewState('terms')}
             onRefundClick={() => setViewState('refunds')}
+            onRiskNoticeClick={() => setViewState('risk-notice')}
             onScrollToSection={scrollToSection}
           />
         )}
