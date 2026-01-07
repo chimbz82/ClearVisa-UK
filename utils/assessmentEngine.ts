@@ -4,16 +4,16 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
   const flags: string[] = [];
   const sectionScores: SectionScore[] = [];
   
-  // --- Category: Personal & Identity ---
+  // --- Category: Personal & Identity (Section A) ---
   let personalScore = 100;
   let personalStatus: SectionScore['status'] = 'PASS';
-  if (answers['previous_refusals'] === true) {
+  if (answers['refused_visa'] === true) {
     flags.push("PREVIOUS REFUSAL - Non-disclosure or poor explanation can lead to a 10-year ban under Paragraph 320(7b).");
     personalScore = 70;
     personalStatus = 'WARN';
   }
-  if (answers['immigration_breaches'] && answers['immigration_breaches'] !== 'none') {
-    flags.push(`IMMIGRATION BREACH: ${answers['immigration_breaches'].toUpperCase()} - Highly sensitive; caseworker discretion applies.`);
+  if (answers['overstayed_visa'] === true || answers['deported_removed'] === true) {
+    flags.push("ADVERSE HISTORY - Previous overstaying or deportation is a high-risk factor for refusal.");
     personalScore = Math.min(personalScore, 40);
     personalStatus = 'FAIL';
   }
@@ -25,39 +25,34 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     detail: personalScore === 100 ? 'Clean immigration history verified.' : 'Historical adverse factors detected.'
   });
 
-  // --- Category: Financial Requirement ---
+  // --- Category: Financial Requirement (Section D) ---
   let financialScore = 100;
   let financialStatus: SectionScore['status'] = 'PASS';
-  const method = answers['fin_req_method'];
-  const income = Number(answers['sponsor_income'] || 0);
-  const savings = Number(answers['savings_amount'] || 0);
+  const method = answers['visa_route'];
+  const income = Number(answers['sponsor_annual_income'] || 0);
+  const swSalary = Number(answers['sw_salary_exact'] || 0);
 
-  if (route === 'Spouse Visa') {
-    if (method === 'employment' && income < 29000) {
+  if (method === 'spouse') {
+    if (income < 29000 && answers['sponsor_benefits'] !== true) {
       financialScore = 20;
       financialStatus = 'FAIL';
-      flags.push("FINANCIAL THRESHOLD - Current £29,000 gross annual requirement not met.");
-    } else if (method === 'savings' && savings < 88500) {
-      financialScore = 40;
-      financialStatus = 'FAIL';
-      flags.push("SAVINGS SHORTFALL - £88,500 required for cash-only savings route.");
+      flags.push("FINANCIAL THRESHOLD - Current £29,000 gross annual requirement not met for Spouse route.");
     }
-    if (answers['payslips_available'] === false) {
-      flags.push("DOCUMENTATION GAP - Specified evidence (Appendix FM-SE) is strictly mandatory.");
+    if (answers['sponsor_emp_length'] === 'under_6m') {
+      flags.push("EMPLOYMENT DURATION - Employment under 6 months requires Category B evidence (12 months history).");
       financialScore = Math.min(financialScore, 60);
       financialStatus = 'WARN';
     }
-  } else {
-    const salary = Number(answers['sw_salary'] || 0);
-    if (salary > 0 && salary < 38700 && answers['shortage_occupation'] !== true) {
+  } else if (method === 'skilled') {
+    if (swSalary > 0 && swSalary < 38700 && answers['sw_shortage'] !== true) {
       financialScore = 60;
       financialStatus = 'WARN';
       flags.push("SALARY RISK - Below £38,700 standard threshold for Skilled Worker route.");
     }
-    if (answers['sponsorship_obtained'] === false) {
+    if (answers['sw_cos_assigned'] === false) {
       financialScore = 0;
       financialStatus = 'FAIL';
-      flags.push("MISSING SPONSORSHIP - Valid CoS from licensed sponsor is mandatory.");
+      flags.push("MISSING SPONSORSHIP - A Certificate of Sponsorship is mandatory.");
     }
   }
   sectionScores.push({
@@ -65,41 +60,41 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     score: financialScore,
     status: financialStatus,
     risk: financialScore < 50 ? 'HIGH' : financialScore < 90 ? 'MEDIUM' : 'LOW',
-    detail: financialStatus === 'PASS' ? 'Aligns with current financial thresholds.' : 'Critical shortfall against specified income/savings rules.'
+    detail: financialStatus === 'PASS' ? 'Aligns with current financial thresholds.' : 'Critical shortfall against specified income rules.'
   });
 
-  // --- Category: Relationship (Spouse only) ---
-  if (route === 'Spouse Visa') {
+  // --- Category: Relationship (Section C - Spouse only) ---
+  if (method === 'spouse') {
     let relScore = 100;
     let relStatus: SectionScore['status'] = 'PASS';
-    if (answers['cohabitation_duration'] === 'never') {
-      relScore = 60;
+    if (answers['person_meetings'] === 'never' || answers['person_meetings'] === 'rare') {
+      relScore = 40;
       relStatus = 'WARN';
-      flags.push("GENUINENESS RISK - 'Never lived together' triggers higher caseworker scrutiny.");
+      flags.push("GENUINENESS RISK - Lack of in-person meetings triggers high caseworker scrutiny.");
     }
-    if (answers['wedding_evidence'] === false && answers['marital_status'] === 'married') {
+    if (answers['is_married'] === false && answers['cohabitation_length'] !== 'over_2') {
       relScore = 20;
       relStatus = 'FAIL';
-      flags.push("LEGAL REQUIREMENT - Missing marriage certificate for a spouse application.");
+      flags.push("UNMARRIED PARTNER RULES - 2 years continuous cohabitation is usually required.");
     }
     sectionScores.push({
       name: 'Relationship Genuineness',
       score: relScore,
       status: relStatus,
       risk: relScore < 70 ? 'MEDIUM' : 'LOW',
-      detail: relStatus === 'PASS' ? 'Relationship markers meet standard requirements.' : 'Evidence of subsistence and genuineness is currently weak.'
+      detail: relStatus === 'PASS' ? 'Relationship markers meet standard requirements.' : 'Evidence of subsistence is currently weak.'
     });
   }
 
-  // --- Category: Suitability ---
+  // --- Category: Suitability (Section F) ---
   let suitScore = 100;
   let suitStatus: SectionScore['status'] = 'PASS';
-  if (answers['criminal_convictions'] === true) {
+  if (answers['criminal_convictions'] === true || answers['pending_charges'] === true) {
     suitScore = 20;
     suitStatus = 'FAIL';
     flags.push("SUITABILITY - Criminal history triggers mandatory or discretionary refusal.");
   }
-  if (answers['nhs_debt'] === true) {
+  if (answers['nhs_debt_500'] === true) {
     suitScore = Math.min(suitScore, 40);
     suitStatus = 'WARN';
     flags.push("NHS DEBT - Debts over £500 are standard grounds for refusal.");
@@ -109,23 +104,23 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     score: suitScore,
     status: suitStatus,
     risk: suitScore < 50 ? 'HIGH' : 'LOW',
-    detail: suitStatus === 'PASS' ? 'No character/conduct issues identified.' : 'Serious suitability barriers found.'
+    detail: suitStatus === 'PASS' ? 'No character issues identified.' : 'Serious suitability barriers found.'
   });
 
-  // --- Category: Accommodation ---
-  let accScore = 100;
-  let accStatus: SectionScore['status'] = 'PASS';
-  if (answers['exclusive_rooms'] === false) {
-    accScore = 40;
-    accStatus = 'WARN';
-    flags.push("ACCOMMODATION RISK - Lack of exclusive room fails the 'overcrowding' test.");
+  // --- Category: English Language (Section G) ---
+  let engScore = 100;
+  let engStatus: SectionScore['status'] = 'PASS';
+  if (answers['english_test_taken'] === false && answers['english_exempt'] === false && answers['degree_english'] === false) {
+    engScore = 0;
+    engStatus = 'FAIL';
+    flags.push("ENGLISH LANGUAGE - Requirement not yet met through test, degree, or exemption.");
   }
   sectionScores.push({
-    name: 'Accommodation',
-    score: accScore,
-    status: accStatus,
-    risk: accScore < 60 ? 'MEDIUM' : 'LOW',
-    detail: accStatus === 'PASS' ? 'Accommodation plans appear sufficient.' : 'Potential overcrowding or permission issues.'
+    name: 'English Language',
+    score: engScore,
+    status: engStatus,
+    risk: engScore < 50 ? 'HIGH' : 'LOW',
+    detail: engStatus === 'PASS' ? 'Language requirement met.' : 'English proficiency evidence missing.'
   });
 
   // --- Overall Calculations ---
@@ -151,7 +146,7 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     nextSteps: [
       "Gather 6 months of original bank statements showing salary credit.",
       "Obtain a formal letter from the sponsor's employer on headed paper.",
-      "Book a TB test if applying from a required territory.",
+      "Check TB test requirements.",
       "Prepare a minimum of 10-15 high-quality photos across the relationship duration."
     ],
     sectionScores,
