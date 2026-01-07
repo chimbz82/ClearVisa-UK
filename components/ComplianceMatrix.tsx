@@ -6,7 +6,6 @@ interface ComplianceMatrixProps {
 }
 
 export const ComplianceMatrix: React.FC<ComplianceMatrixProps> = ({ answers, visaRoute }) => {
-  // Simple calculation for UI feedback
   const getFinancialStatus = () => {
     const income = parseFloat(answers.sponsor_income || answers.sw_salary || '0');
     if (visaRoute === 'Spouse Visa' && income >= 29000) return { status: 'PASS', score: '10/10', color: 'bg-emerald-100 text-emerald-700' };
