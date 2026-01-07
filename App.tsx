@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustStrip from './components/TrustStrip';
@@ -30,7 +30,20 @@ import { PLANS_ARRAY, PLANS, PlanId, getQuestionLimit } from './config/pricingCo
 // PlanId now imported from pricingConfig
 export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
-// PLANS imported from pricingConfig
+const StickyCTA: React.FC<{ onStart: () => void; isVisible: boolean }> = ({ onStart, isVisible }) => {
+  if (!isVisible) return null;
+  return (
+    <div className="fixed bottom-6 left-6 right-6 z-40 lg:hidden animate-in fade-in slide-in-from-bottom-10 duration-500">
+      <button 
+        onClick={onStart}
+        className="w-full bg-navy text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/10 flex items-center justify-center gap-3"
+      >
+        <span className="flex h-2 w-2 rounded-full bg-success"></span>
+        Start Eligibility Check
+      </button>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -40,6 +53,16 @@ const App: React.FC = () => {
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [paidPlan, setPaidPlan] = useState<PlanId | null>(null);
   const [selectedRoute, setSelectedRoute] = useState<string>('');
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show sticky CTA after scrolling past hero (approx 600px)
+      setShowStickyCTA(window.scrollY > 600 && viewState === 'landing');
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [viewState]);
 
   const handleStartCheck = () => {
     setSelectedPlan('basic');
@@ -115,6 +138,7 @@ const App: React.FC = () => {
             />
             <FAQ />
             <Legal onNavigateLegal={setViewState} />
+            <StickyCTA onStart={handleStartCheck} isVisible={showStickyCTA} />
           </>
         );
         
