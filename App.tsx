@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -109,6 +110,7 @@ const App: React.FC = () => {
     setAnswers(finalAnswers);
     setViewState('analyzing-free');
     
+    // Simulate initial high-level logic check
     setTimeout(() => {
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, 'free');
       setAssessmentResult(result);
@@ -120,7 +122,7 @@ const App: React.FC = () => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    setViewState('full-check');
+    setViewState('full-check'); // Move to Stage 2: Deep Audit
   };
 
   const handleFullAuditComplete = (finalAnswers: Record<string, any>) => {
@@ -142,8 +144,15 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
+    // Stage 1: Initial 12 questions
     const freeQuestions = QUESTIONS.filter(q => q.section === 'Initial');
-    const fullQuestions = QUESTIONS.filter(q => q.showIf({ tier: paidPlan || 'basic', route: answers.visa_route || 'spouse', answers }));
+    
+    // Stage 2: Full question set based on tier
+    const fullQuestions = QUESTIONS.filter(q => q.showIf({ 
+      tier: paidPlan || 'free', 
+      route: answers.visa_route || 'spouse', 
+      answers 
+    }));
 
     switch (viewState) {
       case 'landing':

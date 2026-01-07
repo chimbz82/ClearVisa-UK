@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuestionConfig } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -21,12 +22,12 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // Jump to first unanswered question if applicable
+    // Sync with initial answers if jumping back in
     const firstUnanswered = visibleQuestionsList.findIndex(q => answers[q.id] === undefined);
     if (firstUnanswered !== -1 && firstUnanswered > currentStep) {
       setCurrentStep(firstUnanswered);
     }
-  }, [visibleQuestionsList]);
+  }, [visibleQuestionsList.length]);
 
   const activeQuestion = visibleQuestionsList[currentStep];
 
@@ -81,11 +82,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   if (!activeQuestion) return null;
 
   return (
-    <div className="max-w-3xl mx-auto min-h-[600px] flex flex-col pt-4">
-      {/* CLEAN LINEAR PROGRESS BAR - NO PERCENTAGE */}
+    <div className="max-w-3xl mx-auto min-h-[500px] flex flex-col pt-4">
+      {/* LINEAR PROGRESS BAR - NO PERCENTAGE */}
       <div className="mb-14">
         <div className="flex justify-between items-end mb-4">
-          <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
             Question {currentStep + 1} of {visibleQuestionsList.length}
           </span>
         </div>
@@ -106,13 +107,13 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           {activeQuestion.type === 'boolean' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <button 
-                onClick={() => handleAnswer(true)} 
+                onClick={() => { handleAnswer(true); setTimeout(next, 200); }} 
                 className={`py-12 rounded-[1.5rem] border-2 text-xl font-black transition-all ${answers[activeQuestion.id] === true ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
               >
                 Yes
               </button>
               <button 
-                onClick={() => handleAnswer(false)} 
+                onClick={() => { handleAnswer(false); setTimeout(next, 200); }} 
                 className={`py-12 rounded-[1.5rem] border-2 text-xl font-black transition-all ${answers[activeQuestion.id] === false ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
               >
                 No
@@ -125,7 +126,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               {activeQuestion.options?.map(opt => (
                 <button 
                   key={opt.value}
-                  onClick={() => handleAnswer(opt.value)}
+                  onClick={() => { handleAnswer(opt.value); setTimeout(next, 200); }}
                   className={`w-full p-6 text-left border-2 rounded-2xl text-lg font-extrabold transition-all flex justify-between items-center ${answers[activeQuestion.id] === opt.value ? 'border-navy bg-navy/5 text-navy' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-300'}`}
                 >
                   {opt.label}
@@ -138,26 +139,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           )}
 
           {['currency', 'number', 'shortText', 'date'].includes(activeQuestion.type) && (
-            <input 
-              type={activeQuestion.type === 'date' ? 'date' : 'text'}
-              value={answers[activeQuestion.id] || ""}
-              onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-8 bg-white border-2 border-slate-200 rounded-[1.5rem] focus:border-navy outline-none text-2xl font-black transition-all"
-              autoFocus
-            />
+            <div className="space-y-6">
+              <input 
+                type={activeQuestion.type === 'date' ? 'date' : 'text'}
+                value={answers[activeQuestion.id] || ""}
+                onChange={(e) => handleAnswer(e.target.value)}
+                placeholder={activeQuestion.placeholder || "Type your answer..."}
+                className="w-full p-8 bg-white border-2 border-slate-200 rounded-[1.5rem] focus:border-navy outline-none text-2xl font-black transition-all"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && next()}
+              />
+              <Button onClick={next} fullWidth size="lg" variant="navy" disabled={!answers[activeQuestion.id]}>
+                Continue
+              </Button>
+            </div>
           )}
-        </div>
-
-        <div className="mt-12">
-          <Button 
-            onClick={next} 
-            fullWidth 
-            size="lg" 
-            variant="navy" 
-            disabled={answers[activeQuestion.id] === undefined}
-          >
-            Continue
-          </Button>
         </div>
       </div>
 
