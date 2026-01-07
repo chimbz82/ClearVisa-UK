@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PLANS, PlanId } from '../App';
 import Button from './Button';
 import { getUpgradeConfig } from '../utils/upgradeLogic';
+import { getUpgradePrice, getUpgradeLabel } from '../config/planLimits';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -15,18 +16,24 @@ interface PaymentModalProps {
 type CheckoutStep = 'select-route' | 'payment';
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentComplete, selectedTier, paidPlan, onNavigateLegal }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onPaymentComplete, 
+  selectedTier, 
+  paidPlan, 
+  onNavigateLegal 
+}) => {
   const [step, setStep] = useState<CheckoutStep>('select-route');
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
 
   const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
-  const currentPlan = PLANS.find(p => p.id === paidPlan);
-
-  // Business logic for first purchase vs upgrade
-  const upgradeConfig = getUpgradeConfig(paidPlan, selectedTier);
-  const paymentAmount = paidPlan ? (upgradeConfig?.priceGBP || 0) : targetPlan.priceGBP;
+  
+  // Calculate upgrade pricing
+  const paymentAmount = getUpgradePrice(paidPlan, selectedTier);
   const isUpgrade = paidPlan !== null;
+  const modalTitle = getUpgradeLabel(paidPlan, selectedTier);
 
   useEffect(() => {
     if (status === 'success') {
@@ -77,12 +84,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
       <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
         
         {status === 'idle' && (
-          <div className="px-10 pt-10 pb-2 flex justify-between items-center">
-            <h3 className="text-base font-black text-navy uppercase tracking-tight">
-              {step === 'select-route' ? 'Target Visa Route' : (isUpgrade ? 'Upgrade Audit Tier' : 'Secure Checkout')}
+          <div className="px-8 pt-8 pb-2 flex justify-between items-center">
+            <h3 className="text-base font-bold text-navy uppercase tracking-tight">
+              {step === 'select-route' ? 'Target Visa Route' : modalTitle}
             </h3>
             <button onClick={resetAndClose} className="text-slate-400 hover:text-navy p-2 rounded-full hover:bg-slate-50 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
         )}
@@ -108,22 +117,23 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
           )}
 
           {status === 'idle' && step === 'payment' && (
-            <form onSubmit={handleMockPayment} className="space-y-8 pt-6">
-              <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-200/60 shadow-inner">
-                <p className="text-[10px] text-slate-400 mb-4 uppercase font-black tracking-widest leading-none">
-                  {isUpgrade ? `UPGRADING TO ${targetPlan.name.toUpperCase()}` : `ORDER SUMMARY: ${targetPlan.name.toUpperCase()}`}
+            <form onSubmit={handleMockPayment} className="space-y-6">
+              <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                <p className="text-xs text-slate-400 mb-2 uppercase font-bold tracking-widest">
+                  {isUpgrade ? 'UPGRADE ORDER SUMMARY' : 'ORDER SUMMARY'}
                 </p>
-                <div className="flex justify-between items-baseline mb-6">
-                  <h4 className="text-xl font-black text-navy uppercase tracking-tight">{selectedRoute}</h4>
-                  <p className="text-4xl font-black text-navy tracking-tighter">£{paymentAmount}</p>
-                </div>
                 {isUpgrade && (
-                  <div className="pt-5 border-t border-slate-200">
-                    <p className="text-[11px] text-slate-600 font-bold leading-relaxed">
-                      Upgrade from <span className="text-navy">{currentPlan?.name}</span> to <span className="text-navy">{targetPlan.name}</span> – total charged now: <span className="text-accent">£{paymentAmount}</span>
-                    </p>
-                  </div>
+                  <p className="text-xs text-slate-500 mb-3 font-bold">
+                    Upgrading from {PLANS.find(p => p.id === paidPlan)?.name}
+                  </p>
                 )}
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-sm font-bold text-navy">{targetPlan.name}</h4>
+                  <p className="text-lg font-bold text-navy">£{paymentAmount}</p>
+                </div>
+                <p className="text-xs text-slate-500">
+                  {selectedRoute} Route • {isUpgrade ? 'Upgrade charge' : 'Full payment'}
+                </p>
               </div>
               
               <div className="space-y-4">
