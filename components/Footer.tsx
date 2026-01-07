@@ -41,9 +41,9 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick, onTermsClick, onRefundC
           <div>
             <h4 className="font-black text-[10px] uppercase tracking-[0.25em] text-accent mb-6">Legal</h4>
             <ul className="space-y-4 text-slate-300 text-[13px] font-bold">
-              <li><button onClick={onPrivacyClick} className="hover:text-white transition-colors uppercase tracking-tight">Privacy Policy</button></li>
-              <li><button onClick={onTermsClick} className="hover:text-white transition-colors uppercase tracking-tight">Terms of Use</button></li>
-              <li><button onClick={onRefundClick} className="hover:text-white transition-colors uppercase tracking-tight">Refund & Payment Policy</button></li>
+              <li><a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors uppercase tracking-tight">Privacy Policy</a></li>
+              <li><a href="?view=terms" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors uppercase tracking-tight">Terms of Use</a></li>
+              <li><a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors uppercase tracking-tight">Refund & Payment Policy</a></li>
               <li className="pt-3 text-[9px] text-slate-500 leading-relaxed font-black uppercase tracking-[0.1em]">
                 Not affiliated with the UK Government or Home Office.
               </li>

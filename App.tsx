@@ -196,7 +196,6 @@ const AppContent: React.FC = () => {
   };
 
   const handlePaymentSuccess = (route: string, tier: string) => {
-    // Update paid plan state
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
@@ -225,7 +224,6 @@ const AppContent: React.FC = () => {
     const result = runAssessment(routeKey, collectedAnswers);
     setAssessmentResult(result);
     setIsLoadingReport(false);
-    // Do not remove state so user can resume after paywall
     window.scrollTo(0, 0);
   };
 
@@ -368,9 +366,9 @@ const AppContent: React.FC = () => {
                   answers={answers}
                   tier={paidPlan || 'full'}
                   paidPlan={paidPlan}
-                  onUpgrade={() => {
+                  onUpgrade={(targetTier) => {
                     setIsUpgrading(true);
-                    setSelectedPlan('pro_plus');
+                    setSelectedPlan(targetTier);
                     setIsPaymentModalOpen(true);
                   }}
                   onViewLegal={(type) => setViewState(type)}

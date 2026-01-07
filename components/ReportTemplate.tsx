@@ -12,7 +12,7 @@ interface ReportTemplateProps {
   answers?: Record<string, any>;
   tier: string;
   paidPlan: PlanId | null;
-  onUpgrade?: () => void;
+  onUpgrade?: (targetTier: PlanId) => void;
   onViewLegal?: (type: 'privacy' | 'terms' | 'refunds') => void;
 }
 
@@ -62,9 +62,99 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     window.open('/sample-report.pdf', '_blank');
   };
 
-  // BUG 1 FIX: Logic for incremental upgrade price
-  const isUpgradingFromProfessional = paidPlan === 'full';
-  const upgradePrice = isUpgradingFromProfessional ? 20 : 99;
+  const renderUpgradeSection = () => {
+    if (paidPlan === 'pro_plus') return null;
+
+    let heading = "Get a deeper audit of your case";
+    let subheading = "Upgrade for a fuller risk analysis and detailed document checklist.";
+    let options: { tier: PlanId; label: string; priceExtra: number }[] = [];
+
+    if (paidPlan === 'basic') {
+      options = [
+        { tier: 'full', label: 'Professional Audit', priceExtra: 50 },
+        { tier: 'pro_plus', label: 'Professional Plus', priceExtra: 70 }
+      ];
+    } else if (paidPlan === 'full') {
+      heading = "Upgrade to Professional Plus";
+      subheading = "Unlock deeper evidence gap analysis and solicitor-ready summary.";
+      options = [
+        { tier: 'pro_plus', label: 'Professional Plus', priceExtra: 20 }
+      ];
+    }
+
+    return (
+      <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-12 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
+          <div className="flex-shrink-0">
+            <div className="w-20 h-20 bg-accent text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+              ⚡
+            </div>
+          </div>
+          
+          <div className="flex-grow">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
+                {paidPlan === 'basic' ? 'Expand Analysis' : 'Recommended for complex cases'}
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-navy mb-4 uppercase tracking-tight">
+              {heading}
+            </h3>
+            <p className="text-body text-slate-700 mb-8 font-medium leading-relaxed max-w-xl">
+              {subheading}
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+              <div className="flex items-start gap-3">
+                <span className="text-accent font-bold">✓</span>
+                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                  Deeper Gap Analysis
+                </span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-accent font-bold">✓</span>
+                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                  Extra Narrative Questions
+                </span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-accent font-bold">✓</span>
+                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                  Upgrade Weak Documents
+                </span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-accent font-bold">✓</span>
+                <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
+                  Solicitor-Ready Summary
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              {options.map((opt) => (
+                <button 
+                  key={opt.tier}
+                  onClick={() => onUpgrade?.(opt.tier)}
+                  className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
+                >
+                  Upgrade to {opt.label} – Pay £{opt.priceExtra} extra
+                </button>
+              ))}
+            </div>
+            <div className="text-[9px] text-slate-400 font-medium leading-tight px-1 mt-4">
+              By proceeding, you agree to our{' '}
+              <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a>,{' '}
+              <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy</a>, and{' '}
+              <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline">Refund Policy</a>.
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
 
   return (
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
@@ -220,92 +310,20 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       </div>
 
-      {(tier === 'full' || tier === 'basic') && onUpgrade && (
-        <section className="mt-12 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-12 rounded-[40px] border-2 border-accent/30 relative overflow-hidden no-print">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl"></div>
-          
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
-            <div className="flex-shrink-0">
-              <div className="w-20 h-20 bg-accent text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg">
-                ⚡
-              </div>
-            </div>
-            
-            <div className="flex-grow">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-[10px] text-accent font-black uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full">
-                  Recommended for complex cases
-                </span>
-              </div>
-              <h3 className="text-2xl font-bold text-navy mb-4 uppercase tracking-tight">
-                Upgrade to Professional Plus
-              </h3>
-              <p className="text-body text-slate-700 mb-8 font-medium leading-relaxed max-w-xl">
-                {isUpgradingFromProfessional 
-                  ? "You’ve already unlocked the Professional Audit (£79). Pay £20 extra to upgrade to Professional Plus for deeper analysis."
-                  : "Best for complex histories, refusals risk, or borderline evidence. Unlock deeper evidence gap analysis and practical suggests to strengthen your application."}
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                <div className="flex items-start gap-3">
-                  <span className="text-accent font-bold">✓</span>
-                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                    Deeper Gap Analysis
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-accent font-bold">✓</span>
-                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                    Extra Narrative Questions
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-accent font-bold">✓</span>
-                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                    Upgrade Weak Documents
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-accent font-bold">✓</span>
-                  <span className="text-[11px] text-slate-700 font-bold uppercase tracking-tight">
-                    Solicitor-Ready Summary
-                  </span>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <button 
-                  onClick={onUpgrade}
-                  className="bg-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-accent/90 transition-all shadow-lg active:scale-[0.98]"
-                >
-                  {isUpgradingFromProfessional 
-                    ? `Upgrade to Professional Plus – pay £20 extra` 
-                    : `Upgrade to Professional Plus – £99`}
-                </button>
-                <div className="text-[9px] text-slate-400 font-medium leading-tight px-1">
-                  By proceeding, you agree to our{' '}
-                  <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a>,{' '}
-                  <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy</a>, and{' '}
-                  <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline">Refund Policy</a>.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {renderUpgradeSection()}
 
-      <footer className="mt-auto pt-8 border-t border-slate-100 no-print">
+      <footer className="mt-auto pt-4 border-t border-slate-100 no-print pb-4">
         <div 
           onClick={handleDownload}
-          className="bg-navy p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden cursor-pointer hover:bg-navy/90 transition-colors"
+          className="bg-navy p-4 rounded-xl text-white/80 mb-4 relative overflow-hidden cursor-pointer hover:bg-navy/90 transition-colors"
         >
            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
-           <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Download PDF Summary</h4>
-           <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
+           <h4 className="text-[9px] text-emerald-400 mb-2 font-black uppercase tracking-[0.2em]">Download PDF Summary</h4>
+           <p className="text-[9px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
              Not legal advice. ClearVisa UK is not a law firm. Accuracy depends on user inputs. Final decisions made exclusively by UKVI.
            </p>
         </div>
-        <div className="flex justify-between items-center text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
+        <div className="flex justify-between items-center text-[8px] text-slate-400 font-black uppercase tracking-[0.2em]">
           <span>© 2026 ClearVisa UK</span>
           <span>Security Level: SSL-Verified Automated Audit</span>
         </div>
