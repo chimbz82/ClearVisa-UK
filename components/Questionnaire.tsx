@@ -23,7 +23,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // If starting a deep audit after pre-check, sync the index
+    // If resuming from a pre-check into a full audit, skip the initial questions
     if (startStep > 0 && currentStep < startStep) {
         setCurrentStep(startStep);
     }
@@ -83,22 +83,27 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto min-h-[500px] flex flex-col pt-4">
-      {/* LINEAR PROGRESS BAR - CLEAN & PROFESSIONAL */}
+      {/* SOFT LINE INDICATOR */}
       <div className="mb-14">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-[11px] font-black text-navy uppercase tracking-[0.2em]">
-            Step {currentStep + 1} of {visibleQuestionsList.length}
-          </span>
+        <div className="flex justify-between items-end mb-4">
+          <div className="flex flex-col">
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+               {activeQuestion.section}
+             </span>
+             <span className="text-[13px] font-black text-navy uppercase tracking-tight">
+               Step {currentStep + 1} of {visibleQuestionsList.length}
+             </span>
+          </div>
           {currentStep > 0 && (
             <button 
               onClick={back} 
-              className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-navy transition-colors border-b-2 border-transparent hover:border-navy"
+              className="text-[11px] font-bold text-slate-500 uppercase tracking-widest hover:text-accent transition-colors pb-0.5 border-b border-transparent hover:border-accent"
             >
-              ← Previous question
+              Previous question
             </button>
           )}
         </div>
-        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
+        <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
           <div 
             className="h-full bg-navy transition-all duration-700 ease-in-out" 
             style={{ width: `${((currentStep + 1) / visibleQuestionsList.length) * 100}%` }}
@@ -107,25 +112,22 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
-        <div className="mb-4">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{activeQuestion.section}</span>
-        </div>
-        <h3 className="text-2xl sm:text-3xl font-black mb-12 text-navy tracking-tight leading-[1.2]">
+        <h3 className="text-2xl sm:text-4xl font-black mb-14 text-navy tracking-tight leading-[1.15]">
           {activeQuestion.label}
         </h3>
         
-        <div className="min-h-[250px] space-y-8">
+        <div className="min-h-[250px] space-y-10">
           {activeQuestion.type === 'boolean' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <button 
-                onClick={() => { handleAnswer(true); setTimeout(next, 200); }} 
-                className={`py-12 rounded-[1.5rem] border-2 text-xl font-black transition-all ${answers[activeQuestion.id] === true ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
+                onClick={() => { handleAnswer(true); setTimeout(next, 250); }} 
+                className={`py-14 rounded-[2rem] border-2 text-2xl font-black transition-all ${answers[activeQuestion.id] === true ? 'border-navy bg-navy text-white shadow-xl scale-[1.02]' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
               >
                 Yes
               </button>
               <button 
-                onClick={() => { handleAnswer(false); setTimeout(next, 200); }} 
-                className={`py-12 rounded-[1.5rem] border-2 text-xl font-black transition-all ${answers[activeQuestion.id] === false ? 'border-navy bg-navy text-white shadow-xl' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
+                onClick={() => { handleAnswer(false); setTimeout(next, 250); }} 
+                className={`py-14 rounded-[2rem] border-2 text-2xl font-black transition-all ${answers[activeQuestion.id] === false ? 'border-navy bg-navy text-white shadow-xl scale-[1.02]' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-300'}`}
               >
                 No
               </button>
@@ -137,11 +139,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               {activeQuestion.options?.map(opt => (
                 <button 
                   key={opt.value}
-                  onClick={() => { handleAnswer(opt.value); setTimeout(next, 200); }}
-                  className={`w-full p-6 text-left border-2 rounded-2xl text-lg font-extrabold transition-all flex justify-between items-center ${answers[activeQuestion.id] === opt.value ? 'border-navy bg-navy/5 text-navy' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-300'}`}
+                  onClick={() => { handleAnswer(opt.value); setTimeout(next, 250); }}
+                  className={`w-full p-8 text-left border-2 rounded-[1.5rem] text-lg font-black transition-all flex justify-between items-center group ${answers[activeQuestion.id] === opt.value ? 'border-navy bg-navy/5 text-navy' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-300'}`}
                 >
                   {opt.label}
-                  <div className={`w-6 h-6 rounded-full border-4 flex items-center justify-center ${answers[activeQuestion.id] === opt.value ? 'border-navy bg-navy' : 'border-slate-200'}`}>
+                  <div className={`w-6 h-6 rounded-full border-4 flex items-center justify-center transition-all ${answers[activeQuestion.id] === opt.value ? 'border-navy bg-navy' : 'border-slate-200'}`}>
                     {answers[activeQuestion.id] === opt.value && <div className="w-2 h-2 bg-white rounded-full"></div>}
                   </div>
                 </button>
@@ -150,18 +152,18 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           )}
 
           {['currency', 'number', 'shortText', 'date'].includes(activeQuestion.type) && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <input 
                 type={activeQuestion.type === 'date' ? 'date' : 'text'}
                 value={answers[activeQuestion.id] || ""}
                 onChange={(e) => handleAnswer(e.target.value)}
-                placeholder={activeQuestion.placeholder || "Enter your answer here..."}
-                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[1.5rem] focus:border-navy outline-none text-2xl font-black transition-all shadow-sm"
+                placeholder={activeQuestion.placeholder || "Enter details..."}
+                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2rem] focus:border-navy outline-none text-2xl font-black transition-all shadow-sm"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && next()}
               />
-              <Button onClick={next} fullWidth size="lg" variant="navy" className="py-6 uppercase font-black tracking-widest shadow-lg" disabled={!answers[activeQuestion.id]}>
-                Continue
+              <Button onClick={next} fullWidth size="lg" variant="navy" className="py-7 uppercase font-black tracking-widest shadow-2xl" disabled={!answers[activeQuestion.id]}>
+                Next Step
               </Button>
             </div>
           )}
@@ -169,8 +171,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <footer className="flex items-center justify-center pt-16 border-t border-slate-50 mt-20">
-        <button onClick={onCancel} className="text-[10px] font-black text-rose-400 hover:text-rose-600 transition-all uppercase tracking-[0.3em] underline underline-offset-8 decoration-2 decoration-rose-100">
-          Exit & Abandon Assessment
+        <button 
+          onClick={onCancel} 
+          className="text-[11px] font-black text-slate-400 hover:text-rose-500 transition-all uppercase tracking-[0.3em]"
+        >
+          Abandon check
         </button>
       </footer>
     </div>

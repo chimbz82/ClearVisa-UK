@@ -23,11 +23,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
   const currentPlan = PLANS.find(p => p.id === paidPlan);
 
+  // Business logic for first purchase vs upgrade
   const upgradeConfig = getUpgradeConfig(paidPlan, selectedTier);
   const paymentAmount = paidPlan ? (upgradeConfig?.priceGBP || 0) : targetPlan.priceGBP;
   const isUpgrade = paidPlan !== null;
-
-  const isPreview = window.location.hostname === 'localhost' || window.location.hostname.includes('stackblitz');
 
   useEffect(() => {
     if (status === 'success') {
@@ -74,8 +73,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-navy/70 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
-      <div className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
+      <div className="absolute inset-0 bg-navy/80 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
+      <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
         
         {status === 'idle' && (
           <div className="px-10 pt-10 pb-2 flex justify-between items-center">
@@ -90,57 +89,60 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
         <div className={`px-10 ${status === 'idle' ? 'pb-10' : 'py-20'}`}>
           {status === 'idle' && step === 'select-route' && (
-            <div className="space-y-4 pt-4">
-              <button onClick={() => handleRouteSelect('Spouse')} className="w-full flex items-center justify-between p-7 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
+            <div className="space-y-4 pt-6">
+              <button onClick={() => handleRouteSelect('Spouse')} className="w-full flex items-center justify-between p-8 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
                 <div>
                   <h4 className="text-base font-black text-navy mb-1 uppercase tracking-tight">Spouse / Partner</h4>
                   <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Appendix FM Compliance Audit</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-6 h-6 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
               </button>
-              <button onClick={() => handleRouteSelect('Skilled Worker')} className="w-full flex items-center justify-between p-7 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
+              <button onClick={() => handleRouteSelect('Skilled Worker')} className="w-full flex items-center justify-between p-8 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
                 <div>
                   <h4 className="text-base font-black text-navy mb-1 uppercase tracking-tight">Skilled Worker</h4>
                   <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Salary & Sponsorship Review</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-6 h-6 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
               </button>
             </div>
           )}
 
           {status === 'idle' && step === 'payment' && (
-            <form onSubmit={handleMockPayment} className="space-y-8 pt-4">
-              <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200/60 shadow-inner">
-                <p className="text-[10px] text-slate-400 mb-3 uppercase font-black tracking-widest leading-none">
-                  {isUpgrade ? `UPGRADING TO ${targetPlan.name}` : `PLAN: ${targetPlan.name}`}
+            <form onSubmit={handleMockPayment} className="space-y-8 pt-6">
+              <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-200/60 shadow-inner">
+                <p className="text-[10px] text-slate-400 mb-4 uppercase font-black tracking-widest leading-none">
+                  {isUpgrade ? `UPGRADING TO ${targetPlan.name.toUpperCase()}` : `ORDER SUMMARY: ${targetPlan.name.toUpperCase()}`}
                 </p>
-                <div className="flex justify-between items-baseline mb-4">
-                  <h4 className="text-lg font-black text-navy uppercase tracking-tight">{selectedRoute} Route</h4>
-                  <p className="text-3xl font-black text-navy tracking-tighter">£{paymentAmount}</p>
+                <div className="flex justify-between items-baseline mb-6">
+                  <h4 className="text-xl font-black text-navy uppercase tracking-tight">{selectedRoute}</h4>
+                  <p className="text-4xl font-black text-navy tracking-tighter">£{paymentAmount}</p>
                 </div>
                 {isUpgrade && (
-                  <div className="pt-4 border-t border-slate-200">
-                    <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
-                      Upgrade from <span className="text-navy">{currentPlan?.name}</span> to <span className="text-navy">{targetPlan.name}</span>. Total charged now: £{paymentAmount}.
+                  <div className="pt-5 border-t border-slate-200">
+                    <p className="text-[11px] text-slate-600 font-bold leading-relaxed">
+                      Upgrade from <span className="text-navy">{currentPlan?.name}</span> to <span className="text-navy">{targetPlan.name}</span> – total charged now: <span className="text-accent">£{paymentAmount}</span>
                     </p>
                   </div>
                 )}
               </div>
               
               <div className="space-y-4">
-                <input required type="text" placeholder="Card number" className="w-full p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
+                <input required type="text" placeholder="Card number" className="w-full p-6 bg-white border-2 border-slate-100 rounded-[1.25rem] text-base outline-none font-black focus:border-navy transition-colors shadow-sm" />
                 <div className="flex gap-4">
-                  <input required type="text" placeholder="MM / YY" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
-                  <input required type="text" placeholder="CVC" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
+                  <input required type="text" placeholder="MM / YY" className="w-1/2 p-6 bg-white border-2 border-slate-100 rounded-[1.25rem] text-base outline-none font-black focus:border-navy transition-colors shadow-sm" />
+                  <input required type="text" placeholder="CVC" className="w-1/2 p-6 bg-white border-2 border-slate-100 rounded-[1.25rem] text-base outline-none font-black focus:border-navy transition-colors shadow-sm" />
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2">
-                <Button type="submit" fullWidth size="lg" variant="navy" className="py-5 shadow-2xl uppercase font-black tracking-widest">
-                  Secure Payment • £{paymentAmount}
+              <div className="space-y-5 pt-2">
+                <Button type="submit" fullWidth size="lg" variant="navy" className="py-6 shadow-2xl uppercase font-black tracking-widest text-base">
+                  Pay £{paymentAmount} & Continue
                 </Button>
-                <div className="text-[10px] text-center text-slate-400 font-bold leading-tight uppercase tracking-tight">
-                  Secure checkout via Stripe • By proceeding, you agree to our{' '}
+                <div className="text-[10px] text-center text-slate-400 font-black leading-tight uppercase tracking-[0.1em]">
+                  Secure Stripe Checkout • No auto-renewals • One-off payment
+                </div>
+                <div className="text-[9px] text-center text-slate-300 font-bold leading-tight">
+                  By paying, you agree to our{' '}
                   <button type="button" onClick={() => onNavigateLegal('terms')} className="underline hover:text-navy">Terms</button> and{' '}
                   <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline hover:text-navy">Refund Policy</button>.
                 </div>
@@ -153,17 +155,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               <div className="relative w-24 h-24 mx-auto mb-10">
                 <div className="absolute inset-0 border-8 border-slate-50 rounded-full"></div>
                 <div className={`absolute inset-0 border-8 border-success rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
-                <div className={`absolute inset-0 flex items-center justify-center text-success text-4xl`}>
-                  {status === 'processing' ? '' : <svg className="w-12 h-12" fill="none" stroke="currentColor" strokeWidth={5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                <div className={`absolute inset-0 flex items-center justify-center text-success text-5xl`}>
+                  {status === 'processing' ? '' : <svg className="w-12 h-12" fill="none" stroke="currentColor" strokeWidth={6} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                 </div>
               </div>
-              <h4 className={`text-xl font-black text-navy uppercase mb-3 tracking-tight`}>
-                {status === 'processing' ? 'Processing Securely' : 'Payment Verified'}
+              <h4 className={`text-2xl font-black text-navy uppercase mb-4 tracking-tight`}>
+                {status === 'processing' ? 'Authorizing' : 'Payment Success'}
               </h4>
-              <p className="text-[13px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+              <p className="text-sm text-slate-500 font-black uppercase tracking-widest leading-relaxed">
                 {status === 'processing' 
-                  ? 'Verifying details with payment gateway...' 
-                  : `Success! Unlocking your ${targetPlan.name}.`}
+                  ? 'Verifying bank credentials...' 
+                  : `Tier Unlocked: ${targetPlan.name.toUpperCase()}`}
               </p>
             </div>
           )}
@@ -171,17 +173,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
           {status === 'error' && (
             <div className="text-center animate-in fade-in duration-500">
               <div className="w-24 h-24 mx-auto mb-10 bg-rose-50 rounded-full flex items-center justify-center">
-                <span className="text-rose-500 text-5xl font-black">✕</span>
+                <span className="text-rose-500 text-6xl font-black">✕</span>
               </div>
-              <h4 className="text-xl font-black text-navy uppercase mb-3 tracking-tight">Transaction Declined</h4>
-              <p className="text-sm text-slate-600 font-bold mb-10 leading-relaxed uppercase tracking-tight px-4">
-                We couldn't process your payment. Please verify your card details and try again.
+              <h4 className="text-2xl font-black text-navy uppercase mb-4 tracking-tight">Declined</h4>
+              <p className="text-sm text-slate-600 font-black mb-10 uppercase tracking-tight px-6 leading-relaxed">
+                Transaction was unsuccessful. Please check your card balance or use another method.
               </p>
               <button 
                 onClick={() => setStatus('idle')}
-                className="text-[11px] font-black text-accent uppercase tracking-widest hover:underline decoration-2 underline-offset-8"
+                className="text-[12px] font-black text-accent uppercase tracking-[0.2em] hover:underline decoration-2 underline-offset-8"
               >
-                Return to checkout
+                Back to payment
               </button>
             </div>
           )}
