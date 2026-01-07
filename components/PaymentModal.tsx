@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { PLANS, PlanId } from '../App';
 import Button from './Button';
@@ -20,18 +19,23 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
 
-  const plan = PLANS.find(p => p.id === selectedTier) || PLANS.find(p => p.id === 'full')!;
-  
-  // Added 'free' property to match PlanId definition
-  const basePrices: Record<PlanId, number> = {
-    free: 0,
-    basic: 29,
-    full: 79,
-    pro_plus: 99
+  const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
+  const currentPlan = PLANS.find(p => p.id === paidPlan);
+
+  // BUSINESS MODEL DELTAS
+  const getUpgradePrice = (from: PlanId | null, to: PlanId): number => {
+    if (!from) return PLANS.find(p => p.id === to)?.priceGBP || 0;
+    
+    // Logic deltas
+    if (from === 'basic' && to === 'full') return 50;
+    if (from === 'basic' && to === 'pro_plus') return 70;
+    if (from === 'full' && to === 'pro_plus') return 20;
+    
+    return 0; // Already owned or invalid
   };
 
-  const isUpgrade = paidPlan !== null && basePrices[selectedTier] > (basePrices[paidPlan] || 0);
-  const paymentAmount = isUpgrade ? basePrices[selectedTier] - basePrices[paidPlan!] : basePrices[selectedTier];
+  const paymentAmount = getUpgradePrice(paidPlan, selectedTier);
+  const isUpgrade = paidPlan !== null;
 
   const isPreview = window.location.hostname === 'localhost' || window.location.hostname.includes('stackblitz');
 
@@ -61,7 +65,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
     setStatus('processing');
     
     setTimeout(() => {
-      const success = Math.random() > 0.05; // 95% success rate for simulation
+      const success = Math.random() > 0.05; 
       if (success) {
         setStatus('success');
       } else {
@@ -86,7 +90,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
         {status === 'idle' && (
           <div className="px-8 pt-8 pb-2 flex justify-between items-center">
             <h3 className="text-base font-bold text-[#07162A] uppercase tracking-tight">
-              {step === 'select-route' ? 'Target Visa Route' : (isUpgrade ? 'Upgrade Account' : 'Secure Checkout')}
+              {step === 'select-route' ? 'Target Visa Route' : (isUpgrade ? 'Upgrade Audit Tier' : 'Secure Checkout')}
             </h3>
             <button onClick={resetAndClose} className="text-slate-400 hover:text-[#07162A] p-2 rounded-full hover:bg-slate-50 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -116,16 +120,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
           {status === 'idle' && step === 'payment' && (
             <form onSubmit={handleMockPayment} className="space-y-6">
-              {isPreview && (
-                <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg">
-                  <p className="text-[10px] text-amber-700 font-bold uppercase tracking-tight text-center leading-tight">
-                    Preview environment: use test card numbers only. No real payments are processed here.
-                  </p>
-                </div>
-              )}
               <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
                 <p className="text-[10px] text-slate-400 mb-2 uppercase font-bold tracking-widest leading-none">
-                  {isUpgrade ? `Upgrade from ${PLANS.find(p => p.id === paidPlan)?.name} to ${plan.name}` : plan.name}
+                  {isUpgrade ? `UPGRADING TO ${targetPlan.name}` : targetPlan.name}
                 </p>
                 <div className="flex justify-between items-center">
                   <h4 className="text-sm font-bold text-[#07162A]">{selectedRoute} Route</h4>
@@ -133,7 +130,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                 </div>
                 {isUpgrade && (
                   <p className="text-[9px] text-slate-400 mt-2 italic font-bold">
-                    Upgrade from {PLANS.find(p => p.id === paidPlan)?.name} to {plan.name} – total charged now: £{paymentAmount}
+                    Upgrade from {currentPlan?.name} – total charged now: £{paymentAmount}
                   </p>
                 )}
               </div>
@@ -148,8 +145,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
                 <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
                 <div className="text-[10px] text-center text-slate-400 font-medium leading-tight">
                   By proceeding, you agree to our{' '}
-                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline">Terms</button>,{' '}
-                  <button type="button" onClick={() => onNavigateLegal('privacy')} className="underline">Privacy</button>, and{' '}
+                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline">Terms</button> and{' '}
                   <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline">Refund Policy</button>.
                 </div>
               </div>
@@ -171,7 +167,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               <p className="text-sm text-slate-500 font-bold">
                 {status === 'processing' 
                   ? 'Encrypting sensitive details...' 
-                  : `Unlocking ${plan.name} features...`}
+                  : `Unlocking ${targetPlan.name} features...`}
               </p>
             </div>
           )}

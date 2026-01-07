@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustStrip from './components/TrustStrip';
@@ -16,7 +15,7 @@ import ReportTemplate from './components/ReportTemplate';
 import AnalysisLoader from './components/AnalysisLoader';
 import UpgradePricingScreen from './components/UpgradePricingScreen';
 import { runAssessment } from './utils/assessmentEngine';
-import { AssessmentResult, QuestionConfig } from './types';
+import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
 import { QUESTIONS } from './data/questions';
@@ -26,7 +25,7 @@ import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import RiskNotice from './components/RiskNotice';
 
-export type PlanId = 'free' | 'basic' | 'full' | 'pro_plus';
+export type PlanId = 'basic' | 'full' | 'pro_plus';
 
 export interface PlanConfig {
   id: PlanId;
@@ -37,15 +36,8 @@ export interface PlanConfig {
   includedFeatures: string[];
 }
 
+// Canonical Paid Tiers only
 export const PLANS: PlanConfig[] = [
-  {
-    id: 'free',
-    name: 'Free Pre-Check',
-    priceGBP: 0,
-    stripePriceId: '',
-    description: 'Instant eligibility verdict.',
-    includedFeatures: ['Verdict', 'Brief risk flags']
-  },
   {
     id: 'basic',
     name: 'Basic Pre-Check',
@@ -97,7 +89,7 @@ export type ViewState = 'landing' | 'free-check' | 'analyzing-free' | 'free-resu
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [viewState, setViewState] = useState<ViewState>('landing');
-  const [selectedPlan, setSelectedPlan] = useState<PlanId>('free');
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>('basic');
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [paidPlan, setPaidPlan] = useState<PlanId | null>(null);
@@ -110,19 +102,19 @@ const App: React.FC = () => {
     setAnswers(finalAnswers);
     setViewState('analyzing-free');
     
-    // Simulate initial high-level logic check
     setTimeout(() => {
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, 'free');
       setAssessmentResult(result);
       setViewState('free-result-preview');
-    }, 2000);
+    }, 1800);
   };
 
   const handlePaymentComplete = (route: string, tier: string) => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    setViewState('full-check'); // Move to Stage 2: Deep Audit
+    // After payment, user continues remaining 40+ questions
+    setViewState('full-check');
   };
 
   const handleFullAuditComplete = (finalAnswers: Record<string, any>) => {
@@ -133,7 +125,7 @@ const App: React.FC = () => {
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, paidPlan || 'basic');
       setAssessmentResult(result);
       setViewState('report');
-    }, 2500);
+    }, 2200);
   };
 
   const scrollToSection = (id: string) => {
@@ -144,10 +136,7 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
-    // Stage 1: Initial 12 questions
     const freeQuestions = QUESTIONS.filter(q => q.section === 'Initial');
-    
-    // Stage 2: Full question set based on tier
     const fullQuestions = QUESTIONS.filter(q => q.showIf({ 
       tier: paidPlan || 'free', 
       route: answers.visa_route || 'spouse', 
@@ -202,6 +191,7 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={fullQuestions}
               initialAnswers={answers}
+              startStep={freeQuestions.length} // Resume from after the pre-check
             />
           </div>
         );
@@ -221,6 +211,10 @@ const App: React.FC = () => {
                 tier={paidPlan || 'basic'}
                 paidPlan={paidPlan}
                 visibleQuestionsList={fullQuestions}
+                onUpgrade={(target) => {
+                  setSelectedPlan(target);
+                  setIsPaymentModalOpen(true);
+                }}
               />
           </div>
         ) : null;

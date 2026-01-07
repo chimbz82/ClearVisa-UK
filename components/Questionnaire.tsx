@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuestionConfig } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -9,25 +8,26 @@ interface QuestionnaireProps {
   onCancel: () => void;
   initialAnswers?: Record<string, any>;
   visibleQuestionsList: QuestionConfig[];
+  startStep?: number;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ 
   onComplete, 
   onCancel, 
   initialAnswers = {}, 
-  visibleQuestionsList
+  visibleQuestionsList,
+  startStep = 0
 }) => {
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(0);
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // Sync with initial answers if jumping back in
-    const firstUnanswered = visibleQuestionsList.findIndex(q => answers[q.id] === undefined);
-    if (firstUnanswered !== -1 && firstUnanswered > currentStep) {
-      setCurrentStep(firstUnanswered);
+    // Resume logic if needed
+    if (startStep > 0 && currentStep < startStep) {
+        setCurrentStep(startStep);
     }
-  }, [visibleQuestionsList.length]);
+  }, [startStep]);
 
   const activeQuestion = visibleQuestionsList[currentStep];
 
@@ -83,12 +83,20 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto min-h-[500px] flex flex-col pt-4">
-      {/* LINEAR PROGRESS BAR - NO PERCENTAGE */}
-      <div className="mb-14">
-        <div className="flex justify-between items-end mb-4">
+      {/* LINEAR PROGRESS BAR */}
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-4">
           <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
-            Question {currentStep + 1} of {visibleQuestionsList.length}
+            Step {currentStep + 1} of {visibleQuestionsList.length}
           </span>
+          {currentStep > 0 && (
+            <button 
+              onClick={back} 
+              className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-navy transition-colors"
+            >
+              ← Previous question
+            </button>
+          )}
         </div>
         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
           <div 
@@ -157,11 +165,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
       </div>
 
-      <footer className="flex items-center justify-between pt-12 border-t border-slate-100 mt-20">
-        <button onClick={back} disabled={currentStep === 0} className="text-[11px] font-black text-slate-400 hover:text-navy disabled:opacity-0 transition-all uppercase tracking-widest">
-          ← Back
+      <footer className="flex items-center justify-center pt-12 border-t border-slate-100 mt-20">
+        <button onClick={onCancel} className="text-[10px] font-black text-rose-400 hover:text-rose-600 transition-all uppercase tracking-[0.25em]">
+          Exit & Abandon Check
         </button>
-        <button onClick={onCancel} className="text-[11px] font-black text-rose-400 hover:text-rose-600 transition-all uppercase tracking-widest">Exit</button>
       </footer>
     </div>
   );
