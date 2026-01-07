@@ -1,7 +1,7 @@
 import React from 'react';
 import { AssessmentResult, QuestionConfig } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
-import { PlanId, PLANS } from '../App';
+import { PlanId, PLANS } from '../config/pricingConfig';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import Button from './Button';
 import { DocumentChecklist } from './DocumentChecklist';
@@ -17,7 +17,7 @@ interface ReportTemplateProps {
   tier: string;
   paidPlan: PlanId | null;
   onUpgrade?: (targetTier: PlanId) => void;
-  onViewLegal?: (type: 'privacy' | 'terms' | 'refunds') => void;
+  onViewLegal?: (type: 'privacy' | 'terms' | 'refunds' | 'risk-notice') => void;
   visibleQuestionsList: QuestionConfig[];
 }
 
@@ -317,7 +317,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                       {flag.includes('INCOME') && 'Review Category B or D routes. Combine secondary income sources or document 6 months of cash savings exceeding £16,000 threshold to supplement salary.'}
                       {flag.includes('HISTORY') || flag.includes('REFUSAL') && 'Submit a formal Subject Access Request (SAR) to UKVI. Address caseworker notes from previous refusals line-by-line in a dedicated covering letter.'}
                       {flag.includes('EVIDENCE') || flag.includes('RELATIONSHIP') && 'Strengthen cohabitation evidence by sourcing joint council tax bills, insurance policies, or formal witness statements from professional third parties.'}
-                      {!flag.includes('INCOME') && !flag.includes('REFUSAL') && !flag.includes('RELATIONSHIP') && 'Consult with a qualified solicitor to prepare a robust legal representation letter addressing this specific concern.'}
+                      {!flag.includes('INCOME') && !flag.includes('REFUSAL') && !flag.includes('RELATIONSHIP') && 'Consult with a qualified solicitor to prepare a representation letter addressing this specific concern.'}
                     </p>
                   </div>
                 ))}
@@ -325,7 +325,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             ) : (
               <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
                 <p className="text-xs text-emerald-800 font-bold leading-relaxed">
-                  Your profile is strong. To maintain this status, ensure all photocopies are high-resolution and all bank statements are either original or stamped by the issuing branch as per Appendix FM-SE requirements.
+                  Your profile is strong. To maintain this status, ensure all photocopies are high-resolution and all bank statements are either original or stamped by the issuing branch.
                 </p>
               </div>
             )}

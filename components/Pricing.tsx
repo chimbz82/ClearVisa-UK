@@ -1,10 +1,10 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { PLANS } from '../App';
+import { PLANS_ARRAY, PlanId } from '../config/pricingConfig';
 
 interface PricingProps {
-  onStartCheck: (planId: any) => void;
-  onNavigateLegal: (view: 'privacy' | 'terms' | 'refunds') => void;
+  onStartCheck: (planId: PlanId) => void;
+  onNavigateLegal: (view: 'privacy' | 'terms' | 'refunds' | 'risk-notice') => void;
 }
 
 const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
@@ -22,7 +22,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14 items-stretch">
-          {PLANS.map((plan) => {
+          {PLANS_ARRAY.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
             const isFull = plan.id === 'full';
             
@@ -56,8 +56,9 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                 </div>
                 
                 <div className="flex-grow p-8 pt-4 border-t border-slate-50">
+                  <p className="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest">{plan.questionCountLabel}</p>
                   <ul className="space-y-4 mb-4">
-                    {plan.includedFeatures.map((feat, i) => (
+                    {plan.features.map((feat, i) => (
                       <li key={i} className="flex items-start gap-3.5 text-[13px] text-slate-700 font-bold leading-tight tracking-tight">
                         <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isProPlus ? 'text-accent' : 'text-success'}`} fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         {feat}

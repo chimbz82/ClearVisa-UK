@@ -23,65 +23,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import RiskNotice from './components/RiskNotice';
-import { getQuestionLimit } from './config/planLimits';
-
-export type PlanId = 'basic' | 'full' | 'pro_plus';
-
-export interface PlanConfig {
-  id: PlanId;
-  name: string;
-  priceGBP: number;
-  stripePriceId: string;
-  description: string;
-  includedFeatures: string[];
-}
-
-export const PLANS: PlanConfig[] = [
-  {
-    id: 'basic',
-    name: 'Basic Pre-Check',
-    priceGBP: 29,
-    stripePriceId: 'price_basic_29',
-    description: 'Quick automated eligibility verdict and audit summary.',
-    includedFeatures: [
-      'Eligibility likelihood verdict',
-      'Traffic-light risk summary',
-      'Key refusing risk flags',
-      'Plain-English explanation',
-      'Downloadable summary (short PDF)',
-      'List of all questions answered'
-    ]
-  },
-  {
-    id: 'full',
-    name: 'Professional Audit',
-    priceGBP: 79,
-    stripePriceId: 'price_full_79',
-    description: 'Full audit and professional PDF report for straightforward cases.',
-    includedFeatures: [
-      'Everything in Basic Pre-Check',
-      'Personalised document checklist',
-      'Route-specific compliance scoring',
-      'Gap analysis of missing evidence',
-      'Detailed risk factor breakdown',
-      'Full detailed PDF report'
-    ]
-  },
-  {
-    id: 'pro_plus',
-    name: 'Professional Plus',
-    priceGBP: 99,
-    stripePriceId: 'price_pro_99',
-    description: 'Ideal for complex histories and borderline cases.',
-    includedFeatures: [
-      'Everything in Professional Audit',
-      'Solicitor-style action plan',
-      'Priority risk remediation guidance',
-      'Specific evidence strengthening steps',
-      'Sample evidence templates recommended'
-    ]
-  }
-];
+import { PlanId, getQuestionLimit } from './config/pricingConfig';
 
 export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
@@ -138,7 +80,7 @@ const App: React.FC = () => {
 
   const renderView = () => {
     const route = answers.visa_route || (selectedRoute.includes('Spouse') ? 'spouse' : 'skilled') || 'spouse';
-    const questionLimit = getQuestionLimit(paidPlan);
+    const questionLimit = paidPlan ? getQuestionLimit(paidPlan) : 12;
     
     const allQuestions = QUESTIONS.filter(q => 
       q.showIf({ 

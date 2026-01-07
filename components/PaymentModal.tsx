@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PLANS, PlanId } from '../App';
+import { PlanId, PLANS, getUpgradePrice, getUpgradeLabel } from '../config/pricingConfig';
 import Button from './Button';
-import { getUpgradePrice, getUpgradeLabel } from '../config/planLimits';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -29,7 +28,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
 
-  const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
+  const targetPlan = PLANS[selectedTier];
   const paymentAmount = getUpgradePrice(paidPlan, selectedTier);
   const isUpgrade = paidPlan !== null;
   const modalTitle = getUpgradeLabel(paidPlan, selectedTier);
@@ -70,7 +69,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     e.preventDefault();
     setStatus('processing');
     setTimeout(() => {
-       // 95% success rate simulation
        if (Math.random() > 0.05) {
          setStatus('success');
        } else {
@@ -128,9 +126,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <p className="text-[10px] text-slate-400 mb-2 uppercase font-black tracking-[0.2em]">
                   {isUpgrade ? 'UPGRADE ORDER SUMMARY' : 'ORDER SUMMARY'}
                 </p>
-                {isUpgrade && (
+                {isUpgrade && paidPlan && (
                   <p className="text-xs text-slate-500 mb-3 font-bold uppercase tracking-tight">
-                    Upgrading from {PLANS.find(p => p.id === paidPlan)?.name}
+                    Upgrading from {PLANS[paidPlan].name}
                   </p>
                 )}
                 <div className="flex justify-between items-center mb-2">

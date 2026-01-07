@@ -1,5 +1,6 @@
 import React from 'react';
-import { PlanId } from '../App';
+// Corrected import from pricing configuration
+import { PlanId } from '../config/pricingConfig';
 
 interface DocumentChecklistProps {
   answers: Record<string, any>;

@@ -1,7 +1,8 @@
 import React from 'react';
 import { AssessmentResult } from '../types';
 import Button from './Button';
-import { PlanId, PLANS } from '../App';
+// Corrected imports from the pricing configuration
+import { PlanId, PLANS_ARRAY } from '../config/pricingConfig';
 
 interface UpgradePricingScreenProps {
   assessmentResult: AssessmentResult;
@@ -49,7 +50,8 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {PLANS.map((plan) => {
+          {/* Changed to use PLANS_ARRAY for mapping */}
+          {PLANS_ARRAY.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
             const isFull = plan.id === 'full';
             return (
@@ -61,7 +63,8 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
                     </div>
                 </div>
                 <ul className="space-y-4 mb-10 flex-grow">
-                    {plan.includedFeatures.map((f, i) => (
+                    {/* Changed includedFeatures to features as per pricingConfig.ts */}
+                    {plan.features.map((f, i) => (
                         <li key={i} className="text-[11px] font-bold text-slate-600 uppercase tracking-tight flex gap-3 leading-tight">
                             <span className={isProPlus ? 'text-accent font-black' : 'text-success font-black'}>✓</span>
                             <span>{f}</span>

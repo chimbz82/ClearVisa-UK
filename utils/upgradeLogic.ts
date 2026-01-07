@@ -1,4 +1,5 @@
-import { PlanId } from '../App';
+// Import PlanId from the correct config file
+import { PlanId } from '../config/pricingConfig';
 
 export interface UpgradeConfig {
   from: PlanId;
