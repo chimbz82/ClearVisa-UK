@@ -18,7 +18,7 @@ export interface PlanDetails {
 }
 
 // ============================================
-// PRICING CONSTANTS (UPDATE ONLY HERE)
+// PRICING CONSTANTS
 // ============================================
 
 export const PRICING = {
@@ -30,7 +30,7 @@ export const PRICING = {
 export const QUESTION_LIMITS = {
   BASIC: 20,
   PROFESSIONAL: 40,
-  PRO_PLUS: 46  // Actually 40+ but technically 46 available
+  PRO_PLUS: 46
 } as const;
 
 // ============================================
@@ -45,7 +45,7 @@ export const PLANS: Record<PlanId, PlanDetails> = {
     priceGBP: PRICING.BASIC,
     stripePriceId: 'price_basic_29',
     description: 'Quick automated eligibility verdict and audit summary.',
-    questionCountLabel: 'Up to 20 questions',
+    questionCountLabel: 'BASIC PRE-CHECK · UP TO 20 QUESTIONS',
     questionLimit: QUESTION_LIMITS.BASIC,
     features: [
       'Eligibility likelihood verdict',
@@ -64,7 +64,7 @@ export const PLANS: Record<PlanId, PlanDetails> = {
     priceGBP: PRICING.PROFESSIONAL,
     stripePriceId: 'price_full_79',
     description: 'Full audit and professional PDF report for straightforward cases.',
-    questionCountLabel: 'Around 20-40 questions',
+    questionCountLabel: 'PROFESSIONAL AUDIT · AROUND 20–40 QUESTIONS',
     questionLimit: QUESTION_LIMITS.PROFESSIONAL,
     features: [
       'Everything in Basic Pre-Check',
@@ -82,7 +82,7 @@ export const PLANS: Record<PlanId, PlanDetails> = {
     priceGBP: PRICING.PRO_PLUS,
     stripePriceId: 'price_pro_99',
     description: 'Ideal for complex histories and borderline cases.',
-    questionCountLabel: '40+ questions',
+    questionCountLabel: 'PROFESSIONAL PLUS · 40+ QUESTIONS',
     questionLimit: QUESTION_LIMITS.PRO_PLUS,
     features: [
       'Everything in Professional Audit',
@@ -95,7 +95,6 @@ export const PLANS: Record<PlanId, PlanDetails> = {
   }
 };
 
-// Helper to get array of plans
 export const PLANS_ARRAY: PlanDetails[] = [
   PLANS.basic,
   PLANS.full,
@@ -113,7 +112,6 @@ interface UpgradeRule {
   label: string;
 }
 
-// Explicitly defined valid upgrade paths
 export const UPGRADE_MATRIX: UpgradeRule[] = [
   {
     from: 'basic',
@@ -139,40 +137,22 @@ export const UPGRADE_MATRIX: UpgradeRule[] = [
 // HELPER FUNCTIONS
 // ============================================
 
-/**
- * Get upgrade price between two plans
- * Returns null if upgrade is invalid (downgrade, same tier, or invalid)
- */
 export function getUpgradePrice(
   fromPlan: PlanId | null, 
   toPlan: PlanId
 ): number | null {
-  // First purchase - return full price
   if (!fromPlan) {
     return PLANS[toPlan].priceGBP;
   }
-  
-  // Same tier - invalid
   if (fromPlan === toPlan) {
     return null;
   }
-  
-  // Check if this is a valid upgrade path
   const upgrade = UPGRADE_MATRIX.find(
     u => u.from === fromPlan && u.to === toPlan
   );
-  
-  if (upgrade) {
-    return upgrade.price;
-  }
-  
-  // Downgrade or invalid path
-  return null;
+  return upgrade ? upgrade.price : null;
 }
 
-/**
- * Get upgrade label for modal title
- */
 export function getUpgradeLabel(
   fromPlan: PlanId | null, 
   toPlan: PlanId
@@ -180,39 +160,23 @@ export function getUpgradeLabel(
   if (!fromPlan) {
     return 'Secure Checkout';
   }
-  
   const upgrade = UPGRADE_MATRIX.find(
     u => u.from === fromPlan && u.to === toPlan
   );
-  
-  return upgrade?.label || 'Upgrade';
+  return upgrade?.label || `ONE-TIME UPGRADE / NO AUTO-RENEWALS`;
 }
 
-/**
- * Check if upgrade path is valid
- */
 export function isValidUpgrade(
   fromPlan: PlanId | null,
   toPlan: PlanId
 ): boolean {
-  if (!fromPlan) return true; // First purchase always valid
-  if (fromPlan === toPlan) return false; // Same tier invalid
-  
+  if (!fromPlan) return true;
+  if (fromPlan === toPlan) return false;
   return UPGRADE_MATRIX.some(
     u => u.from === fromPlan && u.to === toPlan
   );
 }
 
-/**
- * Get question limit for a plan
- */
 export function getQuestionLimit(planId: PlanId): number {
   return PLANS[planId].questionLimit;
-}
-
-/**
- * Get all valid upgrade options from current plan
- */
-export function getAvailableUpgrades(fromPlan: PlanId): UpgradeRule[] {
-  return UPGRADE_MATRIX.filter(u => u.from === fromPlan);
 }

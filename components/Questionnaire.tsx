@@ -60,6 +60,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const getProgressLabel = () => {
+    if (!paidPlan) return 'PRE-CHECK';
+    if (paidPlan === 'basic') return 'BASIC PRE-CHECK · UP TO 20 QUESTIONS';
+    if (paidPlan === 'full') return 'PROFESSIONAL AUDIT · AROUND 20–40 QUESTIONS';
+    if (paidPlan === 'pro_plus') return 'PROFESSIONAL PLUS · 40+ QUESTIONS';
+    return 'PRE-CHECK';
+  };
+
   if (isReviewing) {
     return (
       <div className="max-w-3xl mx-auto pt-4 text-left animate-in fade-in duration-500">
@@ -67,7 +75,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-2 block">Final Step</span>
           <h2 className="text-3xl font-black text-navy uppercase tracking-tight mb-2">Review Your Audit Data</h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-tight">
-            Verify {totalQuestions} responses for your {paidPlan ? PLANS[paidPlan].name.toUpperCase() : 'REPORT'}.
+            Verify {totalQuestions} responses.
           </p>
         </div>
         
@@ -101,9 +109,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         
         <div className="bg-navy p-10 rounded-[2.5rem] shadow-2xl text-center border border-white/10">
           <h3 className="text-xl font-black text-white uppercase tracking-widest mb-4">Confirm & Lock Audit</h3>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-tight mb-8">Ready to generate your professional eligibility verdict?</p>
+          <p className="text-slate-400 text-sm font-bold uppercase tracking-tight mb-8">Ready to see your initial eligibility verdict?</p>
           <Button onClick={() => onComplete(answers)} fullWidth size="lg" className="py-6 shadow-xl uppercase font-black tracking-[0.2em] text-base bg-success hover:bg-success/90">
-            Generate Report Now
+            Show Verdict
           </Button>
         </div>
         
@@ -119,13 +127,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   return (
     <div className="max-w-2xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {paidPlan && (
-        <div className="mb-6 text-center">
-          <span className="inline-block px-4 py-2 bg-navy text-white rounded-full text-xs font-bold uppercase tracking-widest">
-            {PLANS[paidPlan].name} • {PLANS[paidPlan].questionCountLabel}
-          </span>
-        </div>
-      )}
+      <div className="mb-6 text-center">
+        <span className="inline-block px-4 py-2 bg-navy text-white rounded-full text-[10px] font-black uppercase tracking-widest">
+          {getProgressLabel()}
+        </span>
+      </div>
 
       <div className="text-center mb-12">
         <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-3">
@@ -139,7 +145,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
       </div>
 
-      <div className="bg-white p-10 md:p-14 rounded-[3rem] border-2 border-slate-100 mb-10 shadow-xl relative overflow-hidden group">
+      <div className="bg-white p-10 md:p-14 rounded-[3rem] border-2 border-slate-100 mb-10 shadow-xl relative overflow-hidden group text-left">
         <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
         <h3 className="text-3xl font-black text-navy mb-4 uppercase tracking-tight leading-[1.1]">
           {activeQuestion.label}
@@ -176,36 +182,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
             </button>
           ))}
 
-          {activeQuestion.type === 'multiSelect' && activeQuestion.options?.map(opt => {
-            const selected = Array.isArray(val) && val.includes(opt.value);
-            return (
-              <button
-                key={opt.value}
-                onClick={() => {
-                  const current = (val as string[]) || [];
-                  const updated = selected ? current.filter(v => v !== opt.value) : [...current, opt.value];
-                  handleAnswer(updated);
-                }}
-                className={`w-full p-6 rounded-2xl border-2 text-left font-black transition-all group/btn ${
-                  selected ? 'border-accent bg-blue-50 text-accent shadow-md scale-[1.01]' : 'border-slate-100 bg-white hover:border-navy hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`w-7 h-7 rounded border-2 flex items-center justify-center transition-all ${
-                    selected ? 'border-accent bg-accent' : 'border-slate-200 group-hover/btn:border-navy'
-                  }`}>
-                    {selected && (
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className="uppercase tracking-tight text-base">{opt.label}</span>
-                </div>
-              </button>
-            );
-          })}
-
           {activeQuestion.type === 'boolean' && (
             <div className="grid grid-cols-2 gap-6">
               <button
@@ -232,23 +208,13 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           {['shortText', 'longText', 'number', 'currency', 'date'].includes(activeQuestion.type) && (
             <div className="relative pt-2">
               {activeQuestion.type === 'currency' && <div className="absolute left-6 top-[54%] font-black text-slate-400 text-xl">£</div>}
-              {activeQuestion.type === 'longText' ? (
-                <textarea
-                  value={val || ''}
-                  onChange={(e) => handleAnswer(e.target.value)}
-                  placeholder={activeQuestion.placeholder || 'PROVIDE DETAILED RESPONSE...'}
-                  rows={6}
-                  className="w-full p-8 bg-slate-50 border-2 border-slate-200 rounded-[2rem] focus:border-success focus:bg-white outline-none font-black text-lg transition-all shadow-inner uppercase tracking-tight"
-                />
-              ) : (
-                <input
-                  type={activeQuestion.type === 'date' ? 'date' : activeQuestion.type === 'number' || activeQuestion.type === 'currency' ? 'number' : 'text'}
-                  value={val || ''}
-                  onChange={(e) => handleAnswer(e.target.value)}
-                  placeholder={activeQuestion.placeholder || 'TYPE HERE...'}
-                  className={`w-full p-7 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-success focus:bg-white outline-none font-black text-lg transition-all shadow-inner uppercase tracking-tight ${activeQuestion.type === 'currency' ? 'pl-12' : ''}`}
-                />
-              )}
+              <input
+                type={activeQuestion.type === 'date' ? 'date' : activeQuestion.type === 'number' || activeQuestion.type === 'currency' ? 'number' : 'text'}
+                value={val || ''}
+                onChange={(e) => handleAnswer(e.target.value)}
+                placeholder={activeQuestion.placeholder || 'TYPE HERE...'}
+                className={`w-full p-7 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-success focus:bg-white outline-none font-black text-lg transition-all shadow-inner uppercase tracking-tight ${activeQuestion.type === 'currency' ? 'pl-12' : ''}`}
+              />
             </div>
           )}
         </div>

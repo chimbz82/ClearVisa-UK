@@ -29,12 +29,12 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
       <div className="max-w-5xl w-full">
         {/* PRE-CHECK VERDICT */}
         <div className={`mb-12 p-10 rounded-3xl border-2 text-center ${current.bg} ${current.border} animate-in zoom-in duration-500 shadow-sm`}>
-           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 block underline underline-offset-8 decoration-2 decoration-slate-200">Free Pre-Check Verdict</span>
+           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 block underline underline-offset-8 decoration-2 decoration-slate-200">Headline Pre-Check Verdict</span>
            <h2 className={`text-5xl font-black uppercase tracking-tight mb-4 ${current.color}`}>
-             {assessmentResult.verdict.toUpperCase()} Eligible
+             {assessmentResult.verdict.toUpperCase()} ELIGIBLE
            </h2>
            <p className="text-base font-bold text-slate-600 mb-8 max-w-xl mx-auto leading-relaxed">
-             Initial screening identified <strong>{assessmentResult.riskFlags.length} sensitive markers</strong>. Unlock your deep audit and action plan to strengthen your application.
+             Initial screening identified <strong>{assessmentResult.riskFlags.length} markers</strong>. Pay to unlock your detailed PDF audit, checklists, and solicitor-style action plan.
            </p>
            <div className="flex flex-wrap justify-center gap-3">
              {assessmentResult.riskFlags.map((f, i) => (
@@ -44,17 +44,17 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
         </div>
 
         <div className="text-center mb-12">
-          <h3 className="text-2xl font-black text-navy uppercase tracking-tight mb-3">Compare Audit Tiers</h3>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Secure your report instantly after payment.</p>
+          <h3 className="text-2xl font-black text-navy uppercase tracking-tight mb-3">Compare Report Tiers</h3>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Unlock your full results instantly after checkout.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 items-stretch">
           {PLANS_ARRAY.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
             const isFull = plan.id === 'full';
             return (
               <div key={plan.id} className={`bg-white rounded-[2rem] p-8 border-2 flex flex-col hover:border-accent transition-all duration-300 shadow-sm ${isProPlus ? 'border-accent ring-4 ring-accent/5 scale-105 z-10' : 'border-slate-100'}`}>
-                <div className="mb-8">
+                <div className="mb-8 text-left">
                   <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">
                     {plan.name}
                   </span>
@@ -65,7 +65,7 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
                   </div>
                 </div>
                 
-                <ul className="space-y-4 mb-10 flex-grow">
+                <ul className="space-y-4 mb-10 flex-grow text-left">
                     {plan.features.map((f, i) => (
                         <li key={i} className="text-[11px] font-bold text-slate-600 uppercase tracking-tight flex gap-3 leading-tight">
                             <span className={isProPlus ? 'text-accent font-black' : 'text-success font-black'}>✓</span>
@@ -74,7 +74,7 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
                     ))}
                 </ul>
                 <Button onClick={() => onSelectPlan(plan.id)} fullWidth variant={isProPlus ? 'secondary' : isFull ? 'primary' : 'navy'} size="lg" className="py-5 font-black uppercase tracking-widest">
-                    Choose {plan.shortName}
+                    Unlock {plan.shortName} Report
                 </Button>
               </div>
             );
@@ -85,8 +85,7 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
            <button onClick={onGoBack} className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-navy transition-colors mb-8">← Refine pre-check answers</button>
            <div className="flex justify-center gap-8 opacity-40 grayscale">
               <span className="text-[9px] font-black uppercase tracking-widest">Secure Stripe Checkout</span>
-              <span className="text-[9px] font-black uppercase tracking-widest">Appendix FM Compliant</span>
-              <span className="text-[9px] font-black uppercase tracking-widest">Instant PDF Access</span>
+              <span className="text-[9px] font-black uppercase tracking-widest">One-time payment</span>
            </div>
         </div>
       </div>

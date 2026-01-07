@@ -13,6 +13,7 @@ import PaymentModal from './components/PaymentModal';
 import Questionnaire from './components/Questionnaire';
 import ReportTemplate from './components/ReportTemplate';
 import AnalysisLoader from './components/AnalysisLoader';
+import UpgradePricingScreen from './components/UpgradePricingScreen';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -24,11 +25,9 @@ import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import RiskNotice from './components/RiskNotice';
 
-// PATCH 1: PlanId and pricing helpers now imported from single source of truth
 import { PLANS_ARRAY, PLANS, PlanId, getQuestionLimit } from './config/pricingConfig';
 
-// PlanId now imported from pricingConfig
-export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
+export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'verdict' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
 const StickyCTA: React.FC<{ onStart: () => void; isVisible: boolean }> = ({ onStart, isVisible }) => {
   if (!isVisible) return null;
@@ -57,30 +56,24 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show sticky CTA after scrolling past hero (approx 600px)
       setShowStickyCTA(window.scrollY > 600 && viewState === 'landing');
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [viewState]);
 
-  const handleStartCheck = () => {
-    setSelectedPlan('basic');
-    setIsPaymentModalOpen(true);
+  const handleStartCheck = (planId: PlanId = 'basic') => {
+    setSelectedPlan(planId);
+    setViewState('questionnaire');
+    window.scrollTo(0, 0);
   };
 
   const handlePaymentComplete = (route: string, tier: string) => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
-    setSelectedRoute(route);
     setIsPaymentModalOpen(false);
-    
-    setAnswers(prev => ({ 
-      ...prev, 
-      visa_route: route.includes('Spouse') ? 'spouse' : 'skilled' 
-    }));
-    
-    setViewState('questionnaire');
+    setViewState('report');
+    window.scrollTo(0, 0);
   };
 
   const handleQuestionnaireComplete = (finalAnswers: Record<string, any>) => {
@@ -91,10 +84,10 @@ const App: React.FC = () => {
       const result = runAssessment(
         finalAnswers.visa_route || 'spouse', 
         finalAnswers, 
-        paidPlan || 'basic'
+        selectedPlan
       );
       setAssessmentResult(result);
-      setViewState('report');
+      setViewState('verdict');
       window.scrollTo(0, 0);
     }, 2500);
   };
@@ -108,11 +101,11 @@ const App: React.FC = () => {
 
   const renderView = () => {
     const route = answers.visa_route || (selectedRoute.includes('Spouse') ? 'spouse' : 'skilled') || 'spouse';
-    const questionLimit = paidPlan ? getQuestionLimit(paidPlan) : 12;
+    const questionLimit = getQuestionLimit(selectedPlan);
     
     const allQuestions = QUESTIONS.filter(q => 
       q.showIf({ 
-        tier: paidPlan || 'basic', 
+        tier: selectedPlan, 
         route: route, 
         answers 
       })
@@ -124,21 +117,18 @@ const App: React.FC = () => {
       case 'landing':
         return (
           <>
-            <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
+            <Hero onStartCheck={() => handleStartCheck('basic')} onScrollToSection={scrollToSection} />
             <TrustStrip />
             <HowItWorks />
             <WhoItsFor />
             <WhatYouGet />
             <Pricing 
-              onStartCheck={(planId) => { 
-                setSelectedPlan(planId); 
-                setIsPaymentModalOpen(true); 
-              }} 
+              onStartCheck={(planId) => handleStartCheck(planId)} 
               onNavigateLegal={setViewState} 
             />
             <FAQ />
             <Legal onNavigateLegal={setViewState} />
-            <StickyCTA onStart={handleStartCheck} isVisible={showStickyCTA} />
+            <StickyCTA onStart={() => handleStartCheck('basic')} isVisible={showStickyCTA} />
           </>
         );
         
@@ -150,16 +140,29 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={limitedQuestions}
               initialAnswers={answers}
-              paidPlan={paidPlan}
+              paidPlan={selectedPlan}
             />
           </div>
         );
         
       case 'analyzing':
         return <AnalysisLoader />;
+
+      case 'verdict':
+        return assessmentResult ? (
+          <UpgradePricingScreen 
+            assessmentResult={assessmentResult}
+            onSelectPlan={(planId) => {
+              setSelectedPlan(planId);
+              setIsPaymentModalOpen(true);
+            }}
+            onNavigateLegal={setViewState}
+            onGoBack={() => setViewState('questionnaire')}
+          />
+        ) : null;
         
       case 'report':
-        return assessmentResult ? (
+        return assessmentResult && paidPlan ? (
           <div className="pt-24 pb-20 px-6 bg-slate-50 min-h-screen">
             <div className="max-w-[210mm] mx-auto space-y-8 no-print mb-8">
               <div className="flex justify-between items-center">
@@ -175,7 +178,7 @@ const App: React.FC = () => {
               visaRoute={answers.visa_route === 'skilled' ? 'Skilled Worker' : 'Spouse Visa'}
               assessmentData={assessmentResult}
               answers={answers}
-              tier={paidPlan || 'basic'}
+              tier={paidPlan}
               paidPlan={paidPlan}
               visibleQuestionsList={limitedQuestions}
               onUpgrade={(targetPlan) => {
@@ -199,7 +202,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-white font-sans text-slate-900 antialiased text-left">
         {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
           <Header 
-            onStartCheck={handleStartCheck} 
+            onStartCheck={() => handleStartCheck('basic')} 
             onNavigateHome={() => setViewState('landing')}
             onScrollToSection={scrollToSection}
           />

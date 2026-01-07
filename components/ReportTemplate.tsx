@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { AssessmentResult, QuestionConfig } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
-import { PlanId, PLANS, getAvailableUpgrades, isValidUpgrade } from '../config/pricingConfig';
+// Fix: removed non-existent member 'getAvailableUpgrades' and unused 'PLANS', 'isValidUpgrade'
+import { PlanId } from '../config/pricingConfig';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import Button from './Button';
 import { DocumentChecklist } from './DocumentChecklist';

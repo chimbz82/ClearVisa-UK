@@ -25,12 +25,12 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
             </div>
             
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-navy mb-6 leading-[0.95] uppercase">
-              Fix your UK visa <br className="hidden sm:block"/>
-              <span className="text-accent">before you apply.</span>
+              CHECK YOUR UK VISA <br className="hidden sm:block"/>
+              <span className="text-accent">RISK BEFORE YOU APPLY.</span>
             </h1>
             
             <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-xl leading-relaxed font-semibold">
-              Get an instant solicitor-grade audit of your eligibility for <span className="text-navy">Spouse</span> or <span className="text-navy">Skilled Worker</span> routes. Discover risk flags before they become refusals.
+              Run an automated pre-check for UK Spouse or Skilled Worker visas. Spot refusal risks before you spend thousands on application fees.
             </p>
 
             <div className="flex flex-wrap gap-5 items-center mb-16">
@@ -59,23 +59,9 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Initial Verdict</span>
                </div>
             </div>
-
-            <div className="mt-12 flex items-center gap-6">
-              <div className="flex -space-x-3">
-                {[1,2,3,4,5].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-200 overflow-hidden shadow-md">
-                    <img src={`https://i.pravatar.cc/100?u=visa${i}`} alt="User" />
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-tight">
-                Trusted by applicants from <span className="text-navy font-black">60+ countries</span>
-              </p>
-            </div>
           </div>
 
           <div className="hidden lg:flex lg:w-2/5 justify-end relative">
-            {/* Main Mock Report Card */}
             <div className="w-full max-w-[420px] bg-white rounded-[2.5rem] p-2 shadow-2xl relative border-2 border-slate-100/50 animate-float">
               <div className="bg-slate-50/30 rounded-[2.2rem] overflow-hidden">
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-sm">
@@ -104,38 +90,6 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
                     <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
                       <div className="h-full bg-success rounded-full w-[92%] shadow-[0_0_15px_rgba(43,178,76,0.3)]"></div>
                     </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    {[
-                      { l: "Financial Threshold", v: "PASS" },
-                      { l: "Relationship Evidence", v: "STRONG" },
-                      { l: "Suitability Check", v: "CLEAN" }
-                    ].map((item, i) => (
-                      <div key={i} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
-                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{item.l}</span>
-                         <span className="text-[9px] font-black text-success uppercase tracking-widest">{item.v}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Secondary Floating Card */}
-              <div className="absolute -bottom-10 -left-12 bg-navy text-white p-8 rounded-[2rem] shadow-2xl min-w-[340px] border border-white/5 animate-pulse-slow">
-                <h5 className="text-[11px] font-black uppercase tracking-[0.3em] text-accent mb-6">Expert Guidance</h5>
-                <div className="space-y-4">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-5 h-5 bg-accent rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={5} viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                    </div>
-                    <p className="text-[11px] font-bold text-slate-300 uppercase tracking-tight leading-relaxed">Personalised Document Checklist generated</p>
-                  </div>
-                  <div className="flex gap-4 items-start">
-                    <div className="w-5 h-5 bg-accent rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={5} viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                    </div>
-                    <p className="text-[11px] font-bold text-slate-300 uppercase tracking-tight leading-relaxed">Risk remediation steps identified</p>
                   </div>
                 </div>
               </div>
