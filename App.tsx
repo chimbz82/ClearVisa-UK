@@ -177,25 +177,13 @@ const AppContent: React.FC = () => {
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
-          const headerOffset = 80;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth"
-          });
+          element.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
     } else {
       const element = document.getElementById(id);
       if (element) {
-        const headerOffset = 80;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth"
-        });
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
@@ -382,7 +370,7 @@ const AppContent: React.FC = () => {
       case 'refunds': return <RefundPolicy onBack={() => setViewState('landing')} />;
       default:
         return (
-          <div className="no-print">
+          <div className="no-print bg-white">
             <Header onStartCheck={() => handleStartCheck()} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <main>
               <Hero onStartCheck={() => handleStartCheck()} onScrollToSection={scrollToSection} />
@@ -406,7 +394,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {renderContent()}
       <PaymentModal 
         isOpen={isPaymentModalOpen} 
