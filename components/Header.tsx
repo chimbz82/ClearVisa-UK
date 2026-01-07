@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -27,10 +27,10 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-2.5 border-b border-slate-100' : 'bg-transparent py-5'
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3 border-b border-slate-200/50' : 'bg-transparent py-6'
     }`}>
-      <div className="app-container">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex justify-between items-center">
           <div className="flex-shrink-0">
             <button onClick={onNavigateHome} className="flex items-center gap-2.5 group">
@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ onStartCheck, onNavigateHome, onScrollT
               <button
                 key={link.id}
                 onClick={() => onScrollToSection(link.id)}
-                className="text-[13px] font-medium px-4 py-2 transition-all rounded-full hover:text-[#1877F2] text-slate-600"
+                className="text-[13px] font-semibold px-4 py-2 transition-all rounded-full hover:text-[#1877F2] text-slate-600"
               >
                 {link.name}
               </button>

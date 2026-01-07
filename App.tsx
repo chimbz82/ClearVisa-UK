@@ -176,11 +176,27 @@ const AppContent: React.FC = () => {
       setViewState('landing');
       setTimeout(() => {
         const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
       }, 100);
     } else {
       const element = document.getElementById(id);
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      if (element) {
+        const headerOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
     }
   };
 
@@ -371,28 +387,12 @@ const AppContent: React.FC = () => {
             <main>
               <Hero onStartCheck={() => handleStartCheck()} onScrollToSection={scrollToSection} />
               <TrustStrip />
-              <div className="app-container section-py">
-                <HowItWorks />
-              </div>
-              <div className="bg-white border-y border-slate-100">
-                <div className="app-container section-py">
-                   <WhoItsFor />
-                </div>
-              </div>
-              <div className="app-container section-py">
-                <WhatYouGet />
-              </div>
-              <Pricing onStartCheck={(planId) => {
-                handleStartCheck(planId);
-              }} onNavigateLegal={(view) => setViewState(view)} />
-              <div className="bg-white">
-                <div className="app-container section-py">
-                  <FAQ />
-                </div>
-              </div>
-              <div className="app-container section-py">
-                <Legal />
-              </div>
+              <HowItWorks />
+              <WhoItsFor />
+              <WhatYouGet />
+              <Pricing onStartCheck={(planId) => handleStartCheck(planId)} onNavigateLegal={(view) => setViewState(view)} />
+              <FAQ />
+              <Legal />
             </main>
             <Footer 
               onPrivacyClick={() => setViewState('privacy')} 

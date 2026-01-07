@@ -11,23 +11,23 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section id="how-it-works" className="section-py bg-[#F5F7FB] scroll-mt-20">
-      <div className="app-container">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+    <section id="how-it-works" className="py-16 lg:py-24 bg-[#F5F7FB] scroll-mt-24">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Process</span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#041229] mb-4">How ClearVisa UK works</h2>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#041229] mb-4">How ClearVisa UK works</h2>
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
             A simple three-step flow from questions to clear outcome.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, idx) => (
-            <div key={idx} className="app-card flex flex-col min-h-[220px] p-6 hover-card">
-              <div className="w-10 h-10 bg-white border border-slate-100 text-[#041229] rounded-lg flex items-center justify-center text-sm font-bold mb-6">
+            <div key={idx} className="app-card flex flex-col p-8 hover-card group border-slate-200/60">
+              <div className="w-12 h-12 bg-white border-2 border-slate-100 text-[#041229] rounded-2xl flex items-center justify-center text-base font-black mb-8 group-hover:bg-[#1877F2] group-hover:text-white group-hover:border-[#1877F2] transition-all">
                 {idx + 1}
               </div>
-              <h3 className="text-lg font-bold text-[#041229] mb-3 leading-tight">
+              <h3 className="text-lg font-bold text-[#041229] mb-4 leading-tight">
                 {step.title}
               </h3>
               <p className="text-sm text-slate-500 leading-relaxed font-medium">
@@ -37,8 +37,8 @@ const HowItWorks: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest italic">
+        <div className="mt-12 text-center">
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] italic">
             YOU STAY IN CONTROL: NO AUTOMATIC REFERRALS, NO UNEXPECTED CALLS.
           </p>
         </div>
