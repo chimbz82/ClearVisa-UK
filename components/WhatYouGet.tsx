@@ -19,6 +19,10 @@ const WhatYouGet: React.FC = () => {
     { title: "Peace of Mind", desc: "Know your compliance score in minutes, not weeks." }
   ];
 
+  const handleDownload = () => {
+    window.open('/public/sample-report.pdf', '_blank');
+  };
+
   return (
     <section className="py-16 lg:py-20 bg-slate-50">
       <div className="max-w-6xl mx-auto px-6">
@@ -82,7 +86,10 @@ const WhatYouGet: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between bg-success text-white px-5 py-4 rounded-2xl shadow-xl cursor-pointer hover:bg-success/90 transition-all active:scale-[0.98]">
+                  <div 
+                    onClick={handleDownload}
+                    className="flex items-center justify-between bg-success text-white px-5 py-4 rounded-2xl shadow-xl cursor-pointer hover:bg-success/90 transition-all active:scale-[0.98]"
+                  >
                     <span className="text-xs font-black uppercase tracking-widest">Download PDF Report</span>
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                   </div>

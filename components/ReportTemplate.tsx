@@ -55,6 +55,10 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
     }
   };
 
+  const handleDownload = () => {
+    window.open('/public/sample-report.pdf', '_blank');
+  };
+
   return (
     <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
       {tier === 'pro_plus' && (
@@ -280,9 +284,12 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       )}
 
       <footer className="mt-auto pt-8 border-t border-slate-100 no-print">
-        <div className="bg-navy p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden">
+        <div 
+          onClick={handleDownload}
+          className="bg-navy p-6 rounded-2xl text-white/80 mb-6 relative overflow-hidden cursor-pointer hover:bg-navy/90 transition-colors"
+        >
            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-full"></div>
-           <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Mandatory Disclosure</h4>
+           <h4 className="text-[10px] text-emerald-400 mb-3 font-black uppercase tracking-[0.2em]">Download PDF Summary</h4>
            <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-white/60">
              Not legal advice. ClearVisa UK is not a law firm. Accuracy depends on user inputs. Final decisions made exclusively by UKVI.
            </p>

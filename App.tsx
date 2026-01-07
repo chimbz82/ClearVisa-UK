@@ -235,6 +235,10 @@ const AppContent: React.FC = () => {
     setTimeout(() => setIsLoadingReport(false), 2000);
   };
 
+  const handleDownload = () => {
+    window.open('/public/sample-report.pdf', '_blank');
+  };
+
   const renderContent = () => {
     switch (viewState) {
       case 'questionnaire':
@@ -344,7 +348,7 @@ const AppContent: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                 <Button onClick={() => setViewState('landing')} variant="outline" size="sm">Exit</Button>
-                <Button onClick={() => window.print()} variant="navy" size="sm">Download PDF</Button>
+                <Button onClick={handleDownload} variant="navy" size="sm">Download PDF</Button>
               </div>
             </div>
             <div id="report-print-root">
