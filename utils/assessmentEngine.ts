@@ -1,108 +1,145 @@
-import { AssessmentResult } from '../types';
+import { AssessmentResult, SectionScore } from '../types';
 
 export function runAssessment(route: string, answers: Record<string, any>): AssessmentResult {
   const flags: string[] = [];
-  let score = 10; // High score baseline
-
-  // 1. Suitability & Character (Heavy weights)
-  if (answers['criminal_records'] === true) {
-    flags.push("CRIMINAL HISTORY - Triggers mandatory/discretionary refusal under Part 9 of Immigration Rules.");
-    score -= 15;
-  }
-  if (answers['nhs_debt'] === true) {
-    flags.push("NHS DEBT - Unpaid NHS debt over £500 is a standard ground for refusal.");
-    score -= 10;
-  }
+  const sectionScores: SectionScore[] = [];
+  
+  // --- Category: Personal & Identity ---
+  let personalScore = 100;
+  let personalStatus: SectionScore['status'] = 'PASS';
   if (answers['previous_refusals'] === true) {
-    flags.push("REFUSAL HISTORY - Previous refusals require careful disclosure and explanation.");
-    score -= 3;
+    flags.push("PREVIOUS REFUSAL - Requires disclosure in all future applications.");
+    personalScore = 70;
+    personalStatus = 'WARN';
   }
+  sectionScores.push({
+    name: 'Identity & History',
+    score: personalScore,
+    status: personalStatus,
+    risk: personalScore < 80 ? 'MEDIUM' : 'LOW',
+    detail: personalScore === 100 ? 'No adverse immigration history detected.' : 'History of refusals requires careful wording.'
+  });
 
-  // 2. Financial Requirement
+  // --- Category: Financial Requirement ---
+  let financialScore = 100;
+  let financialStatus: SectionScore['status'] = 'PASS';
+  const method = answers['fin_req_method'];
+  const income = Number(answers['sponsor_income'] || 0);
+  const savings = Number(answers['savings_amount'] || 0);
+
   if (route === 'Spouse Visa') {
-    if (answers['income_band'] === 'under_29k' && answers['fin_req_method'] === 'employment') {
-      flags.push("INCOME BELOW THRESHOLD - Current £29,000 baseline not met.");
-      score -= 8;
+    if (method === 'employment' && income < 29000) {
+      financialScore = 20;
+      financialStatus = 'FAIL';
+      flags.push("INCOME BELOW THRESHOLD - Baseline of £29,000 not met.");
+    } else if (method === 'savings' && savings < 88500) {
+      financialScore = 40;
+      financialStatus = 'FAIL';
+      flags.push("INSUFFICIENT SAVINGS - £88,500 threshold not met.");
     }
-    if (answers['fin_req_method'] === 'savings') {
-      const savings = parseFloat(answers['savings_total'] || "0");
-      if (savings < 88500) {
-        flags.push("INSUFFICIENT SAVINGS - £88,500 is the required amount if relying on savings alone.");
-        score -= 5;
-      }
-    }
-  } else if (route === 'Skilled Worker Visa') {
-    const salary = parseFloat(answers['sw_salary_exact'] || "0");
-    if (salary < 38700) {
-      flags.push("SALARY BELOW BASELINE - General £38,700 threshold not met for standard roles.");
-      score -= 6;
-    }
-    if (answers['sponsor_license'] === 'no' || answers['sponsor_license'] === 'unsure') {
-      flags.push("SPONSORSHIP RISK - Application impossible without a licensed UK sponsor.");
-      score -= 12;
-    }
-  }
-
-  // 3. Relationship Genuineness (Spouse)
-  if (route === 'Spouse Visa') {
-    if (answers['live_together'] === 'never') {
-      flags.push("GENUINENESS RISK - Never having lived together is a high-scrutiny factor for UKVI.");
-      score -= 5;
-    }
-    const relEvidence = answers['rel_evidence'] || [];
-    if (relEvidence.length < 3) {
-      flags.push("EVIDENCE VOLUME - Low variety of documentation for relationship duration.");
-      score -= 2;
-    }
-  }
-
-  // 4. Requirements (English/Accommodation)
-  if (answers['english_route'] === 'no') {
-    flags.push("ENGLISH LANGUAGE - Mandatory requirement not yet evidenced.");
-    score -= 5;
-  }
-  if (answers['overcrowding_check'] === true) {
-    flags.push("ACCOMMODATION RISK - Proposed property may be considered overcrowded.");
-    score -= 4;
-  }
-
-  // --- Determination ---
-  let verdict: 'likely' | 'borderline' | 'unlikely';
-  let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
-  let summary = "";
-  let nextSteps: string[] = [];
-
-  if (score >= 6) {
-    verdict = 'likely';
-    riskLevel = 'LOW';
-    summary = "Your profile aligns with most public criteria. Success depends on the quality and authenticity of your supporting documents.";
-    nextSteps = [
-      "Gather 6 months of original bank statements and payslips.",
-      "Book your TB test if applying from a high-risk country.",
-      "Draft a detailed timeline of your relationship history.",
-      "Check that your sponsor's employment contract matches the application details."
-    ];
-  } else if (score >= -5) {
-    verdict = 'borderline';
-    riskLevel = 'MEDIUM';
-    summary = "You meet core criteria, but identified risk flags suggest your application will undergo significant scrutiny by caseworkers.";
-    nextSteps = [
-      "Address identified risk flags with legal cover letters.",
-      "Obtain professional legal review of your financial evidence.",
-      "Ensure all previous refusals are fully disclosed and explained.",
-      "Consider delaying your application until you meet the higher thresholds."
-    ];
   } else {
+    const salary = Number(answers['sw_salary'] || 0);
+    if (salary > 0 && salary < 38700 && answers['shortage_occupation'] !== true) {
+      financialScore = 60;
+      financialStatus = 'WARN';
+      flags.push("SALARY RISK - Below standard Skilled Worker threshold.");
+    }
+  }
+  sectionScores.push({
+    name: 'Financial Compliance',
+    score: financialScore,
+    status: financialStatus,
+    risk: financialScore < 50 ? 'HIGH' : financialScore < 90 ? 'MEDIUM' : 'LOW',
+    detail: financialStatus === 'PASS' ? 'Income levels align with current rules.' : 'Financial shortfall detected against relevant thresholds.'
+  });
+
+  // --- Category: Relationship (Spouse only) ---
+  if (route === 'Spouse Visa') {
+    let relScore = 100;
+    let relStatus: SectionScore['status'] = 'PASS';
+    if (answers['cohabitation_duration'] === 'never') {
+      relScore = 60;
+      relStatus = 'WARN';
+      flags.push("GENUINENESS RISK - Lack of cohabitation history increases scrutiny.");
+    }
+    sectionScores.push({
+      name: 'Relationship Genuineness',
+      score: relScore,
+      status: relStatus,
+      risk: relScore < 70 ? 'MEDIUM' : 'LOW',
+      detail: relStatus === 'PASS' ? 'Standard relationship evidence profile.' : 'Requires stronger proof of subsistence.'
+    });
+  }
+
+  // --- Category: Suitability ---
+  let suitScore = 100;
+  let suitStatus: SectionScore['status'] = 'PASS';
+  if (answers['criminal_convictions'] === true || answers['nhs_debt'] === true || answers['deception_allegation'] === true) {
+    suitScore = 0;
+    suitStatus = 'FAIL';
+    flags.push("CRITICAL SUITABILITY ISSUE - High risk of mandatory refusal.");
+  }
+  sectionScores.push({
+    name: 'Suitability & Character',
+    score: suitScore,
+    status: suitStatus,
+    risk: suitScore < 50 ? 'HIGH' : 'LOW',
+    detail: suitStatus === 'PASS' ? 'No character/conduct issues found.' : 'Mandatory/Discretionary refusal grounds identified.'
+  });
+
+  // --- Category: Accommodation ---
+  let accScore = 100;
+  let accStatus: SectionScore['status'] = 'PASS';
+  if (answers['accommodation_arranged'] === false || answers['exclusive_rooms'] === false) {
+    accScore = 40;
+    accStatus = 'WARN';
+    flags.push("ACCOMMODATION RISK - Evidence of overcrowding or lack of exclusive use.");
+  }
+  sectionScores.push({
+    name: 'Accommodation',
+    score: accScore,
+    status: accStatus,
+    risk: accScore < 60 ? 'MEDIUM' : 'LOW',
+    detail: accStatus === 'PASS' ? 'Arrangements meet minimum standards.' : 'Possible overcrowding risk.'
+  });
+
+  // --- Overall Calculations ---
+  const avgScore = sectionScores.reduce((acc, s) => acc + s.score, 0) / sectionScores.length;
+  let verdict: AssessmentResult['verdict'] = 'likely';
+  let riskLevel: AssessmentResult['riskLevel'] = 'LOW';
+  
+  if (avgScore < 50) {
     verdict = 'unlikely';
     riskLevel = 'HIGH';
-    summary = "Critical barriers found. Applying now carries a very high risk of refusal and loss of UKVI fees.";
-    nextSteps = [
-      "Consult an OISC-regulated solicitor immediately.",
-      "Do not submit your application until the identified barriers are resolved.",
-      "Check if your employer can increase salary to meet the SWV baseline.",
-      "Look for alternative routes or exemptions (e.g. Health & Care Visa lower thresholds)."
-    ];
+  } else if (avgScore < 85) {
+    verdict = 'borderline';
+    riskLevel = 'MEDIUM';
   }
 
-  return { verdict, riskLevel, riskFlags: flags, summary, nextSteps };
+  const result: AssessmentResult = {
+    verdict,
+    riskLevel,
+    riskFlags: flags,
+    summary: verdict === 'likely' ? 'Your profile appears to align with core public criteria.' : 
+             verdict === 'borderline' ? 'You meet core criteria, but identified risk flags suggest significant scrutiny.' : 
+             'Critical barriers found. Applying now carries a very high risk of refusal.',
+    nextSteps: [
+      "Gather 6 months of original bank statements.",
+      "Obtain an official employer letter.",
+      "Check TB test requirements.",
+      "Confirm accommodation permission."
+    ],
+    sectionScores,
+    remediationSteps: [
+      { issue: 'Insufficient Income', resolution: 'Consider using Category D (Cash Savings) to supplement income if held for 6+ months.' },
+      { issue: 'Relationship Proof', resolution: 'Collect flight tickets, hotel bookings, and timestamped photos for all periods spent together.' },
+      { issue: 'Previous Refusal', resolution: 'Draft a witness statement explaining the refusal and how circumstances have changed.' }
+    ],
+    sampleWording: [
+      { section: 'Relationship', text: '“We have maintained a genuine and subsisting relationship through daily communication and regular visits, evidenced by our call logs and travel history attached as Annex A...”' },
+      { section: 'Financial', text: '“My sponsor meets the financial requirement through salaried employment under Category A, having earned above the threshold for more than 6 months with the same employer...”' }
+    ]
+  };
+
+  return result;
 }

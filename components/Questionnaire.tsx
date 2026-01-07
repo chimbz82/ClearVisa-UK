@@ -50,7 +50,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const next = () => {
     const val = answers[activeQuestion.id];
-    const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText' || activeQuestion.type === 'currency') 
+    const isAnswered = (activeQuestion.type === 'longText' || activeQuestion.type === 'number' || activeQuestion.type === 'shortText' || activeQuestion.type === 'currency' || activeQuestion.type === 'date') 
       ? (val !== undefined && val !== null && val !== "")
       : (activeQuestion.type === 'multiSelect')
       ? (Array.isArray(val) && val.length > 0)
@@ -78,25 +78,29 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     return (
       <div className="max-w-2xl mx-auto pt-4 animate-in fade-in duration-300">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2 text-[#041229]">Review your audit details</h2>
-          <p className="text-sm text-slate-500 font-medium">Verify your responses before generating the report.</p>
+          <h2 className="text-2xl font-bold mb-2 text-[#041229] uppercase tracking-tight">Review Audit Details</h2>
+          <p className="text-sm text-slate-500 font-medium">Verify your responses before generating the final report.</p>
         </div>
         
-        <div className="space-y-3 mb-10">
-          {visibleQuestionsList.map((q, idx) => (
-            <div key={q.id} className="app-card border border-slate-100 p-4 flex justify-between items-center group transition-all">
-              <div className="flex-grow pr-4">
-                <p className="text-[10px] text-slate-400 mb-0.5 font-bold uppercase tracking-wider">{q.section} • {q.label}</p>
-                <p className="text-sm font-semibold text-[#041229]">
-                  {Array.isArray(answers[q.id]) 
-                    ? (answers[q.id] as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
-                    : String(answers[q.id] === true ? 'Yes' : answers[q.id] === false ? 'No' : 
-                        q.options?.find(o => o.value === answers[q.id])?.label || answers[q.id] || '—')}
-                </p>
+        <div className="space-y-3 mb-10 overflow-y-auto max-h-[60vh] pr-2">
+          {visibleQuestionsList.map((q, idx) => {
+            const answer = answers[q.id];
+            if (answer === undefined) return null;
+            return (
+              <div key={q.id} className="app-card border border-slate-100 p-4 flex justify-between items-center group transition-all">
+                <div className="flex-grow pr-4">
+                  <p className="text-[10px] text-slate-400 mb-0.5 font-bold uppercase tracking-wider">{q.section} • {q.label}</p>
+                  <p className="text-sm font-semibold text-[#041229]">
+                    {Array.isArray(answer) 
+                      ? (answer as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
+                      : String(answer === true ? 'Yes' : answer === false ? 'No' : 
+                          q.options?.find(o => o.value === answer)?.label || answer || '—')}
+                  </p>
+                </div>
+                <button onClick={() => handleEdit(idx)} className="text-[11px] font-bold text-[#1877F2] hover:bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-wider transition-colors">Edit</button>
               </div>
-              <button onClick={() => handleEdit(idx)} className="text-[11px] font-bold text-[#1877F2] hover:bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-wider transition-colors">Edit</button>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <div className="flex flex-col gap-3">
@@ -111,7 +115,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const renderField = (q: QuestionConfig) => {
     const val = answers[q.id];
-    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText' || q.type === 'currency') 
+    const isAnswered = (q.type === 'longText' || q.type === 'number' || q.type === 'shortText' || q.type === 'currency' || q.type === 'date') 
       ? (val !== undefined && val !== null && val !== "") 
       : (q.type === 'multiSelect')
       ? (Array.isArray(val) && val.length > 0)
@@ -152,7 +156,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         const currentMulti = (val as string[]) || [];
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
+            <div className="grid grid-cols-1 gap-2 text-left">
               {q.options?.map(opt => (
                 <button 
                   key={opt.value}
@@ -169,6 +173,19 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
             <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
+      case 'date':
+        return (
+          <div className="space-y-8">
+            <input 
+              type="date"
+              value={val || ""}
+              onChange={(e) => handleAnswer(e.target.value)}
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
+              autoFocus
+            />
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+          </div>
+        );
       case 'currency':
       case 'number':
         return (
@@ -177,15 +194,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               type="number"
               min="0"
               step={q.type === 'currency' ? '100' : '1'}
-              placeholder={q.placeholder || "Enter amount..."}
+              placeholder={q.placeholder || (q.type === 'currency' ? "Enter amount in GBP..." : "Enter number...")}
               value={val || ""}
-              onChange={(e) => {
-                const value = e.target.value;
-                // ✅ Validate numeric input
-                if (value === '' || !isNaN(Number(value))) {
-                  handleAnswer(value);
-                }
-              }}
+              onChange={(e) => handleAnswer(e.target.value)}
               className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
@@ -194,12 +205,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 = £{Number(val).toLocaleString()}
               </p>
             )}
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
-              Continue
-            </Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
-
       case 'shortText':
         return (
           <div className="space-y-8">
@@ -207,17 +215,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               type="text"
               placeholder={q.placeholder || "Type your answer..."}
               value={val || ""}
-              maxLength={100}  // ✅ Limit short text
+              maxLength={100}
               onChange={(e) => handleAnswer(e.target.value)}
               className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
-              Continue
-            </Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
-
       case 'longText':
         return (
           <div className="space-y-8">
@@ -225,7 +230,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               value={val || ""}
               onChange={(e) => handleAnswer(e.target.value)}
               placeholder={q.placeholder}
-              maxLength={2000}  // ✅ Limit long text
+              maxLength={2000}
               className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-body font-semibold min-h-[150px] transition-all"
             />
             <div className="flex justify-between items-center">
@@ -233,9 +238,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 {val?.length || 0} / 2000 characters
               </span>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>
-              Continue
-            </Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
           </div>
         );
       default:
