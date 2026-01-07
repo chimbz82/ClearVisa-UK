@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { QuestionConfig } from '../types';
 import Button from './Button';
+import { PlanId } from '../App';
 
 interface QuestionnaireProps {
   onComplete: (answers: Record<string, any>) => void;
@@ -8,6 +9,7 @@ interface QuestionnaireProps {
   visibleQuestionsList: QuestionConfig[];
   initialAnswers?: Record<string, any>;
   startStep?: number;
+  paidPlan?: PlanId | null;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ 
@@ -15,7 +17,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   onCancel, 
   visibleQuestionsList,
   initialAnswers = {},
-  startStep = 0
+  startStep = 0,
+  paidPlan
 }) => {
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(startStep);
@@ -61,7 +64,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   if (isReviewing) {
     return (
-      <div className="max-w-2xl mx-auto pt-4">
+      <div className="max-w-2xl mx-auto pt-4 text-left">
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-2 text-navy">Review Your Answers</h2>
           <p className="text-sm text-slate-500">Verify before generating report.</p>
@@ -70,7 +73,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         <div className="space-y-3 mb-10">
           {visibleQuestionsList.map((q, idx) => (
             <div key={q.id} className="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center">
-              <div className="flex-grow pr-4">
+              <div className="flex-grow pr-4 text-left">
                 <p className="text-xs text-slate-400 mb-1 font-bold uppercase">{q.section} • {q.label}</p>
                 <p className="text-sm font-bold text-navy">
                   {Array.isArray(answers[q.id]) 
@@ -108,7 +111,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const val = answers[activeQuestion.id];
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto text-left">
       {/* Progress */}
       <div className="text-center mb-8">
         <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">

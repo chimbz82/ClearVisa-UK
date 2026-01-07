@@ -24,6 +24,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import RiskNotice from './components/RiskNotice';
+import { getQuestionLimit } from './config/planLimits';
 
 export type PlanId = 'basic' | 'full' | 'pro_plus';
 
@@ -83,7 +84,7 @@ export const PLANS: PlanConfig[] = [
   }
 ];
 
-export type ViewState = 'landing' | 'free-check' | 'analyzing-free' | 'free-result-preview' | 'full-check' | 'analyzing-full' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
+export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'report' | 'privacy' | 'terms' | 'refunds' | 'risk-notice';
 
 const App: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -92,40 +93,37 @@ const App: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [paidPlan, setPaidPlan] = useState<PlanId | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<string>('');
 
   const handleStartCheck = () => {
-    setViewState('free-check');
-  };
-
-  const handleFreeCheckComplete = (finalAnswers: Record<string, any>) => {
-    setAnswers(finalAnswers);
-    setViewState('analyzing-free');
-    
-    setTimeout(() => {
-      const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, 'free');
-      setAssessmentResult(result);
-      setViewState('free-result-preview');
-    }, 1800);
+    // Always start with payment modal for tier selection
+    setSelectedPlan('basic');
+    setIsPaymentModalOpen(true);
   };
 
   const handlePaymentComplete = (route: string, tier: string) => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
+    setSelectedRoute(route);
     setIsPaymentModalOpen(false);
     
-    // Store the route they selected
+    // Store route in answers
     setAnswers({ visa_route: route === 'Spouse Visa' ? 'spouse' : 'skilled' });
     
-    // Start full questionnaire from beginning
-    setViewState('full-check');
+    // Start questionnaire immediately
+    setViewState('questionnaire');
   };
 
-  const handleFullAuditComplete = (finalAnswers: Record<string, any>) => {
+  const handleQuestionnaireComplete = (finalAnswers: Record<string, any>) => {
     setAnswers(finalAnswers);
-    setViewState('analyzing-full');
+    setViewState('analyzing');
     
     setTimeout(() => {
-      const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, paidPlan || 'basic');
+      const result = runAssessment(
+        finalAnswers.visa_route || 'spouse', 
+        finalAnswers, 
+        paidPlan || 'basic'
+      );
       setAssessmentResult(result);
       setViewState('report');
     }, 2200);
@@ -139,106 +137,107 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
-    const freeQuestions = QUESTIONS.filter(q => q.section === 'Initial');
-    const fullQuestions = QUESTIONS.filter(q => q.showIf({ 
-      tier: paidPlan || 'free', 
-      route: answers.visa_route || 'spouse', 
-      answers 
-    }));
+    // Get questions based on paid plan and route
+    const route = answers.visa_route || selectedRoute || 'spouse';
+    const questionLimit = getQuestionLimit(paidPlan);
+    
+    const allQuestions = QUESTIONS.filter(q => 
+      q.showIf({ 
+        tier: paidPlan || 'basic', 
+        route: route, 
+        answers 
+      })
+    );
+    
+    // Limit questions based on plan
+    const limitedQuestions = allQuestions.slice(0, questionLimit);
 
     switch (viewState) {
       case 'landing':
         return (
           <>
+            <Header 
+              onStartCheck={handleStartCheck} 
+              onNavigateHome={() => setViewState('landing')}
+              onScrollToSection={scrollToSection}
+            />
             <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
             <TrustStrip />
             <HowItWorks />
             <WhoItsFor />
             <WhatYouGet />
-            <Pricing onStartCheck={(p) => { setSelectedPlan(p); setIsPaymentModalOpen(true); }} onNavigateLegal={setViewState} />
+            <Pricing 
+              onStartCheck={(planId) => { 
+                setSelectedPlan(planId); 
+                setIsPaymentModalOpen(true); 
+              }} 
+              onNavigateLegal={setViewState} 
+            />
             <FAQ />
             <Legal onNavigateLegal={setViewState} />
           </>
         );
-      case 'free-check':
+        
+      case 'questionnaire':
         return (
           <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
             <Questionnaire 
-              onComplete={handleFreeCheckComplete}
+              onComplete={handleQuestionnaireComplete}
               onCancel={() => setViewState('landing')}
-              visibleQuestionsList={freeQuestions}
+              visibleQuestionsList={limitedQuestions}
               initialAnswers={answers}
+              paidPlan={paidPlan}
             />
           </div>
         );
-      case 'analyzing-free':
-      case 'analyzing-full':
+        
+      case 'analyzing':
         return <AnalysisLoader />;
-      case 'free-result-preview':
-        return assessmentResult ? (
-          <UpgradePricingScreen 
-            assessmentResult={assessmentResult}
-            onSelectPlan={(planId) => {
-              setSelectedPlan(planId);
-              setIsPaymentModalOpen(true);
-            }}
-            onNavigateLegal={setViewState}
-            onGoBack={() => setViewState('free-check')}
-          />
-        ) : null;
-      case 'full-check':
-        return (
-          <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
-            <Questionnaire 
-              onComplete={handleFullAuditComplete}
-              onCancel={() => setViewState('landing')}
-              visibleQuestionsList={fullQuestions}
-              initialAnswers={answers}
-              startStep={0}
-            />
-          </div>
-        );
+        
       case 'report':
         return assessmentResult ? (
           <div className="pt-24 pb-20 px-6 bg-slate-50 min-h-screen">
-             <div className="max-w-[210mm] mx-auto space-y-8 no-print">
-               <div className="flex justify-between items-center no-print mb-8">
-                 <Button variant="outline" onClick={() => setViewState('landing')}>Back to Home</Button>
-                 <Button onClick={triggerReportPdfDownload} variant="navy" className="uppercase font-black tracking-widest">Download PDF</Button>
-               </div>
-             </div>
-             <ReportTemplate 
-                visaRoute={answers.visa_route === 'skilled' ? 'Skilled Worker' : 'Spouse Visa'}
-                assessmentData={assessmentResult}
-                answers={answers}
-                tier={paidPlan || 'basic'}
-                paidPlan={paidPlan}
-                visibleQuestionsList={fullQuestions}
-                onUpgrade={(target) => {
-                  setSelectedPlan(target);
-                  setIsPaymentModalOpen(true);
-                }}
-              />
+            <div className="max-w-[210mm] mx-auto space-y-8 no-print">
+              <div className="flex justify-between items-center no-print mb-8">
+                <Button variant="outline" onClick={() => setViewState('landing')}>
+                  Back to Home
+                </Button>
+                <Button onClick={triggerReportPdfDownload} variant="navy">
+                  Download PDF
+                </Button>
+              </div>
+            </div>
+            <ReportTemplate 
+              visaRoute={answers.visa_route === 'skilled' ? 'Skilled Worker' : 'Spouse Visa'}
+              assessmentData={assessmentResult}
+              answers={answers}
+              tier={paidPlan || 'basic'}
+              paidPlan={paidPlan}
+              visibleQuestionsList={limitedQuestions}
+              onUpgrade={(targetPlan) => {
+                setSelectedPlan(targetPlan);
+                setIsPaymentModalOpen(true);
+              }}
+            />
           </div>
         ) : null;
-      case 'privacy': return <PrivacyPolicy onBack={() => setViewState('landing')} />;
-      case 'terms': return <TermsOfUse onBack={() => setViewState('landing')} />;
-      case 'refunds': return <RefundPolicy onBack={() => setViewState('landing')} />;
-      case 'risk-notice': return <RiskNotice onBack={() => setViewState('landing')} />;
-      default: return null;
+        
+      case 'privacy': 
+        return <PrivacyPolicy onBack={() => setViewState('landing')} />;
+      case 'terms': 
+        return <TermsOfUse onBack={() => setViewState('landing')} />;
+      case 'refunds': 
+        return <RefundPolicy onBack={() => setViewState('landing')} />;
+      case 'risk-notice': 
+        return <RiskNotice onBack={() => setViewState('landing')} />;
+      default: 
+        return null;
     }
   };
 
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-white font-sans text-slate-900 antialiased">
-        {viewState === 'landing' && (
-          <Header 
-            onStartCheck={handleStartCheck} 
-            onNavigateHome={() => setViewState('landing')}
-            onScrollToSection={scrollToSection}
-          />
-        )}
+      <div className="min-h-screen bg-white font-sans text-slate-900 antialiased text-left">
         <main>{renderView()}</main>
         {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
           <Footer 
