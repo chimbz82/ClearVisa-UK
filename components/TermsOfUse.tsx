@@ -21,69 +21,169 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
             
             <header className="border-b border-slate-100 pb-8">
               <h1 className="text-3xl font-extrabold text-navy uppercase tracking-tight mb-2">Terms of Use</h1>
-              <p className="font-semibold text-slate-400 text-sm uppercase tracking-widest">Effective Date: October 2023</p>
+              <p className="font-semibold text-slate-400 text-sm uppercase tracking-widest">Effective Date: January 2026</p>
             </header>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">1. Acceptance of Terms</h2>
-              <p>By accessing or using ClearVisa UK (the "Service"), you agree to be bound by these Terms of Use. If you do not agree to these terms, you must not use the Service.</p>
+              <p className="text-sm leading-relaxed">
+                These Terms of Use (“Terms”) govern your access to and use of the ClearVisa UK website,
+                tools, and services (collectively, the “Service”). By using the Service, you agree to be
+                bound by these Terms. If you do not agree, you must not use the Service.
+              </p>
             </section>
 
             <section className="space-y-4 bg-rose-50 p-6 rounded-2xl border border-rose-100">
-              <h2 className="text-xl font-bold text-rose-900">2. Mandatory Legal Disclosure</h2>
+              <h2 className="text-xl font-bold text-rose-900">2. Regulatory Status & Professional Identity</h2>
               <div className="space-y-3 text-rose-800 text-sm font-medium">
-                <p><strong>ClearVisa UK is NOT a law firm.</strong> We are an automated technology provider. We are NOT regulated by the Solicitors Regulation Authority (SRA) or the Office of the Immigration Services Commission (OISC).</p>
-                <p>The Service provides automated eligibility assessments based on rules-based logic and publicly available Home Office guidance. <strong>This does not constitute legal advice.</strong></p>
-                <p>No solicitor-client or professional-client relationship is created through your use of the Service. For complex cases, previous refusals, or specific legal questions, you should consult a qualified and regulated immigration solicitor.</p>
+                <p>
+                  <strong>ClearVisa UK is NOT a law firm, immigration practice, or regulated adviser.</strong> 
+                  We do not provide legal representation or reserved immigration activities as defined by UK law.
+                </p>
+                <p>
+                  We are <strong>not regulated</strong> by the Solicitors Regulation Authority (SRA) or the
+                  Office of the Immigration Services Commissioner (OISC). Our Service provides automated,
+                  logic-driven eligibility assessments and practical guidance based on publicly available
+                  information and your answers.
+                </p>
+                <p>
+                  Nothing in our reports, website, or communications should be taken as specific legal advice
+                  about your case. For tailored legal advice, you should consult a qualified and regulated
+                  immigration adviser or solicitor.
+                </p>
               </div>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">3. Service Description</h2>
-              <p>ClearVisa UK provides an automated immigration eligibility pre-check tool. Our reports (Basic Pre-Check, Professional Audit, and Professional Plus) are generated using algorithms to map user-supplied data against general immigration criteria.</p>
-              <p><strong>UKVI Decisions:</strong> You acknowledge that UK Visas and Immigration (UKVI) and the Home Office make the final decision on all visa applications. ClearVisa UK has no influence over these decisions and cannot guarantee any specific outcome for your visa application.</p>
+              <p className="text-sm leading-relaxed">
+                The Service provides automated UK immigration eligibility pre-checks and related
+                documentation. Depending on the audit tier you purchase (Basic, Professional, or
+                Professional Plus), you may receive:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>A logic-driven eligibility verdict and risk profile;</li>
+                <li>A traffic-light risk matrix and narrative explanation;</li>
+                <li>Personalised document checklists and gap analysis; and</li>
+                <li>Suggested wording and evidence-strengthening steps (for higher tiers).</li>
+              </ul>
+              <p className="text-sm italic">
+                The UK Home Office and UK Visas and Immigration (UKVI) are the final decision-makers for
+                all immigration applications. ClearVisa UK cannot guarantee any particular outcome, timescale,
+                or decision on your application.
+              </p>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">4. Eligibility & Age Requirement</h2>
-              <p>You must be at least 18 years of age to use this Service. By using the Service, you represent and warrant that you are 18 or older and have the legal capacity to enter into these Terms.</p>
+              <p className="text-sm">
+                You must be at least 18 years old and have legal capacity to enter into these Terms in
+                order to use the Service.
+              </p>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-navy">5. User Responsibilities & Data Accuracy</h2>
-              <p>The accuracy of any report generated is strictly dependent on the information you provide. You are solely responsible for ensuring that all data supplied is truthful, complete, and accurate.</p>
-              <p><strong>Misuse and Fraud:</strong> Providing false information, misleading details, or attempting to use the Service to circumvent immigration laws is strictly prohibited. We reserve the right to terminate access and block users suspected of fraudulent activity.</p>
+              <p className="text-sm">
+                The accuracy of any report we generate depends entirely on the information you provide.
+                You agree that all information you supply will be truthful, complete, and up to date.
+              </p>
+              <p className="text-sm font-black text-navy uppercase tracking-tight">You are solely responsible for:</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Checking that your answers in the assessment are accurate before generating a report;</li>
+                <li>Reviewing the report and documents before relying on them; and</li>
+                <li>Deciding whether to seek independent legal advice.</li>
+              </ul>
+              <p className="text-sm">
+                ClearVisa UK is not responsible for any loss or negative outcome caused by inaccurate,
+                incomplete, or misleading information you provide.
+              </p>
+            </section>
+
+            <section className="space-y-4 border-l-4 border-amber-400 pl-6 py-2">
+              <h2 className="text-xl font-bold text-navy">6. No Guarantee of Outcome</h2>
+              <p className="text-sm leading-relaxed">
+                Any eligibility verdict (“Likely Eligible”, “Borderline”, “High Risk”, or similar) is an
+                indicative pre-check only. It is <strong>not</strong> a guarantee that your application
+                will be granted or refused. Your ultimate outcome depends on your full circumstances,
+                evidence quality, and the Home Office decision-maker.
+              </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold text-navy">6. Limitation of Liability</h2>
-              <p>To the maximum extent permitted by law, ClearVisa UK shall not be liable for any direct, indirect, or consequential loss or damage arising from your use of the Service, including but not limited to visa refusals, loss of application fees, or travel expenses.</p>
-              <p>Our liability for any single generation of a report is limited to the fee paid by you for that specific report.</p>
+              <h2 className="text-xl font-bold text-navy">7. Payments, Tiers & Upgrades</h2>
+              <p className="text-sm leading-relaxed">
+                Prices for each audit tier are displayed on the Pricing page and may be updated from time
+                to time. Payment is taken securely through our payment processor at the point you confirm
+                your purchase.
+              </p>
+              <p className="text-sm leading-relaxed">
+                Where we offer upgrade options (for example, from Basic to Professional or Professional
+                Plus), the upgrade fee will reflect the difference between what you have already paid and
+                the total price of the higher tier, as clearly shown at checkout.
+              </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold text-navy">7. Payments, Chargebacks & Abuse</h2>
-              <p>Payments are processed securely via Stripe. Initiating an unjustified chargeback for a completed report is considered a breach of these Terms. We reserve the right to take action to recover fees and may share information with payment processors regarding abusive chargeback behavior.</p>
+              <h2 className="text-xl font-bold text-navy">8. Intellectual Property</h2>
+              <p className="text-sm leading-relaxed">
+                All content, branding, assessment logic, and reports produced by the Service are owned by
+                or licensed to ClearVisa UK and are protected by intellectual property laws. You may use
+                your report for your personal immigration planning only and may not copy, resell, or
+                redistribute the assessment logic or report templates.
+              </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold text-navy">8. Privacy & Data Handling</h2>
-              <p>Your use of the Service is also governed by our <button onClick={() => {}} className="text-accent underline">Privacy Policy</button>, which describes how we collect, use, and protect your personal information.</p>
+              <h2 className="text-xl font-bold text-navy">9. Limitation of Liability</h2>
+              <p className="text-sm leading-relaxed">
+                To the maximum extent permitted by law, ClearVisa UK and its officers, employees, and
+                contractors will not be liable for:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Any loss of profits, income, or opportunity;</li>
+                <li>Any indirect, incidental, or consequential loss; or</li>
+                <li>Any loss arising from your decision to rely solely on our reports without seeking
+                    independent advice.</li>
+              </ul>
+              <p className="text-sm font-bold">
+                Our total aggregate liability for any claim related to the Service will not exceed the
+                amount you paid for the relevant assessment.
+              </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold text-navy">9. Governing Law</h2>
-              <p>These Terms and any dispute or claim arising out of them shall be governed by and construed in accordance with the laws of <strong>England and Wales</strong>. You agree to submit to the exclusive jurisdiction of the courts of England and Wales.</p>
+              <h2 className="text-xl font-bold text-navy">10. Prohibited Use & Abuse</h2>
+              <p className="text-sm">You must not misuse the Service, including by:</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Attempting to reverse-engineer or circumvent the assessment logic;</li>
+                <li>Providing deliberately false or fraudulent information;</li>
+                <li>Attempting unauthorised access to our systems; or</li>
+                <li>Using our content or branding in a misleading way.</li>
+              </ul>
+              <p className="text-sm">
+                We reserve the right to suspend or terminate your access where we reasonably suspect
+                abuse, fraud, or breach of these Terms.
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold text-navy">11. Governing Law & Jurisdiction</h2>
+              <p className="text-sm leading-relaxed">
+                These Terms and any dispute or claim arising out of or in connection with them shall be
+                governed by the laws of England and Wales. You agree that the courts of England and Wales
+                will have exclusive jurisdiction, except where consumer law requires otherwise.
+              </p>
             </section>
 
             <section className="pt-10 border-t border-slate-100">
-              <h2 className="text-xl font-bold text-navy mb-4">Contact Information</h2>
-              <p>If you have any questions regarding these Terms, please contact us at:</p>
+              <h2 className="text-xl font-bold text-navy mb-4">Contact</h2>
+              <p className="text-sm">If you have questions about these Terms, you can contact us at:</p>
               <a href="mailto:clearvisauk@protonmail.com" className="text-accent font-bold text-lg">clearvisauk@protonmail.com</a>
             </section>
 
             <footer className="text-[10px] text-slate-400 uppercase font-black tracking-[0.3em] pt-12">
-              © 2026 CLEARVISA UK. ALL RIGHTS RESERVED.
+              © 2026 CLEARVISA UK • LONDON • UK COMPLIANCE AUDIT
             </footer>
           </div>
         </div>
