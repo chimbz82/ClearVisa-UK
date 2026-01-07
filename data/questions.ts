@@ -1,292 +1,272 @@
 import { QuestionConfig } from '../types';
 
 export const QUESTIONS: QuestionConfig[] = [
-  // --- CORE QUESTIONS (STAGE 1) ---
+  // --- SECTION: BACKGROUND ---
   {
     id: 'nationality',
-    section: 'Background',
-    label: 'What is your nationality?',
+    section: 'Personal Background',
+    label: 'What is your current nationality?',
     type: 'shortText',
-    placeholder: 'e.g. Indian',
+    placeholder: 'e.g. Indian, American, etc.',
+    showIf: () => true
+  },
+  {
+    id: 'applicant_age',
+    section: 'Personal Background',
+    label: 'What is your current age?',
+    type: 'number',
+    placeholder: 'Age in years',
     showIf: () => true
   },
   {
     id: 'current_location',
-    section: 'Background',
+    section: 'Personal Background',
     label: 'Where are you currently located?',
     type: 'singleSelect',
     options: [
       { value: 'outside_uk', label: 'Outside the UK' },
-      { value: 'in_uk_valid', label: 'In the UK (valid visa)' },
-      { value: 'in_uk_overstay', label: 'In the UK (overstayed/no visa)' }
-    ],
-    showIf: () => true
-  },
-  {
-    id: 'immigration_status',
-    section: 'Background',
-    label: 'What is your current immigration status?',
-    type: 'singleSelect',
-    options: [
-      { value: 'none', label: 'No UK history' },
-      { value: 'visitor', label: 'Visitor' },
-      { value: 'student', label: 'Student' },
-      { value: 'work', label: 'Work Visa' },
-      { value: 'graduate', label: 'Graduate' },
-      { value: 'other', label: 'Other' }
+      { value: 'in_uk_valid', label: 'In the UK (on a valid visa)' },
+      { value: 'in_uk_overstay', label: 'In the UK (overstayed/no current leave)' }
     ],
     showIf: () => true
   },
   {
     id: 'visa_route',
-    section: 'Background',
-    label: 'Which UK visa route are you planning to apply for?',
+    section: 'Personal Background',
+    label: 'Which UK visa route are you assessing?',
     type: 'singleSelect',
     options: [
-      { value: 'spouse', label: 'Spouse / Partner Visa' },
-      { value: 'skilled', label: 'Skilled Worker Visa' }
-    ],
-    showIf: () => true
-  },
-  {
-    id: 'income_band',
-    section: 'Financials',
-    label: 'What is your gross annual household income?',
-    type: 'singleSelect',
-    options: [
-      { value: 'under_29k', label: 'Under £29,000' },
-      { value: '29k_38k', label: '£29,000 – £38,700' },
-      { value: 'over_38k', label: 'Over £38,700' }
+      { value: 'spouse', label: 'Spouse / Partner Visa (Family)' },
+      { value: 'skilled', label: 'Skilled Worker Visa (Work)' }
     ],
     showIf: () => true
   },
   {
     id: 'previous_refusals',
     section: 'History',
-    label: 'Have you ever had a visa refusal (any country)?',
+    label: 'Have you ever been refused a visa for the UK or any other country?',
+    type: 'boolean',
+    showIf: () => true
+  },
+  {
+    id: 'refusal_count',
+    section: 'History',
+    label: 'How many times have you been refused?',
+    type: 'number',
+    showIf: (ctx) => ctx.answers.previous_refusals === true
+  },
+
+  // --- SECTION: SUITABILITY & CHARACTER ---
+  {
+    id: 'criminal_records',
+    section: 'Suitability',
+    label: 'Do you have any criminal convictions or cautions (in the UK or abroad)?',
+    type: 'boolean',
+    showIf: () => true
+  },
+  {
+    id: 'nhs_debt',
+    section: 'Suitability',
+    label: 'Do you have any outstanding debt of £500 or more to the NHS?',
+    type: 'boolean',
+    showIf: () => true
+  },
+  {
+    id: 'litigation_concerns',
+    section: 'Suitability',
+    label: 'Have you ever been involved in any legal proceedings or litigations?',
     type: 'boolean',
     showIf: () => true
   },
 
-  // --- PROFESSIONAL AUDIT QUESTIONS (STAGE 2) ---
+  // --- SECTION: FINANCIAL REQUIREMENT (SPOUSE BRANCH) ---
   {
-    id: 'income_sources',
+    id: 'fin_req_method',
     section: 'Financials',
-    label: 'Which income sources will you rely on?',
-    helpText: 'You can combine multiple sources under Appendix FM.',
-    type: 'multiSelect',
+    label: 'How do you intend to meet the financial requirement?',
+    type: 'singleSelect',
     options: [
-      { value: 'salary', label: 'Salaried Employment' },
-      { value: 'self_employment', label: 'Self-employment / Director' },
-      { value: 'savings', label: 'Cash Savings' },
+      { value: 'employment', label: 'Income from Salaried Employment' },
+      { value: 'savings', label: 'Cash Savings only' },
+      { value: 'self_employment', label: 'Self-Employment / Director' },
       { value: 'pension', label: 'Pension Income' },
-      { value: 'property', label: 'Property Rental Income' },
-      { value: 'exempt', label: 'Exempt Benefits (PIP, etc.)' }
+      { value: 'exempt', label: 'Exempt (on PIP, DLA, or Carers Allowance)' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
+    showIf: (ctx) => ctx.route === 'spouse'
   },
   {
-    id: 'employment_length',
+    id: 'income_band',
     section: 'Financials',
-    label: 'How long have you/your sponsor been in your current job?',
+    label: 'What is the gross annual income of the UK sponsor (or combined)?',
     type: 'singleSelect',
     options: [
-      { value: 'less_6m', label: 'Less than 6 months' },
-      { value: 'over_6m', label: 'More than 6 months' }
+      { value: 'under_29k', label: 'Under £29,000' },
+      { value: '29k_35k', label: '£29,000 – £34,999' },
+      { value: 'over_35k', label: 'Over £35,000' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && (ctx.answers.income_sources?.includes('salary') || ctx.route === 'skilled')
+    showIf: (ctx) => ctx.route === 'spouse' && ctx.answers.fin_req_method === 'employment'
   },
   {
-    id: 'savings_amount',
+    id: 'sponsor_emp_status',
     section: 'Financials',
-    label: 'What is the total of your accessible cash savings?',
+    label: 'How long has the sponsor been with their current employer?',
     type: 'singleSelect',
     options: [
-      { value: 'under_16k', label: 'Under £16,000' },
-      { value: '16k_65k', label: '£16,000 – £65,000' },
-      { value: 'over_65k', label: 'Over £65,000' }
+      { value: 'under_6m', label: 'Less than 6 months (Category B)' },
+      { value: 'over_6m', label: '6 months or more (Category A)' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.answers.income_sources?.includes('savings')
+    showIf: (ctx) => ctx.route === 'spouse' && ctx.answers.fin_req_method === 'employment'
   },
   {
-    id: 'english_test',
-    section: 'Requirements',
-    label: 'Do you have a valid English Language test result?',
+    id: 'savings_total',
+    section: 'Financials',
+    label: 'What is the total amount of cash savings held for at least 6 months?',
+    type: 'number',
+    placeholder: 'e.g. 88500',
+    showIf: (ctx) => ctx.answers.fin_req_method === 'savings' || (ctx.tier !== 'basic' && ctx.route === 'spouse')
+  },
+
+  // --- SECTION: RELATIONSHIP EVIDENCE (SPOUSE BRANCH) ---
+  {
+    id: 'rel_status',
+    section: 'Relationship',
+    label: 'What is your current relationship status?',
     type: 'singleSelect',
     options: [
-      { value: 'yes_selt', label: 'Yes, SELT level A1 or higher' },
-      { value: 'degree', label: 'Yes, UK-equivalent degree' },
-      { value: 'exempt', label: 'Exempt (Age / Nationality)' },
-      { value: 'no', label: 'No, need to take test' }
+      { value: 'married', label: 'Married / Civil Partnership' },
+      { value: 'unmarried', label: 'Unmarried Partners (living together)' },
+      { value: 'fiance', label: 'Fiancé(e) / Proposed Civil Partner' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
+    showIf: (ctx) => ctx.route === 'spouse'
+  },
+  {
+    id: 'live_together',
+    section: 'Relationship',
+    label: 'Have you lived together in person?',
+    type: 'singleSelect',
+    options: [
+      { value: 'yes_2years', label: 'Yes, for 2+ years continuously' },
+      { value: 'yes_under2', label: 'Yes, for less than 2 years' },
+      { value: 'never', label: 'No, we have never lived together' }
+    ],
+    showIf: (ctx) => ctx.route === 'spouse'
   },
   {
     id: 'rel_evidence',
     section: 'Relationship',
-    label: 'Which relationship evidence do you have?',
+    label: 'Which evidence do you have for your relationship?',
     type: 'multiSelect',
     options: [
       { value: 'marriage_cert', label: 'Official Marriage Certificate' },
       { value: 'joint_tenancy', label: 'Joint Tenancy / Mortgage' },
       { value: 'joint_bills', label: 'Joint Council Tax / Utility Bills' },
-      { value: 'photos', label: 'Photos & Travel Evidence' },
-      { value: 'children', label: 'Shared children' },
-      { value: 'joint_bank', label: 'Joint Bank Account' }
+      { value: 'photos', label: 'Photos across duration of relationship' },
+      { value: 'comms', label: 'Regular chat/call logs' },
+      { value: 'travel', label: 'Flight tickets/stamps for visits' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'spouse'
+    showIf: (ctx) => ctx.route === 'spouse' && ctx.tier !== 'basic'
   },
+
+  // --- SECTION: EMPLOYMENT (SKILLED WORKER BRANCH) ---
   {
-    id: 'living_together',
-    section: 'Relationship',
-    label: 'Have you lived together for at least 2 years?',
-    type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'spouse'
-  },
-  {
-    id: 'acc_evidence',
-    section: 'Accommodation',
-    label: 'What accommodation evidence do you have?',
-    type: 'multiSelect',
-    options: [
-      { value: 'tenancy', label: 'Tenancy Agreement' },
-      { value: 'title', label: 'Land Registry / Deeds' },
-      { value: 'landlord_letter', label: 'Landlord Permission Letter' },
-      { value: 'council_tax', label: 'Council Tax Bill' },
-      { value: 'permission', label: 'Homeowner Permission Letter' }
-    ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
-  },
-  {
-    id: 'overstays_detail',
-    section: 'History',
-    label: 'Have you ever stayed in the UK beyond your visa expiry?',
-    type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
-  },
-  {
-    id: 'criminal_records',
-    section: 'History',
-    label: 'Do you have any criminal convictions (any country)?',
-    type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
-  },
-  {
-    id: 'tb_test',
-    section: 'Requirements',
-    label: 'Are you applying from a country requiring a TB test?',
-    type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.answers.current_location === 'outside_uk'
-  },
-  {
-    id: 'job_code',
+    id: 'job_offer_status',
     section: 'Employment',
-    label: 'Do you know your Occupation Code (SOC Code)?',
+    label: 'Do you have a formal job offer from a UK employer?',
     type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
-  },
-  {
-    id: 'job_offer',
-    section: 'Employment',
-    label: 'Do you have a formal job offer from a UK licensed sponsor?',
-    type: 'boolean',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
+    showIf: (ctx) => ctx.route === 'skilled'
   },
   {
     id: 'sponsor_license',
     section: 'Employment',
-    label: 'Does the employer have a valid Sponsor License?',
+    label: 'Does the employer hold a valid UKVI Sponsor License?',
     type: 'singleSelect',
     options: [
-      { value: 'yes', label: 'Yes, fully licensed' },
-      { value: 'no', label: 'No' },
-      { value: 'unsure', label: 'Unsure' }
+      { value: 'yes', label: 'Yes, I have verified this' },
+      { value: 'no', label: 'No, they do not' },
+      { value: 'unsure', label: 'I am not sure' }
     ],
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus') && ctx.route === 'skilled'
-  },
-
-  // --- PROFESSIONAL PLUS (PRO_PLUS) EXTRAS ---
-  {
-    id: 'living_arrangement',
-    section: 'Relationship',
-    label: 'What is your current living arrangement?',
-    type: 'singleSelect',
-    options: [
-      { value: 'together', label: 'Living together permanently' },
-      { value: 'separate', label: 'Living separately' }
-    ],
-    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'spouse'
-  },
-  {
-    id: 'live_together_history',
-    section: 'Relationship',
-    label: 'Have you ever lived together in person?',
-    type: 'singleSelect',
-    options: [
-      { value: 'always', label: 'Yes, we live together now' },
-      { value: 'past', label: 'Yes, we have in the past' },
-      { value: 'never', label: 'No, never' }
-    ],
-    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'spouse'
-  },
-  {
-    id: 'bank_statements_format',
-    section: 'Financials',
-    label: 'In what format are your bank statements?',
-    type: 'singleSelect',
-    options: [
-      { value: 'original', label: 'Original paper statements' },
-      { value: 'pdf', label: 'Downloaded PDFs' },
-      { value: 'pdf_stamped', label: 'PDFs stamped by the bank' }
-    ],
-    showIf: (ctx) => ctx.tier === 'pro_plus' && (ctx.answers.income_sources?.includes('salary') || ctx.answers.income_sources?.includes('savings'))
+    showIf: (ctx) => ctx.route === 'skilled' && ctx.answers.job_offer_status === true
   },
   {
     id: 'sw_salary_exact',
     section: 'Employment',
-    label: 'What is the exact gross annual salary on your job offer?',
+    label: 'What is the gross annual salary offered?',
     type: 'number',
-    placeholder: '38700',
-    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'skilled'
+    placeholder: 'e.g. 38700',
+    showIf: (ctx) => ctx.route === 'skilled' && ctx.answers.job_offer_status === true
   },
   {
-    id: 'shortage_occupation',
+    id: 'soc_code_known',
     section: 'Employment',
-    label: 'Is your job on the UK Immigration Salary List (formerly Shortage Occupation)?',
-    type: 'boolean',
-    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.route === 'skilled'
+    label: 'Do you know the 4-digit SOC Code for your role?',
+    type: 'shortText',
+    placeholder: 'e.g. 2135',
+    showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'basic'
   },
-  {
-    id: 'refusal_letters_status',
-    section: 'History',
-    label: 'Do you have copies of all previous refusal letters?',
-    type: 'singleSelect',
-    options: [
-      { value: 'all', label: 'Yes, I have all of them' },
-      { value: 'some', label: 'I have some but not all' },
-      { value: 'none', label: 'I have none of them' }
-    ],
-    showIf: (ctx) => ctx.tier === 'pro_plus' && ctx.answers.previous_refusals === true
-  },
+
+  // --- SECTION: ACCOMMODATION ---
   {
     id: 'uk_living_plan',
     section: 'Accommodation',
-    label: 'What is your planned living arrangement in the UK?',
+    label: 'Where do you plan to live in the UK?',
     type: 'singleSelect',
     options: [
       { value: 'renting', label: 'Renting our own home' },
       { value: 'family', label: 'Living with family/friends' },
-      { value: 'buying', label: 'Buying a property' },
-      { value: 'none', label: 'No firm plans yet' }
+      { value: 'buying', label: 'Own/Buying a property' }
     ],
-    showIf: (ctx) => ctx.tier === 'pro_plus'
+    showIf: () => true
   },
   {
-    id: 'main_worry',
-    section: 'Concerns',
-    label: 'What is your primary concern regarding the application?',
+    id: 'overcrowding_check',
+    section: 'Accommodation',
+    label: 'Will the property be shared with anyone other than your partner/dependants?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.answers.uk_living_plan === 'family'
+  },
+  {
+    id: 'exclusive_use',
+    section: 'Accommodation',
+    label: 'Will you have at least one room for your exclusive use?',
+    type: 'boolean',
+    showIf: (ctx) => ctx.tier !== 'basic'
+  },
+
+  // --- SECTION: ENGLISH LANGUAGE ---
+  {
+    id: 'english_route',
+    section: 'Requirements',
+    label: 'How will you meet the English Language requirement?',
+    type: 'singleSelect',
+    options: [
+      { value: 'selt', label: 'SELT Test (e.g. IELTS/Pearson)' },
+      { value: 'degree', label: 'Degree taught in English' },
+      { value: 'nationality', label: 'Nationality of majority-English country' },
+      { value: 'exempt', label: 'Exempt (Age 65+ / Disability)' },
+      { value: 'no', label: 'I have not met it yet' }
+    ],
+    showIf: () => true
+  },
+  {
+    id: 'selt_level',
+    section: 'Requirements',
+    label: 'What level of SELT have you achieved?',
+    type: 'singleSelect',
+    options: [
+      { value: 'a1', label: 'A1 (Entry Level)' },
+      { value: 'a2', label: 'A2 (Extension Level)' },
+      { value: 'b1', label: 'B1 (ILR/Citizenship/Worker Level)' }
+    ],
+    showIf: (ctx) => ctx.answers.english_route === 'selt'
+  },
+
+  // --- SECTION: PROFESSIONAL PLUS EXTRAS ---
+  {
+    id: 'audit_priority',
+    section: 'Risk Management',
+    label: 'What is your biggest concern about this application?',
     type: 'longText',
-    placeholder: 'Describe any specific issues you are worried about...',
-    showIf: (ctx) => (ctx.tier === 'full' || ctx.tier === 'pro_plus')
+    placeholder: 'Explain any specific worries about your evidence or history...',
+    showIf: (ctx) => ctx.tier === 'pro_plus'
   }
 ];

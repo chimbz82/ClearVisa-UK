@@ -17,7 +17,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
 import { runAssessment } from './utils/assessmentEngine';
-import { AssessmentResult } from './types';
+import { AssessmentResult, QuestionConfig } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import Button from './components/Button';
 import { QUESTIONS } from './data/questions';
@@ -40,13 +40,14 @@ export const PLANS: PlanConfig[] = [
     name: 'Basic Pre-Check',
     priceGBP: 29,
     stripePriceId: 'price_basic_29',
-    description: 'Quick automated eligibility verdict and summary.',
+    description: 'Quick automated eligibility verdict and audit summary.',
     includedFeatures: [
-      'Automated eligibility verdict',
-      'Summary of strong vs weak areas',
-      'Key risk flag indicators',
+      'Eligibility likelihood verdict',
+      'Traffic-light risk summary',
+      'Key refusing risk flags',
       'Plain-English explanation',
-      'Downloadable summary (short PDF)'
+      'Downloadable summary (short PDF)',
+      'List of all questions answered'
     ]
   },
   {
@@ -58,9 +59,9 @@ export const PLANS: PlanConfig[] = [
     includedFeatures: [
       'Everything in Basic Pre-Check',
       'Personalised document checklist',
-      'Route-specific compliance checks',
+      'Route-specific compliance scoring',
+      'Gap analysis of missing evidence',
       'Detailed risk factor breakdown',
-      'Step-by-step next-actions plan',
       'Full detailed PDF report'
     ]
   },
@@ -69,13 +70,13 @@ export const PLANS: PlanConfig[] = [
     name: 'Professional Plus',
     priceGBP: 99,
     stripePriceId: 'price_pro_99',
-    description: 'Ideal for previous refusals and borderline cases where evidence and wording really matter.',
+    description: 'Ideal for complex histories and borderline cases.',
     includedFeatures: [
       'Everything in Professional Audit',
-      'Deeper rule-by-rule gap analysis',
-      'Additional narrative questions to strengthen explanations',
-      'Practical document upgrade suggestions',
-      'Summary written specifically for solicitor/advisor discussion'
+      'Solicitor-style action plan',
+      'Priority risk remediation guidance',
+      'Specific evidence strengthening steps',
+      'Sample evidence templates recommended'
     ]
   }
 ];
@@ -93,27 +94,13 @@ const AppContent: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   useEffect(() => {
-    // We only want to save "active" session states to localStorage
     if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(viewState)) {
-      const state = {
-        answers,
-        selectedPlan,
-        paidPlan,
-        viewState
-      };
+      const state = { answers, selectedPlan, paidPlan, viewState };
       localStorage.setItem('clearvisaState', JSON.stringify(state));
     }
   }, [answers, selectedPlan, paidPlan, viewState]);
 
   useEffect(() => {
-    // Handle deep links for legal pages via URL without breaking the main app flow
-    const urlParams = new URLSearchParams(window.location.search);
-    const viewParam = urlParams.get('view') as ViewState;
-    if (viewParam && ['privacy', 'terms', 'refunds'].includes(viewParam)) {
-      setViewState(viewParam);
-      return;
-    }
-
     const saved = localStorage.getItem('clearvisaState');
     if (saved) {
       try {
@@ -126,45 +113,23 @@ const AppContent: React.FC = () => {
             setViewState(state.viewState);
             if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
               const routeKey = state.answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-              const result = runAssessment(routeKey, state.answers);
-              setAssessmentResult(result);
+              setAssessmentResult(runAssessment(routeKey, state.answers));
             }
           }
         }
-      } catch (e) {
-        console.error('Failed to restore state:', e);
-      }
+      } catch (e) { console.error('State restore failed', e); }
     }
   }, []);
 
-  const stage1Ids = ['nationality', 'current_location', 'immigration_status', 'visa_route', 'income_band', 'previous_refusals'];
-
-  const getVisibleQuestions = () => {
-    if (isUpgrading && selectedPlan === 'pro_plus') {
-      return QUESTIONS.filter(q => {
-        const route = answers['visa_route'] === 'spouse' ? 'spouse' : 'skilled';
-        const isProOnly = q.showIf({ tier: 'pro_plus', route, answers }) && 
-                          !q.showIf({ tier: 'full', route, answers });
-        return isProOnly;
-      });
-    }
-
-    return QUESTIONS.filter(q => {
-      const route = answers['visa_route'] === 'spouse' ? 'spouse' : 
-                    answers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-      
-      let tier: PlanId = paidPlan || 'basic';
-      
-      if (!paidPlan) {
-        return stage1Ids.includes(q.id) && q.showIf({ tier: 'basic', route, answers });
-      }
-      
-      return q.showIf({ tier, route, answers });
-    });
+  const getVisibleQuestions = (currentAnswers: Record<string, any> = answers) => {
+    const route = currentAnswers['visa_route'] === 'spouse' ? 'spouse' : 
+                  currentAnswers['visa_route'] === 'skilled' ? 'skilled' : 'any';
+    const tier = paidPlan || 'basic';
+    
+    return QUESTIONS.filter(q => q.showIf({ tier, route, answers: currentAnswers }));
   };
 
   const handleStartCheck = (planId?: PlanId) => {
-    // Only clear if we are NOT in a report
     if (viewState !== 'report') {
       setAnswers({});
       setPaidPlan(null);
@@ -181,15 +146,11 @@ const AppContent: React.FC = () => {
       setViewState('landing');
       setTimeout(() => {
         const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
       const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -197,49 +158,21 @@ const AppContent: React.FC = () => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    
     const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-    const result = runAssessment(routeKey, answers);
-    setAssessmentResult(result);
-
-    if (planId === 'basic' || isUpgrading) {
-      setViewState('report');
-      setIsLoadingReport(true);
-      setTimeout(() => setIsLoadingReport(false), 2000);
-    } else {
-      setViewState('questionnaire');
-    }
-    setIsUpgrading(false);
-    window.scrollTo(0, 0);
-  };
-
-  const handleQuickCheckComplete = async (collectedAnswers: Record<string, any>) => {
-    setAnswers(collectedAnswers);
-    setIsLoadingReport(true);
-    setViewState('quickVerdict');
+    setAssessmentResult(runAssessment(routeKey, answers));
     
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-    const result = runAssessment(routeKey, collectedAnswers);
-    setAssessmentResult(result);
-    setIsLoadingReport(false);
-    window.scrollTo(0, 0);
-  };
-
-  const handleFullAssessmentComplete = (collectedAnswers: Record<string, any>) => {
-    const finalAnswers = { ...answers, ...collectedAnswers };
-    setAnswers(finalAnswers);
-    
-    const routeKey = finalAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
-    const result = runAssessment(routeKey, finalAnswers);
-    
-    setAssessmentResult(result);
     setViewState('report');
     setIsLoadingReport(true);
-    setIsUpgrading(false);
-    window.scrollTo(0, 0);
     setTimeout(() => setIsLoadingReport(false), 2000);
+    window.scrollTo(0, 0);
+  };
+
+  const handleQuestionnaireComplete = async (collectedAnswers: Record<string, any>) => {
+    setAnswers(collectedAnswers);
+    const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
+    setAssessmentResult(runAssessment(routeKey, collectedAnswers));
+    setViewState('quickVerdict');
+    window.scrollTo(0, 0);
   };
 
   const handleExitReport = () => {
@@ -259,10 +192,9 @@ const AppContent: React.FC = () => {
             <Header onStartCheck={() => handleStartCheck()} onNavigateHome={() => setViewState('landing')} onScrollToSection={scrollToSection} />
             <div className="pt-24 pb-12 app-container">
               <Questionnaire 
-                onComplete={paidPlan ? handleFullAssessmentComplete : handleQuickCheckComplete} 
+                onComplete={handleQuestionnaireComplete} 
                 onCancel={() => setViewState('landing')} 
                 isPaid={!!paidPlan}
-                isUpgrading={isUpgrading}
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
                 visibleQuestionsList={getVisibleQuestions()}
@@ -274,43 +206,25 @@ const AppContent: React.FC = () => {
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
             <div className="max-w-[640px] w-full app-card border-t-8 border-accent">
-              {isLoadingReport ? (
-                <div className="text-center py-20">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-navy mx-auto mb-6"></div>
-                  <p className="text-body font-bold text-slate-600 uppercase tracking-tight">
-                    Analyzing your eligibility...
-                  </p>
+              <div className="mb-8 text-center">
+                <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
+                  assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
+                  assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
+                }`}>
+                  {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
                 </div>
-              ) : (
-                <>
-                  <div className="mb-8 text-center">
-                    <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl shadow-inner mb-6 ${
-                      assessmentResult?.verdict === 'likely' ? 'bg-emerald-100 text-emerald-600' :
-                      assessmentResult?.verdict === 'borderline' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
-                    }`}>
-                      {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
-                    </div>
-                    <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
-                    <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
-                  </div>
-
-                  <div className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100">
-                    <p className="text-small text-slate-600 leading-relaxed font-medium">
-                      Based on your initial answers, you meet core requirements for the {answers['visa_route']?.toUpperCase()} route. Select a report level to unlock your full analysis and document checklist.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
-                     <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
-                     <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
-                  </div>
-                  
-                  <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">
-                    Cancel
-                  </button>
-                </>
-              )}
+                <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
+                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
+              </div>
+              <p className="text-small text-slate-600 leading-relaxed font-medium mb-8">
+                Based on your professional audit pre-check, you have reached the paywall. Unlock your full report to see critical risk factors and document checklists.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
+                 <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
+                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
+              </div>
+              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">Cancel</button>
             </div>
           </div>
         );
@@ -318,35 +232,23 @@ const AppContent: React.FC = () => {
         const plan = PLANS.find(p => p.id === (selectedPlan || 'full'))!;
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
-            <div className="max-w-[600px] w-full app-card border border-slate-200">
+            <div className="max-w-[600px] w-full app-card border border-slate-200 p-10">
               <div className="text-center mb-8">
                 <span className="text-[11px] text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
                 <h2 className="text-h2 mb-2 text-navy">Unlock your assessment</h2>
-                <p className="text-body text-slate-600 font-medium">{plan.description}</p>
+                <p className="text-body text-slate-600 font-medium">Instant access to your professional immigration audit.</p>
               </div>
-              
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
                   {plan.includedFeatures.map((f, i) => (
                     <li key={i} className="flex gap-3 items-start text-small font-bold text-slate-700 uppercase tracking-tight">
-                      <span className="text-accent text-lg">✓</span> {f}
+                      <span className="text-accent">✓</span> {f}
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="space-y-4">
-                <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>
-                  Pay £{plan.priceGBP} & Continue
-                </Button>
-                <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our <button onClick={() => setViewState('terms')} className="underline hover:text-slate-600">Terms of Use</button>, <button onClick={() => setViewState('privacy')} className="underline hover:text-slate-600">Privacy Policy</button>, and <button onClick={() => setViewState('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
-                </p>
-              </div>
-              
-              <button onClick={() => setViewState('landing')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">
-                Go back
-              </button>
+              <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>Pay £{plan.priceGBP} & Continue</Button>
+              <button onClick={() => setViewState('quickVerdict')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">Go back</button>
             </div>
           </div>
         );
@@ -377,6 +279,7 @@ const AppContent: React.FC = () => {
                     setIsPaymentModalOpen(true);
                   }}
                   onViewLegal={(type) => setViewState(type)}
+                  visibleQuestionsList={getVisibleQuestions()}
                 />
               )}
             </div>
