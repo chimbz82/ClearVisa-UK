@@ -26,6 +26,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers);
   const [currentStep, setCurrentStep] = useState(0);
   const [isReviewing, setIsReviewing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isPaid && (selectedPlan === 'full' || selectedPlan === 'pro_plus') && currentStep === 0 && !isReviewing) {
@@ -39,13 +40,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const activeQuestion = visibleQuestionsList[currentStep];
 
   const handleAnswer = (value: any) => {
+    setIsSaving(true);
     setAnswers(prev => ({ ...prev, [activeQuestion.id]: value }));
+    setTimeout(() => setIsSaving(false), 300);
   };
 
   const toggleMultiSelect = (value: string) => {
+    setIsSaving(true);
     const current = (answers[activeQuestion.id] as string[]) || [];
     const updated = current.includes(value) ? current.filter(v => v !== value) : [...current, value];
-    handleAnswer(updated);
+    setAnswers(prev => ({ ...prev, [activeQuestion.id]: updated }));
+    setTimeout(() => setIsSaving(false), 300);
   };
 
   const next = () => {
@@ -78,34 +83,34 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     return (
       <div className="max-w-2xl mx-auto pt-4 animate-in fade-in duration-300">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2 text-[#041229] uppercase tracking-tight">Review Audit Details</h2>
-          <p className="text-sm text-slate-500 font-medium">Verify your responses before generating the final report.</p>
+          <h2 className="text-2xl font-bold mb-2 text-navy uppercase tracking-tight">Audit Confirmation</h2>
+          <p className="text-sm text-slate-500 font-medium uppercase tracking-tight">Review your 50+ compliance points before final processing.</p>
         </div>
         
-        <div className="space-y-3 mb-10 overflow-y-auto max-h-[60vh] pr-2">
+        <div className="space-y-3 mb-10 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar">
           {visibleQuestionsList.map((q, idx) => {
             const answer = answers[q.id];
             if (answer === undefined) return null;
             return (
-              <div key={q.id} className="app-card border border-slate-100 p-4 flex justify-between items-center group transition-all">
+              <div key={q.id} className="app-card border border-slate-100 p-4 flex justify-between items-center group transition-all hover:border-slate-300">
                 <div className="flex-grow pr-4">
                   <p className="text-[10px] text-slate-400 mb-0.5 font-bold uppercase tracking-wider">{q.section} • {q.label}</p>
-                  <p className="text-sm font-semibold text-[#041229]">
+                  <p className="text-sm font-semibold text-navy">
                     {Array.isArray(answer) 
                       ? (answer as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
                       : String(answer === true ? 'Yes' : answer === false ? 'No' : 
                           q.options?.find(o => o.value === answer)?.label || answer || '—')}
                   </p>
                 </div>
-                <button onClick={() => handleEdit(idx)} className="text-[11px] font-bold text-[#1877F2] hover:bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-wider transition-colors">Edit</button>
+                <button onClick={() => handleEdit(idx)} className="text-[11px] font-bold text-accent hover:bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-wider transition-colors">Change</button>
               </div>
             );
           })}
         </div>
         
         <div className="flex flex-col gap-3">
-          <Button onClick={() => onComplete(answers)} fullWidth size="lg">Finalize & generate report</Button>
-          <button onClick={() => setIsReviewing(false)} className="text-xs font-bold text-slate-400 hover:text-[#041229] uppercase tracking-widest py-3 transition-colors">Back to questionnaire</button>
+          <Button onClick={() => onComplete(answers)} fullWidth size="lg" variant="primary" className="font-black uppercase tracking-widest">Run Compliance Analysis</Button>
+          <button onClick={() => setIsReviewing(false)} className="text-xs font-bold text-slate-400 hover:text-navy uppercase tracking-widest py-3 transition-colors">Back to questions</button>
         </div>
       </div>
     );
@@ -126,10 +131,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <button onClick={() => handleAnswer(true)} className={`py-8 rounded-2xl border-2 text-lg font-bold transition-all ${val === true ? 'border-[#041229] bg-[#041229] text-white shadow-md' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>Yes</button>
-              <button onClick={() => handleAnswer(false)} className={`py-8 rounded-2xl border-2 text-lg font-bold transition-all ${val === false ? 'border-[#041229] bg-[#041229] text-white shadow-md' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>No</button>
+              <button onClick={() => handleAnswer(true)} className={`py-8 rounded-2xl border-2 text-lg font-bold transition-all ${val === true ? 'border-navy bg-navy text-white shadow-lg' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>Yes</button>
+              <button onClick={() => handleAnswer(false)} className={`py-8 rounded-2xl border-2 text-lg font-bold transition-all ${val === false ? 'border-navy bg-navy text-white shadow-lg' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}>No</button>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'singleSelect':
@@ -140,16 +145,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 <button 
                   key={opt.value}
                   onClick={() => handleAnswer(opt.value)}
-                  className={`w-full p-4 text-left border-2 rounded-xl text-sm font-semibold transition-all flex justify-between items-center ${val === opt.value ? 'border-[#1877F2] bg-[#1877F2]/5 text-[#1877F2]' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
+                  className={`w-full p-4 text-left border-2 rounded-xl text-sm font-semibold transition-all flex justify-between items-center ${val === opt.value ? 'border-accent bg-accent/5 text-accent' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
                 >
                   {opt.label}
-                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${val === opt.value ? 'border-[#1877F2] bg-[#1877F2]' : 'border-slate-200'}`}>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${val === opt.value ? 'border-accent bg-accent' : 'border-slate-200'}`}>
                     {val === opt.value && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                   </div>
                 </button>
               ))}
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'multiSelect':
@@ -161,16 +166,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 <button 
                   key={opt.value}
                   onClick={() => toggleMultiSelect(opt.value)}
-                  className={`p-3.5 text-left border-2 rounded-xl text-xs font-semibold transition-all flex gap-3 items-center ${currentMulti.includes(opt.value) ? 'border-[#1877F2] bg-[#1877F2]/5 text-[#1877F2]' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
+                  className={`p-3.5 text-left border-2 rounded-xl text-xs font-semibold transition-all flex gap-3 items-center ${currentMulti.includes(opt.value) ? 'border-accent bg-accent/5 text-accent' : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'}`}
                 >
-                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${currentMulti.includes(opt.value) ? 'bg-[#1877F2] border-[#1877F2] text-white' : 'border-slate-200 bg-slate-50'}`}>
+                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${currentMulti.includes(opt.value) ? 'bg-accent border-accent text-white' : 'border-slate-200 bg-slate-50'}`}>
                     {currentMulti.includes(opt.value) && '✓'}
                   </div>
                   <span className="leading-tight font-bold">{opt.label}</span>
                 </button>
               ))}
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'date':
@@ -180,10 +185,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               type="date"
               value={val || ""}
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'currency':
@@ -197,15 +202,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               placeholder={q.placeholder || (q.type === 'currency' ? "Enter amount in GBP..." : "Enter number...")}
               value={val || ""}
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
             {q.type === 'currency' && val && (
-              <p className="text-small text-slate-500 font-bold">
-                = £{Number(val).toLocaleString()}
+              <p className="text-small text-slate-500 font-bold uppercase">
+                = £{Number(val).toLocaleString()} GBP
               </p>
             )}
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'shortText':
@@ -217,10 +222,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               value={val || ""}
               maxLength={100}
               onChange={(e) => handleAnswer(e.target.value)}
-              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-h3 font-semibold shadow-inner transition-all"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-h3 font-semibold shadow-inner transition-all"
               autoFocus
             />
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       case 'longText':
@@ -231,14 +236,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               onChange={(e) => handleAnswer(e.target.value)}
               placeholder={q.placeholder}
               maxLength={2000}
-              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-[#041229] outline-none text-body font-semibold min-h-[150px] transition-all"
+              className="w-full p-6 bg-white border-2 border-slate-200 rounded-2xl focus:border-navy outline-none text-body font-semibold min-h-[150px] transition-all"
             />
             <div className="flex justify-between items-center">
-              <span className="text-caption text-slate-400 font-bold">
+              <span className="text-caption text-slate-400 font-bold uppercase tracking-tight">
                 {val?.length || 0} / 2000 characters
               </span>
             </div>
-            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered}>Continue</Button>
+            <Button onClick={next} fullWidth size="lg" disabled={!isAnswered} className="font-black uppercase tracking-widest">Next Step</Button>
           </div>
         );
       default:
@@ -250,25 +255,39 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   return (
     <div className="max-w-2xl mx-auto min-h-[440px] flex flex-col pt-4">
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-2.5">
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Step {currentStep + 1} of {visibleQuestionsList.length} • {activeQuestion.section}</span>
-          <span className="text-xs font-bold text-[#041229]">{progress}% Complete</span>
+      <div className="mb-10">
+        <div className="flex justify-between items-end mb-3">
+          <div>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] block mb-0.5">Section Progress</span>
+            <span className="text-xs font-black text-navy uppercase tracking-widest">{activeQuestion.section}</span>
+          </div>
+          <div className="text-right">
+            <div className="flex items-center gap-2 mb-1">
+              {isSaving ? (
+                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">Saving response...</span>
+              ) : (
+                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Verified Answer</span>
+              )}
+            </div>
+            <span className="text-[10px] font-black text-navy uppercase tracking-widest">{progress}% Audit Complete</span>
+          </div>
         </div>
-        <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-[#1877F2] transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
+        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-full bg-accent transition-all duration-700 ease-in-out" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-2 duration-300 text-left">
-        <h3 className="text-2xl font-bold mb-3 text-[#041229] tracking-tight leading-snug">{activeQuestion.label}</h3>
-        {activeQuestion.helpText && <p className="text-xs text-slate-500 mb-6 leading-relaxed font-medium italic">{activeQuestion.helpText}</p>}
+        <h3 className="text-2xl font-black mb-4 text-navy tracking-tight leading-snug">{activeQuestion.label}</h3>
+        {activeQuestion.helpText && <p className="text-xs text-slate-500 mb-8 leading-relaxed font-bold italic opacity-70">{activeQuestion.helpText}</p>}
         <div className="mb-10">{renderField(activeQuestion)}</div>
       </div>
 
-      <div className="flex items-center justify-between pt-6 border-t border-slate-100 mt-auto">
-        <button onClick={back} disabled={currentStep === 0} className="text-[11px] font-bold text-slate-400 hover:text-[#041229] disabled:opacity-0 transition-colors uppercase tracking-widest">Back</button>
-        <button onClick={onCancel} className="text-[11px] font-bold text-rose-400 hover:text-rose-600 transition-colors uppercase tracking-widest">Quit</button>
+      <div className="flex items-center justify-between pt-8 border-t border-slate-100 mt-auto">
+        <button onClick={back} disabled={currentStep === 0} className="text-[11px] font-black text-slate-400 hover:text-navy disabled:opacity-0 transition-colors uppercase tracking-widest flex items-center gap-2 group">
+          <span className="group-hover:-translate-x-1 transition-transform">←</span> Previous
+        </button>
+        <button onClick={onCancel} className="text-[11px] font-black text-rose-400 hover:text-rose-600 transition-colors uppercase tracking-widest">Abandon Check</button>
       </div>
     </div>
   );

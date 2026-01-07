@@ -16,6 +16,7 @@ import ReportSkeleton from './components/ReportSkeleton';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import RefundPolicy from './components/RefundPolicy';
+import AnalysisLoader from './components/AnalysisLoader';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult, QuestionConfig } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -81,7 +82,7 @@ export const PLANS: PlanConfig[] = [
   }
 ];
 
-export type ViewState = 'landing' | 'questionnaire' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
+export type ViewState = 'landing' | 'questionnaire' | 'analyzing' | 'quickVerdict' | 'paywall' | 'report' | 'privacy' | 'terms' | 'refunds';
 
 const AppContent: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -94,7 +95,7 @@ const AppContent: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   useEffect(() => {
-    if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(viewState)) {
+    if (['questionnaire', 'analyzing', 'quickVerdict', 'paywall', 'report'].includes(viewState)) {
       const state = { answers, selectedPlan, paidPlan, viewState };
       localStorage.setItem('clearvisaState', JSON.stringify(state));
     }
@@ -109,7 +110,7 @@ const AppContent: React.FC = () => {
           setAnswers(state.answers);
           setSelectedPlan(state.selectedPlan);
           setPaidPlan(state.paidPlan);
-          if (['questionnaire', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
+          if (['questionnaire', 'analyzing', 'quickVerdict', 'paywall', 'report'].includes(state.viewState)) {
             setViewState(state.viewState);
             if (state.viewState === 'report' || state.viewState === 'quickVerdict') {
               const routeKey = state.answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
@@ -163,7 +164,6 @@ const AppContent: React.FC = () => {
     setAssessmentResult(runAssessment(routeKey, answers));
     
     if (isActuallyAnUpgrade) {
-        // If they upgraded, they might have new questions to answer
         setViewState('questionnaire');
     } else {
         setViewState('report');
@@ -178,14 +178,18 @@ const AppContent: React.FC = () => {
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     setAssessmentResult(runAssessment(routeKey, collectedAnswers));
     
-    if (paidPlan) {
-        setViewState('report');
-        setIsLoadingReport(true);
-        setTimeout(() => setIsLoadingReport(false), 1500);
-    } else {
-        setViewState('quickVerdict');
-    }
-    window.scrollTo(0, 0);
+    setViewState('analyzing');
+    // Actual logic analysis is near-instant, but we show the analysis loader for value perception
+    setTimeout(() => {
+      if (paidPlan) {
+          setViewState('report');
+          setIsLoadingReport(true);
+          setTimeout(() => setIsLoadingReport(false), 1500);
+      } else {
+          setViewState('quickVerdict');
+      }
+      window.scrollTo(0, 0);
+    }, 2800);
   };
 
   const handleExitReport = () => {
@@ -216,6 +220,12 @@ const AppContent: React.FC = () => {
             </div>
           </div>
         );
+      case 'analyzing':
+        return (
+          <div className="bg-white min-h-screen flex items-center justify-center">
+            <AnalysisLoader />
+          </div>
+        );
       case 'quickVerdict':
         return (
           <div className="min-h-screen pt-24 pb-20 flex items-center justify-center px-4 bg-slate-50 text-left">
@@ -231,7 +241,7 @@ const AppContent: React.FC = () => {
                 <p className="text-body text-slate-500 font-bold uppercase tracking-tight">PRE-CHECK VERDICT: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
               </div>
               <p className="text-small text-slate-600 leading-relaxed font-bold mb-8 text-center uppercase tracking-tight">
-                Unlock your full professional audit to see the critical risk factors identified and get your personalized document checklist.
+                Audit analysis complete. Unlock your full professional report to see the 50+ compliance factors audited and get your personalized document checklist.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
@@ -314,7 +324,7 @@ const AppContent: React.FC = () => {
               <WhatYouGet />
               <Pricing onStartCheck={(planId) => handleStartCheck(planId)} onNavigateLegal={(view) => setViewState(view)} />
               <FAQ />
-              <Legal />
+              <Legal onNavigateLegal={(view) => setViewState(view)} />
             </main>
             <Footer 
               onPrivacyClick={() => setViewState('privacy')} 

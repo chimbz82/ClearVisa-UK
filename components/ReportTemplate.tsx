@@ -267,7 +267,16 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           ClearVisa UK Official Audit Report. This document is for informational purposes only and does not constitute legal advice.
           Accuracy is dependent on user-supplied information. Not affiliated with UKVI or the Home Office.
         </p>
-        <div className="flex justify-center gap-8 mt-4 opacity-30 grayscale">
+        
+        <div className="flex justify-center gap-4 mt-6 no-print">
+          <button onClick={() => onViewLegal?.('terms')} className="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">Terms of Use</button>
+          <span className="text-slate-200">|</span>
+          <button onClick={() => onViewLegal?.('privacy')} className="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">Privacy Policy</button>
+          <span className="text-slate-200">|</span>
+          <button onClick={() => onViewLegal?.('refunds')} className="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-accent transition-colors">Refund Policy</button>
+        </div>
+
+        <div className="flex justify-center gap-8 mt-6 opacity-30 grayscale">
           <span className="text-[8px] font-black uppercase tracking-widest">Logic: v2.5.0-PRO</span>
           <span className="text-[8px] font-black uppercase tracking-widest">Audit Engine: Verified</span>
         </div>
