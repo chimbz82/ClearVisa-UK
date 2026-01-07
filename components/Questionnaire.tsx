@@ -23,7 +23,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // If we're starting a deep audit after pre-check, skip the first 12
+    // If starting a deep audit after pre-check, sync the index
     if (startStep > 0 && currentStep < startStep) {
         setCurrentStep(startStep);
     }
@@ -107,6 +107,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <div className="flex-grow animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
+        <div className="mb-4">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{activeQuestion.section}</span>
+        </div>
         <h3 className="text-2xl sm:text-3xl font-black mb-12 text-navy tracking-tight leading-[1.2]">
           {activeQuestion.label}
         </h3>

@@ -11,21 +11,15 @@ interface PricingProps {
 const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
   const { t } = useLanguage();
 
-  const comparison = [
-    { feature: "Eligibility Verdict", cv: "✓ Instant", diy: "Guesswork", solicitor: "✓ Professional" },
-    { feature: "Compliance Score", cv: "✓ Automated", diy: "✕ No", solicitor: "✓ Professional" },
-    { feature: "Evidence Audit", cv: "✓ Detailed", diy: "✕ No", solicitor: "✓ Full" },
-    { feature: "Time Cost", cv: "10 Minutes", diy: "Weeks", solicitor: "Days/Weeks" },
-    { feature: "Financial Cost", cv: "£29 - £99", diy: "Free", solicitor: "£800 - £3000+" }
-  ];
-
   return (
     <section id="pricing" className="py-12 lg:py-16 bg-white border-y border-slate-50 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Pricing</span>
           <h2 className="text-3xl lg:text-4xl font-extrabold text-navy mb-4 tracking-tight uppercase">Straightforward Pricing</h2>
-          <p className="text-base text-slate-600 font-semibold leading-relaxed">All plans begin with a short pre-check before your full audit is generated.</p>
+          <p className="text-base text-slate-600 font-semibold leading-relaxed">
+            All plans begin with a short pre-check assessment before your full audit is generated.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14 items-stretch">
@@ -36,7 +30,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
             return (
               <div 
                 key={plan.id} 
-                className={`flex flex-col rounded-2xl bg-white border-2 relative overflow-hidden transition-all duration-300 h-full ${
+                className={`flex flex-col rounded-[2rem] bg-white border-2 relative overflow-hidden transition-all duration-300 h-full ${
                   isProPlus 
                   ? 'border-accent shadow-2xl z-10 lg:scale-[1.05]' 
                   : isFull 
@@ -79,7 +73,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     fullWidth
                     variant={isProPlus ? 'secondary' : isFull ? 'primary' : 'outline'}
                     size="lg"
-                    className="py-4 shadow-lg mb-6"
+                    className="py-4 shadow-lg mb-6 uppercase font-black tracking-widest"
                   >
                     Choose {plan.name}
                   </Button>
@@ -89,11 +83,10 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">✓ No hidden fees</span>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-50 text-[10px] text-slate-400 font-bold leading-tight">
+                    <div className="pt-3 border-t border-slate-50 text-[10px] text-slate-400 font-bold leading-tight uppercase tracking-tight">
                       By proceeding, you agree to our{' '}
-                      <button onClick={() => onNavigateLegal('terms')} className="underline">Terms</button>,{' '}
-                      <button onClick={() => onNavigateLegal('privacy')} className="underline">Privacy</button>, and{' '}
-                      <button onClick={() => onNavigateLegal('refunds')} className="underline">Refund Policy</button>.
+                      <button onClick={() => onNavigateLegal('terms')} className="underline hover:text-navy">Terms</button> and{' '}
+                      <button onClick={() => onNavigateLegal('refunds')} className="underline hover:text-navy">Refund Policy</button>.
                     </div>
                   </div>
                 </div>

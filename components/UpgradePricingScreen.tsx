@@ -51,6 +51,7 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {PLANS.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
+            const isFull = plan.id === 'full';
             return (
               <div key={plan.id} className={`bg-white rounded-[2rem] p-8 border-2 flex flex-col hover:border-accent transition-all duration-300 shadow-sm ${isProPlus ? 'border-accent ring-4 ring-accent/5 scale-105 z-10' : 'border-slate-100'}`}>
                 <div className="mb-8">
@@ -67,7 +68,7 @@ const UpgradePricingScreen: React.FC<UpgradePricingScreenProps> = ({
                         </li>
                     ))}
                 </ul>
-                <Button onClick={() => onSelectPlan(plan.id)} fullWidth variant={isProPlus ? 'secondary' : 'navy'} size="lg" className="py-5 font-black uppercase tracking-widest">
+                <Button onClick={() => onSelectPlan(plan.id)} fullWidth variant={isProPlus ? 'secondary' : isFull ? 'primary' : 'navy'} size="lg" className="py-5 font-black uppercase tracking-widest">
                     Choose {plan.id.replace('_', ' ')}
                 </Button>
               </div>

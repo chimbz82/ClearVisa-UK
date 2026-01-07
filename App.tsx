@@ -36,7 +36,7 @@ export interface PlanConfig {
   includedFeatures: string[];
 }
 
-// Canonical Paid Tiers as per business model
+// Canonical Paid Tiers only
 export const PLANS: PlanConfig[] = [
   {
     id: 'basic',
@@ -102,8 +102,8 @@ const App: React.FC = () => {
     setAnswers(finalAnswers);
     setViewState('analyzing-free');
     
+    // Stage 1 Analysis: Brief verdict based on first 12 questions
     setTimeout(() => {
-      // Logic for pre-check verdict
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, 'free');
       setAssessmentResult(result);
       setViewState('free-result-preview');
@@ -114,7 +114,7 @@ const App: React.FC = () => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    // After payment, user continues to the Deep Audit
+    // Move to Stage 2: Deep Audit
     setViewState('full-check');
   };
 
@@ -122,8 +122,8 @@ const App: React.FC = () => {
     setAnswers(finalAnswers);
     setViewState('analyzing-full');
     
+    // Stage 2 Analysis: Full deep audit across 50+ data points
     setTimeout(() => {
-      // Re-run assessment with full data and selected tier
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, paidPlan || 'basic');
       setAssessmentResult(result);
       setViewState('report');
@@ -141,7 +141,7 @@ const App: React.FC = () => {
     // Initial subset for free pre-check
     const freeQuestions = QUESTIONS.filter(q => q.section === 'Initial');
     
-    // Full data set including deep audit questions
+    // Full data set including deep audit questions (only visible if tier is not free)
     const fullQuestions = QUESTIONS.filter(q => q.showIf({ 
       tier: paidPlan || 'free', 
       route: answers.visa_route || 'spouse', 
@@ -196,7 +196,7 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={fullQuestions}
               initialAnswers={answers}
-              startStep={freeQuestions.length} // Resume after the initial pre-check questions
+              startStep={freeQuestions.length} // Resume from after the pre-check batch
             />
           </div>
         );

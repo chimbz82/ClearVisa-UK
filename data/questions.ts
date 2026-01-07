@@ -1,4 +1,3 @@
-
 import { QuestionConfig } from '../types';
 
 export const QUESTIONS: QuestionConfig[] = [
@@ -68,5 +67,18 @@ export const QUESTIONS: QuestionConfig[] = [
   { id: 'acc_owner_permission', section: 'Accommodation', label: 'Do you have owner permission to stay?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
   { id: 'english_test_provider', section: 'English', label: 'English test provider (IELTS/PTE)?', type: 'shortText', showIf: (ctx) => ctx.answers.english_test_passed === true && ctx.tier !== 'free' },
   { id: 'degree_taught_english', section: 'English', label: 'Is your degree taught in English?', type: 'boolean', showIf: (ctx) => ctx.tier !== 'free' },
-  { id: 'ecctis_verified', section: 'English', label: 'Has degree been Ecctis verified?', type: 'boolean', showIf: (ctx) => ctx.answers.degree_taught_english === true && ctx.tier !== 'free' }
+  { id: 'ecctis_verified', section: 'English', label: 'Has degree been Ecctis verified?', type: 'boolean', showIf: (ctx) => ctx.answers.degree_taught_english === true && ctx.tier !== 'free' },
+
+  // --- SKILLED WORKER SPECIFIC ---
+  { id: 'cos_job_title', section: 'Skilled Worker', label: 'Exact job title on your CoS?', type: 'shortText', placeholder: 'e.g. Software Engineer', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'cos_soc_code', section: 'Skilled Worker', label: 'SOC code for your role?', type: 'shortText', placeholder: 'e.g. 2136', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'cos_start_date', section: 'Skilled Worker', label: 'Employment start date?', type: 'date', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'sponsor_license_number', section: 'Skilled Worker', label: 'Sponsor license number?', type: 'shortText', placeholder: 'Optional', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'going_rate_met', section: 'Skilled Worker', label: 'Does salary meet going rate for SOC?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'new_entrant_eligible', section: 'Skilled Worker', label: 'Eligible for new entrant rate?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'immigration_skills_charge', section: 'Skilled Worker', label: 'Will employer pay Immigration Skills Charge?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'atas_certificate_required', section: 'Skilled Worker', label: 'ATAS certificate required?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'criminal_record_cert', section: 'Skilled Worker', label: 'Role requires criminal record certificate?', type: 'boolean', showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'previous_visa_type', section: 'Skilled Worker', label: 'Switching from another UK visa?', type: 'singleSelect', options: [{ value: 'no', label: 'No - from abroad' }, { value: 'student', label: 'Student' }, { value: 'graduate', label: 'Graduate' }, { value: 'other', label: 'Other' }], showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' },
+  { id: 'sponsor_rating', section: 'Skilled Worker', label: 'Sponsor rating?', type: 'singleSelect', options: [{ value: 'a', label: 'A-rated' }, { value: 'b', label: 'B-rated' }, { value: 'unsure', label: 'Unsure' }], showIf: (ctx) => ctx.route === 'skilled' && ctx.tier !== 'free' }
 ];

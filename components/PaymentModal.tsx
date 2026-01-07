@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PLANS, PlanId } from '../App';
 import Button from './Button';
+import { getUpgradeConfig } from '../utils/upgradeLogic';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -22,19 +23,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
   const currentPlan = PLANS.find(p => p.id === paidPlan);
 
-  // Business model pricing deltas
-  const getUpgradePrice = (from: PlanId | null, to: PlanId): number => {
-    if (!from) return PLANS.find(p => p.id === to)?.priceGBP || 0;
-    
-    // Hard-coded deltas from the business requirements
-    if (from === 'basic' && to === 'full') return 50;
-    if (from === 'basic' && to === 'pro_plus') return 70;
-    if (from === 'full' && to === 'pro_plus') return 20;
-    
-    return 0; // Invalid or same tier
-  };
-
-  const paymentAmount = getUpgradePrice(paidPlan, selectedTier);
+  const upgradeConfig = getUpgradeConfig(paidPlan, selectedTier);
+  const paymentAmount = paidPlan ? (upgradeConfig?.priceGBP || 0) : targetPlan.priceGBP;
   const isUpgrade = paidPlan !== null;
 
   const isPreview = window.location.hostname === 'localhost' || window.location.hostname.includes('stackblitz');
@@ -84,7 +74,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#041229]/70 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
+      <div className="absolute inset-0 bg-navy/70 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
       <div className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
         
         {status === 'idle' && (
@@ -138,10 +128,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               </div>
               
               <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-navy uppercase tracking-widest ml-1">Card Details</label>
-                  <input required type="text" placeholder="Card number" className="w-full p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
-                </div>
+                <input required type="text" placeholder="Card number" className="w-full p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
                 <div className="flex gap-4">
                   <input required type="text" placeholder="MM / YY" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
                   <input required type="text" placeholder="CVC" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
@@ -175,8 +162,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               </h4>
               <p className="text-[13px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
                 {status === 'processing' 
-                  ? 'Verifying bank details with Stripe...' 
-                  : `Success! Unlocking ${targetPlan.name} audit...`}
+                  ? 'Verifying details with payment gateway...' 
+                  : `Success! Unlocking your ${targetPlan.name}.`}
               </p>
             </div>
           )}
@@ -188,7 +175,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
               </div>
               <h4 className="text-xl font-black text-navy uppercase mb-3 tracking-tight">Transaction Declined</h4>
               <p className="text-sm text-slate-600 font-bold mb-10 leading-relaxed uppercase tracking-tight px-4">
-                We couldn't process your payment. Please verify your card numbers and funds, then try again.
+                We couldn't process your payment. Please verify your card details and try again.
               </p>
               <button 
                 onClick={() => setStatus('idle')}
