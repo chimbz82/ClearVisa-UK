@@ -340,7 +340,7 @@ const AppContent: React.FC = () => {
                   Pay £{plan.priceGBP} & Continue
                 </Button>
                 <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our <a href="?view=terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Terms of Use</a>, <a href="?view=privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Privacy Policy</a>, and <a href="?view=refunds" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Refund Policy</a>.
+                  By proceeding, you agree to our <button onClick={() => setViewState('terms')} className="underline hover:text-slate-600">Terms of Use</button>, <button onClick={() => setViewState('privacy')} className="underline hover:text-slate-600">Privacy Policy</button>, and <button onClick={() => setViewState('refunds')} className="underline hover:text-slate-600">Refund Policy</button>.
                 </p>
               </div>
               

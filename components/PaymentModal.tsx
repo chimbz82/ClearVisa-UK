@@ -78,7 +78,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-[#07162A]/60 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
-      <div className="relative bg-white w-full max-w-md rounded-[1.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="relative bg-white w-full max-w-md rounded-[1.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
         
         {status === 'idle' && (
           <div className="px-8 pt-8 pb-2 flex justify-between items-center">

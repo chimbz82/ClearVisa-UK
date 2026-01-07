@@ -25,10 +25,10 @@ const WhatYouGet: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="lg:grid lg:grid-cols-2 lg:gap-20 items-center mb-12">
           <div className="mb-12 lg:mb-0">
-            <h2 className="text-3xl lg:text-4xl font-extrabold text-navy mb-6 tracking-tight">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-navy mb-6 tracking-tight text-left">
               What your ClearVisa UK report includes
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 mb-8 font-semibold leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-600 mb-8 font-semibold leading-relaxed text-left">
               A professional-grade summary you can use for your own planning or with a solicitor.
             </p>
             
@@ -38,7 +38,7 @@ const WhatYouGet: React.FC = () => {
                   <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg className="w-3.5 h-3.5 text-success" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   </div>
-                  <p className="text-navy text-sm font-bold">
+                  <p className="text-navy text-sm font-bold text-left">
                     {text}
                   </p>
                 </li>
@@ -63,7 +63,7 @@ const WhatYouGet: React.FC = () => {
                   <span className="text-[10px] font-bold opacity-60">ID: CV-942103</span>
                 </div>
                 
-                <div className="p-7 space-y-7">
+                <div className="p-7 space-y-7 text-left">
                   <div className="flex items-center gap-5">
                     <div className="w-14 h-14 bg-emerald-100 text-success rounded-2xl flex items-center justify-center text-3xl font-bold shadow-sm">✓</div>
                     <div>
@@ -83,13 +83,13 @@ const WhatYouGet: React.FC = () => {
                     </div>
                   </div>
 
-                  <div 
+                  <button 
                     onClick={triggerReportPdfDownload}
-                    className="flex items-center justify-between bg-success text-white px-5 py-4 rounded-2xl shadow-xl cursor-pointer hover:bg-success/90 transition-all active:scale-[0.98]"
+                    className="w-full flex items-center justify-between bg-success text-white px-5 py-4 rounded-2xl shadow-xl cursor-pointer hover:bg-success/90 transition-all active:scale-[0.98]"
                   >
                     <span className="text-xs font-black uppercase tracking-widest">Download PDF Report</span>
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -102,7 +102,7 @@ const WhatYouGet: React.FC = () => {
            </div>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
               {whyChoose.map((item, i) => (
-                <div key={i} className="bg-white p-7 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+                <div key={i} className="bg-white p-7 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full text-left">
                    <h4 className="text-base font-bold text-navy mb-3 uppercase tracking-tight">{item.title}</h4>
                    <p className="text-xs text-slate-500 font-semibold leading-relaxed flex-grow">{item.desc}</p>
                 </div>

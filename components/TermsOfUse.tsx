@@ -31,7 +31,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
               <h3 className="text-xl font-bold text-navy">2. Nature of Service (Mandatory Disclosure)</h3>
               <div className="bg-rose-50 p-6 border-l-4 border-rose-500 rounded-r-xl space-y-3">
                 <p className="text-rose-900 font-bold uppercase text-xs tracking-widest">Crucial Legal Information:</p>
-                <ul className="list-disc pl-5 text-sm text-rose-800 space-y-2 font-semibold">
+                <ul className="list-disc pl-5 text-sm text-rose-800 space-y-2 font-semibold text-left">
                   <li>CLEARVISA UK is NOT a law firm and is NOT regulated by the Solicitors Regulation Authority (SRA) or the Office of the Immigration Services Commission (OISC).</li>
                   <li>We do NOT provide legal advice. Our reports are automated assessments based strictly on the data you provide.</li>
                   <li>No solicitor–client relationship is created through your use of the Service.</li>
@@ -54,7 +54,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
             <section className="space-y-4 pt-12 border-t border-slate-100">
               <h2 className="text-2xl font-extrabold text-navy uppercase tracking-tight">Legal Disclaimer & Risk Notice</h2>
               <p>The CLEARVISA UK Service is an automated logic-based information tool. It is designed to assist users in identifying potential eligibility based on public criteria but is not a substitute for professional legal advice.</p>
-              <ul className="list-disc pl-5 space-y-2">
+              <ul className="list-disc pl-5 space-y-2 text-left">
                 <li><strong>Risk of Refusal:</strong> Immigration rules change frequently. While we strive for accuracy, we cannot guarantee that the criteria used in our software match the specific caseworker guidance used at the moment of your application.</li>
                 <li><strong>Data Integrity:</strong> If you omit information (e.g., a minor criminal conviction or a previous refusal), the report will be invalid and potentially dangerously misleading.</li>
                 <li><strong>As-Is Service:</strong> The Service is provided "as-is" without any warranties of any kind, express or implied.</li>
@@ -65,7 +65,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
             <section className="space-y-4 pt-12 border-t border-slate-100">
               <h2 className="text-2xl font-extrabold text-navy uppercase tracking-tight">Acceptable Use Policy</h2>
               <p>You agree NOT to use CLEARVISA UK to:</p>
-              <ul className="list-disc pl-5 space-y-2">
+              <ul className="list-disc pl-5 space-y-2 text-left">
                 <li>Submit fraudulent or misleading information.</li>
                 <li>Attempt to reverse-engineer the underlying logic or database of the software.</li>
                 <li>Use the Service for commercial resale without our express written consent.</li>
@@ -79,7 +79,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ onBack }) => {
             <section className="space-y-4 pt-12 border-t border-slate-100">
               <h2 className="text-2xl font-extrabold text-navy uppercase tracking-tight">Complaints Policy</h2>
               <p>We value your feedback and aim to resolve any issues quickly. If you have a complaint about our Service, please follow this process:</p>
-              <ol className="list-decimal pl-5 space-y-2">
+              <ol className="list-decimal pl-5 space-y-2 text-left">
                 <li><strong>Contact Support:</strong> Email us at <a href="mailto:clearvisauk@protonmail.com" className="text-accent font-bold">clearvisauk@protonmail.com</a> with the subject line "Formal Complaint".</li>
                 <li><strong>Investigation:</strong> We will acknowledge your complaint within 2 business days and provide a full response within 10 business days.</li>
                 <li><strong>Resolution:</strong> If the complaint relates to a technical error, we will aim to rectify the report or offer a refund if applicable under our Refund Policy.</li>
