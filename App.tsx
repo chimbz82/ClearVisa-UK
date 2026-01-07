@@ -156,11 +156,6 @@ const App: React.FC = () => {
       case 'landing':
         return (
           <>
-            <Header 
-              onStartCheck={handleStartCheck} 
-              onNavigateHome={() => setViewState('landing')}
-              onScrollToSection={scrollToSection}
-            />
             <Hero onStartCheck={handleStartCheck} onScrollToSection={scrollToSection} />
             <TrustStrip />
             <HowItWorks />
@@ -238,6 +233,13 @@ const App: React.FC = () => {
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-white font-sans text-slate-900 antialiased text-left">
+        {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
+          <Header 
+            onStartCheck={handleStartCheck} 
+            onNavigateHome={() => setViewState('landing')}
+            onScrollToSection={scrollToSection}
+          />
+        )}
         <main>{renderView()}</main>
         {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
           <Footer 

@@ -70,6 +70,27 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       )}
 
+      {/* Question Limit Notice */}
+      {paidPlan !== 'pro_plus' && (
+        <div className="no-print mb-8 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl">
+          <div className="flex items-start gap-4">
+            <div className="text-3xl">ℹ️</div>
+            <div>
+              <h4 className="text-sm font-bold text-navy mb-2 uppercase">
+                {paidPlan === 'basic' ? 'Basic Pre-Check (20 Questions)' : 'Professional Audit (40 Questions)'}
+              </h4>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                You completed a {paidPlan === 'basic' ? 'Basic' : 'Professional'} assessment covering 
+                {visibleQuestionsList.length} key compliance questions. 
+                {paidPlan === 'basic' 
+                  ? ' Upgrade to Professional Audit (40Q) or Professional Plus (full depth) for solicitor-style analysis.'
+                  : ' Upgrade to Professional Plus for complete case deep-dive with all questions and evidence gap analysis.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 2. AVIATION GRADE HEADER */}
       <header className="flex justify-between items-start mb-16 border-b-4 border-navy pb-12">
         <div className="flex-grow">
@@ -232,7 +253,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </div>
           
           {/* Action Plan */}
-          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm">
+          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm text-left">
             <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
               Solicitor-Style Action Plan
             </h4>
@@ -274,7 +295,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </div>
           
           {/* Evidence Strengthening */}
-          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm">
+          <div className="bg-white p-8 rounded-2xl mb-8 shadow-sm text-left">
             <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
               Evidence Strengthening
             </h4>
@@ -311,7 +332,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           </div>
           
           {/* Templates */}
-          <div className="bg-white p-8 rounded-2xl shadow-sm">
+          <div className="bg-white p-8 rounded-2xl shadow-sm text-left">
             <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
               Critical Document Templates
             </h4>
@@ -350,7 +371,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             const answer = answers[q.id];
             if (answer === undefined) return null;
             return (
-              <div key={q.id} className="border-b border-slate-50 pb-6 flex flex-col group">
+              <div key={q.id} className="border-b border-slate-50 pb-6 flex flex-col group text-left">
                 <p className="text-[9px] text-slate-400 font-black uppercase mb-3 leading-tight tracking-[0.1em] group-hover:text-navy transition-colors">{q.label}</p>
                 <p className="text-[14px] text-navy font-black tracking-tight uppercase">
                   {answer === true ? 'AFFIRMATIVE' : answer === false ? 'NEGATIVE' : String(answer).toUpperCase()}
