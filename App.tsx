@@ -13,7 +13,6 @@ import PaymentModal from './components/PaymentModal';
 import Questionnaire from './components/Questionnaire';
 import ReportTemplate from './components/ReportTemplate';
 import AnalysisLoader from './components/AnalysisLoader';
-import UpgradePricingScreen from './components/UpgradePricingScreen';
 import { runAssessment } from './utils/assessmentEngine';
 import { AssessmentResult } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -96,7 +95,6 @@ const App: React.FC = () => {
   const [selectedRoute, setSelectedRoute] = useState<string>('');
 
   const handleStartCheck = () => {
-    // Always start with payment modal for tier selection
     setSelectedPlan('basic');
     setIsPaymentModalOpen(true);
   };
@@ -107,10 +105,11 @@ const App: React.FC = () => {
     setSelectedRoute(route);
     setIsPaymentModalOpen(false);
     
-    // Store route in answers
-    setAnswers({ visa_route: route === 'Spouse Visa' ? 'spouse' : 'skilled' });
+    setAnswers(prev => ({ 
+      ...prev, 
+      visa_route: route.includes('Spouse') ? 'spouse' : 'skilled' 
+    }));
     
-    // Start questionnaire immediately
     setViewState('questionnaire');
   };
 
@@ -126,7 +125,8 @@ const App: React.FC = () => {
       );
       setAssessmentResult(result);
       setViewState('report');
-    }, 2200);
+      window.scrollTo(0, 0);
+    }, 2500);
   };
 
   const scrollToSection = (id: string) => {
@@ -137,8 +137,7 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
-    // Get questions based on paid plan and route
-    const route = answers.visa_route || selectedRoute || 'spouse';
+    const route = answers.visa_route || (selectedRoute.includes('Spouse') ? 'spouse' : 'skilled') || 'spouse';
     const questionLimit = getQuestionLimit(paidPlan);
     
     const allQuestions = QUESTIONS.filter(q => 
@@ -149,7 +148,6 @@ const App: React.FC = () => {
       })
     );
     
-    // Limit questions based on plan
     const limitedQuestions = allQuestions.slice(0, questionLimit);
 
     switch (viewState) {
@@ -192,13 +190,13 @@ const App: React.FC = () => {
       case 'report':
         return assessmentResult ? (
           <div className="pt-24 pb-20 px-6 bg-slate-50 min-h-screen">
-            <div className="max-w-[210mm] mx-auto space-y-8 no-print">
-              <div className="flex justify-between items-center no-print mb-8">
-                <Button variant="outline" onClick={() => setViewState('landing')}>
-                  Back to Home
+            <div className="max-w-[210mm] mx-auto space-y-8 no-print mb-8">
+              <div className="flex justify-between items-center">
+                <Button variant="outline" onClick={() => setViewState('landing')} className="font-bold">
+                  ← Back to Home
                 </Button>
-                <Button onClick={triggerReportPdfDownload} variant="navy">
-                  Download PDF
+                <Button onClick={triggerReportPdfDownload} variant="navy" className="font-bold">
+                  Download Full Report (PDF)
                 </Button>
               </div>
             </div>
@@ -217,16 +215,11 @@ const App: React.FC = () => {
           </div>
         ) : null;
         
-      case 'privacy': 
-        return <PrivacyPolicy onBack={() => setViewState('landing')} />;
-      case 'terms': 
-        return <TermsOfUse onBack={() => setViewState('landing')} />;
-      case 'refunds': 
-        return <RefundPolicy onBack={() => setViewState('landing')} />;
-      case 'risk-notice': 
-        return <RiskNotice onBack={() => setViewState('landing')} />;
-      default: 
-        return null;
+      case 'privacy': return <PrivacyPolicy onBack={() => setViewState('landing')} />;
+      case 'terms': return <TermsOfUse onBack={() => setViewState('landing')} />;
+      case 'refunds': return <RefundPolicy onBack={() => setViewState('landing')} />;
+      case 'risk-notice': return <RiskNotice onBack={() => setViewState('landing')} />;
+      default: return null;
     }
   };
 
@@ -256,6 +249,7 @@ const App: React.FC = () => {
           onPaymentComplete={handlePaymentComplete}
           selectedTier={selectedPlan}
           paidPlan={paidPlan}
+          currentRoute={selectedRoute}
           onNavigateLegal={setViewState}
         />
       </div>

@@ -1,7 +1,7 @@
 export const PLAN_QUESTION_LIMITS = {
   basic: 20,
   full: 40,
-  pro_plus: 46  // or total questions available
+  pro_plus: 46
 };
 
 export const PLAN_PRICING = {
