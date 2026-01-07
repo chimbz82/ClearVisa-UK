@@ -126,9 +126,13 @@ const AppContent: React.FC = () => {
   const getVisibleQuestions = (currentAnswers: Record<string, any> = answers) => {
     const route = currentAnswers['visa_route'] === 'spouse' ? 'spouse' : 
                   currentAnswers['visa_route'] === 'skilled' ? 'skilled' : 'any';
-    const tier = paidPlan || 'basic';
+    const tier = paidPlan || selectedPlan || 'basic';
     
-    return QUESTIONS.filter(q => q.showIf({ tier, route, answers: currentAnswers }));
+    const filtered = QUESTIONS.filter(q => q.showIf({ tier, route, answers: currentAnswers }));
+    
+    // Tier-specific question limits
+    const limit = tier === 'basic' ? 20 : tier === 'full' ? 30 : 40;
+    return filtered.slice(0, limit);
   };
 
   const handleStartCheck = (planId?: PlanId) => {
@@ -158,7 +162,6 @@ const AppContent: React.FC = () => {
 
   const handlePaymentSuccess = (route: string, tier: string) => {
     const planId = tier as PlanId;
-    const isActuallyAnUpgrade = paidPlan !== null;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
     const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';

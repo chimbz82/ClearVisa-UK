@@ -30,7 +30,7 @@ const AnalysisLoader: React.FC = () => {
       </div>
       
       <div className="max-w-xs mx-auto">
-        <h2 className="text-xl font-black text-navy uppercase tracking-tight mb-3">Analyzing 50+ Compliance Points</h2>
+        <h2 className="text-xl font-black text-navy uppercase tracking-tight mb-3">Analyzing compliance profile</h2>
         <div className="h-1 w-full bg-slate-100 rounded-full mb-6 overflow-hidden">
           <div 
             className="h-full bg-accent transition-all duration-300" 
