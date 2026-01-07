@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { QuestionConfig } from '../types';
 import Button from './Button';
+import { PLANS, PlanId } from '../config/pricingConfig';
 
 interface QuestionnaireProps {
   onComplete: (answers: Record<string, any>) => void;
   onCancel: () => void;
   visibleQuestionsList: QuestionConfig[];
   initialAnswers?: Record<string, any>;
-  paidPlan?: string | null;
+  paidPlan?: PlanId | null;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({ 
@@ -66,7 +67,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-2 block">Final Step</span>
           <h2 className="text-3xl font-black text-navy uppercase tracking-tight mb-2">Review Your Audit Data</h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-tight">
-            Verify {totalQuestions} responses for your {paidPlan?.replace('_', ' ').toUpperCase()} report.
+            Verify {totalQuestions} responses for your {paidPlan ? PLANS[paidPlan].name.toUpperCase() : 'REPORT'}.
           </p>
         </div>
         
@@ -119,9 +120,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   return (
     <div className="max-w-2xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
       {paidPlan && (
-        <div className="mb-10 text-center">
-          <span className="inline-block px-5 py-2.5 bg-navy text-white rounded-full text-[10px] font-black uppercase tracking-[0.25em] shadow-lg">
-             {paidPlan.replace('_', ' ')} Plan • QUESTION {currentStep + 1} OF {totalQuestions}
+        <div className="mb-6 text-center">
+          <span className="inline-block px-4 py-2 bg-navy text-white rounded-full text-xs font-bold uppercase tracking-widest">
+            {PLANS[paidPlan].name} • {PLANS[paidPlan].questionCountLabel}
           </span>
         </div>
       )}
