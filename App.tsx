@@ -189,7 +189,7 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={fullQuestions}
               initialAnswers={answers}
-              startStep={freeQuestions.length}
+              startStep={0}
             />
           </div>
         );
