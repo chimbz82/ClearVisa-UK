@@ -24,9 +24,9 @@ const WhatYouGet: React.FC = () => {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-slate-50">
+    <section className="py-12 lg:py-16 bg-slate-50">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-20 items-center mb-16">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-20 items-center mb-12">
           <div className="mb-12 lg:mb-0">
             <h2 className="text-3xl lg:text-4xl font-extrabold text-navy mb-6 tracking-tight">
               What your ClearVisa UK report includes
@@ -48,7 +48,7 @@ const WhatYouGet: React.FC = () => {
               ))}
             </ul>
 
-            <div className="p-5 bg-emerald-50 rounded-2xl border border-success/10 w-full inline-block">
+            <div className="p-4 bg-emerald-50 rounded-2xl border border-success/10 w-full inline-block">
               <p className="text-[11px] text-emerald-800 font-black uppercase tracking-widest text-center">
                 Use this summary for planning or share it with a solicitor.
               </p>
@@ -56,7 +56,7 @@ const WhatYouGet: React.FC = () => {
           </div>
 
           <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded-[2rem] p-4 shadow-2xl">
+            <div className="w-full max-w-[380px] bg-white border border-slate-200 rounded-[2rem] p-4 shadow-2xl">
               <div className="bg-slate-50 rounded-[1.5rem] overflow-hidden border border-slate-100">
                 <div className="p-5 bg-navy text-white flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -66,7 +66,7 @@ const WhatYouGet: React.FC = () => {
                   <span className="text-[10px] font-bold opacity-60">ID: CV-942103</span>
                 </div>
                 
-                <div className="p-8 space-y-8">
+                <div className="p-7 space-y-7">
                   <div className="flex items-center gap-5">
                     <div className="w-14 h-14 bg-emerald-100 text-success rounded-2xl flex items-center justify-center text-3xl font-bold shadow-sm">✓</div>
                     <div>
@@ -75,7 +75,7 @@ const WhatYouGet: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-6 border-t border-slate-200">
+                  <div className="space-y-4 pt-5 border-t border-slate-200">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Risk score</span>
                     <div className="grid grid-cols-5 gap-2">
                       <div className="h-2 bg-success rounded-full"></div>
@@ -99,13 +99,13 @@ const WhatYouGet: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-12 border-t border-slate-200">
+        <div className="pt-10 border-t border-slate-200">
            <div className="text-center mb-10">
               <h2 className="text-2xl lg:text-3xl font-extrabold text-navy tracking-tight uppercase">Why people choose ClearVisa UK</h2>
            </div>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
               {whyChoose.map((item, i) => (
-                <div key={i} className="bg-white p-7 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div key={i} className="bg-white p-7 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
                    <h4 className="text-base font-bold text-navy mb-3 uppercase tracking-tight">{item.title}</h4>
                    <p className="text-xs text-slate-500 font-semibold leading-relaxed flex-grow">{item.desc}</p>
                 </div>

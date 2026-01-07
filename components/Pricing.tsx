@@ -20,15 +20,15 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
   ];
 
   return (
-    <section id="pricing" className="py-16 lg:py-20 bg-white border-y border-slate-50 scroll-mt-24">
+    <section id="pricing" className="py-12 lg:py-16 bg-white border-y border-slate-50 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Pricing</span>
           <h2 className="text-3xl lg:text-4xl font-extrabold text-navy mb-4 tracking-tight">Simple, one-time pricing</h2>
-          <p className="text-base text-slate-600 font-semibold">No subscriptions. No hidden fees. Pay once per pre-check.</p>
+          <p className="text-base text-slate-600 font-semibold leading-relaxed">No subscriptions. No hidden fees. Pay once per pre-check.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14 items-stretch">
           {PLANS.map((plan) => {
             const isProPlus = plan.id === 'pro_plus';
             const isFull = plan.id === 'full';
@@ -65,7 +65,7 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                 
                 {/* Features Section */}
                 <div className="flex-grow p-8 pt-4 border-t border-slate-50">
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-4 mb-4">
                     {plan.includedFeatures.map((feat, i) => (
                       <li key={i} className="flex items-start gap-3.5 text-[13px] text-slate-700 font-bold leading-tight tracking-tight">
                         <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isProPlus ? 'text-accent' : 'text-success'}`} fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
@@ -82,11 +82,11 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
                     fullWidth
                     variant={isProPlus ? 'secondary' : isFull ? 'primary' : 'outline'}
                     size="lg"
-                    className="py-4 shadow-lg"
+                    className="py-4 shadow-lg mb-6"
                   >
                     {isProPlus ? 'Choose Professional Plus' : `Choose ${plan.name}`}
                   </Button>
-                  <div className="mt-6 text-center space-y-3">
+                  <div className="text-center space-y-3">
                     {isProPlus && (
                       <p className="text-[10px] text-accent font-black uppercase tracking-widest">
                         MOST RECOMMENDED FOR COMPLEX CASES
@@ -101,9 +101,9 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
 
                     <div className="pt-3 border-t border-slate-50 text-[10px] text-slate-400 font-bold leading-tight">
                       By proceeding, you agree to our{' '}
-                      <button onClick={() => onNavigateLegal('terms')} className="underline hover:text-slate-600">Terms</button>,{' '}
-                      <button onClick={() => onNavigateLegal('privacy')} className="underline hover:text-slate-600">Privacy</button>, and{' '}
-                      <button onClick={() => onNavigateLegal('refunds')} className="underline hover:text-slate-600 transition-colors">Refund Policy</button>.
+                      <button onClick={() => onNavigateLegal('terms')} className="underline">Terms</button>,{' '}
+                      <button onClick={() => onNavigateLegal('privacy')} className="underline">Privacy</button>, and{' '}
+                      <button onClick={() => onNavigateLegal('refunds')} className="underline">Refund Policy</button>.
                     </div>
                   </div>
                 </div>
@@ -112,35 +112,35 @@ const Pricing: React.FC<PricingProps> = ({ onStartCheck, onNavigateLegal }) => {
           })}
         </div>
 
-        <div className="bg-slate-50 rounded-[2.5rem] p-10 lg:p-14 border border-slate-100 max-w-5xl mx-auto shadow-inner">
-           <div className="text-center mb-10">
+        <div className="bg-slate-50 rounded-[2rem] p-8 lg:p-12 border border-slate-100 max-w-5xl mx-auto shadow-inner">
+           <div className="text-center mb-8">
               <h3 className="text-2xl font-extrabold text-navy tracking-tight uppercase">Compare your options</h3>
-              <p className="text-sm text-slate-500 font-semibold mt-1">How we compare to DIY and traditional legal services.</p>
+              <p className="text-sm text-slate-500 font-semibold mt-1 leading-relaxed">How we compare to DIY and traditional legal services.</p>
            </div>
            <div className="overflow-x-auto">
               <table className="w-full text-left">
                  <thead>
                     <tr className="border-b-2 border-slate-200">
-                       <th className="py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Decision Factor</th>
-                       <th className="py-5 text-[10px] font-black text-accent uppercase tracking-widest text-center px-4">ClearVisa Report</th>
-                       <th className="py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center px-4">DIY Forums</th>
-                       <th className="py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center px-4">Solicitor</th>
+                       <th className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Decision Factor</th>
+                       <th className="py-4 text-[10px] font-black text-accent uppercase tracking-widest text-center px-4">ClearVisa Report</th>
+                       <th className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center px-4">DIY Forums</th>
+                       <th className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center px-4">Solicitor</th>
                     </tr>
                  </thead>
                  <tbody className="divide-y divide-slate-100">
                     {comparison.map((row, i) => (
                       <tr key={i} className="hover:bg-white transition-colors">
-                         <td className="py-5 text-xs font-black text-navy uppercase tracking-tight">{row.feature}</td>
-                         <td className="py-5 text-xs font-black text-accent text-center px-4">{row.cv}</td>
-                         <td className="py-5 text-xs font-bold text-slate-500 text-center px-4">{row.diy}</td>
-                         <td className="py-5 text-xs font-bold text-slate-500 text-center px-4">{row.solicitor}</td>
+                         <td className="py-4 text-xs font-black text-navy uppercase tracking-tight">{row.feature}</td>
+                         <td className="py-4 text-xs font-black text-accent text-center px-4">{row.cv}</td>
+                         <td className="py-4 text-xs font-bold text-slate-500 text-center px-4">{row.diy}</td>
+                         <td className="py-4 text-xs font-bold text-slate-500 text-center px-4">{row.solicitor}</td>
                       </tr>
                     ))}
                  </tbody>
               </table>
            </div>
-           <div className="mt-8 pt-8 border-t border-slate-200 text-center">
-              <p className="text-[10px] text-slate-400 italic font-bold uppercase tracking-widest">
+           <div className="mt-8 pt-6 border-t border-slate-200 text-center">
+              <p className="text-[10px] text-slate-400 italic font-bold uppercase tracking-widest leading-relaxed">
                  Note: ClearVisa UK is an automated pre-check tool. It is not a law firm and cannot provide legal advice or represent you. Final decisions are made by the Home Office.
               </p>
            </div>

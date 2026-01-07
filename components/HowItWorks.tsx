@@ -11,7 +11,7 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-16 lg:py-20 bg-slate-50 scroll-mt-24">
+    <section id="how-it-works" className="py-12 lg:py-16 bg-slate-50 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3 block">Process</span>
@@ -37,7 +37,7 @@ const HowItWorks: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-10 text-center">
           <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] italic">
             YOU STAY IN CONTROL: NO AUTOMATIC REFERRALS, NO UNEXPECTED CALLS.
           </p>
