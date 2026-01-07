@@ -23,7 +23,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
 
   useEffect(() => {
-    // Resume logic if needed
+    // If we're starting a deep audit after pre-check, skip the first 12
     if (startStep > 0 && currentStep < startStep) {
         setCurrentStep(startStep);
     }
@@ -83,22 +83,22 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto min-h-[500px] flex flex-col pt-4">
-      {/* LINEAR PROGRESS BAR */}
-      <div className="mb-12">
+      {/* LINEAR PROGRESS BAR - CLEAN & PROFESSIONAL */}
+      <div className="mb-14">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+          <span className="text-[11px] font-black text-navy uppercase tracking-[0.2em]">
             Step {currentStep + 1} of {visibleQuestionsList.length}
           </span>
           {currentStep > 0 && (
             <button 
               onClick={back} 
-              className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-navy transition-colors"
+              className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-navy transition-colors border-b-2 border-transparent hover:border-navy"
             >
               ← Previous question
             </button>
           )}
         </div>
-        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
           <div 
             className="h-full bg-navy transition-all duration-700 ease-in-out" 
             style={{ width: `${((currentStep + 1) / visibleQuestionsList.length) * 100}%` }}
@@ -152,12 +152,12 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 type={activeQuestion.type === 'date' ? 'date' : 'text'}
                 value={answers[activeQuestion.id] || ""}
                 onChange={(e) => handleAnswer(e.target.value)}
-                placeholder={activeQuestion.placeholder || "Type your answer..."}
-                className="w-full p-8 bg-white border-2 border-slate-200 rounded-[1.5rem] focus:border-navy outline-none text-2xl font-black transition-all"
+                placeholder={activeQuestion.placeholder || "Enter your answer here..."}
+                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[1.5rem] focus:border-navy outline-none text-2xl font-black transition-all shadow-sm"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && next()}
               />
-              <Button onClick={next} fullWidth size="lg" variant="navy" disabled={!answers[activeQuestion.id]}>
+              <Button onClick={next} fullWidth size="lg" variant="navy" className="py-6 uppercase font-black tracking-widest shadow-lg" disabled={!answers[activeQuestion.id]}>
                 Continue
               </Button>
             </div>
@@ -165,9 +165,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
       </div>
 
-      <footer className="flex items-center justify-center pt-12 border-t border-slate-100 mt-20">
-        <button onClick={onCancel} className="text-[10px] font-black text-rose-400 hover:text-rose-600 transition-all uppercase tracking-[0.25em]">
-          Exit & Abandon Check
+      <footer className="flex items-center justify-center pt-16 border-t border-slate-50 mt-20">
+        <button onClick={onCancel} className="text-[10px] font-black text-rose-400 hover:text-rose-600 transition-all uppercase tracking-[0.3em] underline underline-offset-8 decoration-2 decoration-rose-100">
+          Exit & Abandon Assessment
         </button>
       </footer>
     </div>

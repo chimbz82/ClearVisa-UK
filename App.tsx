@@ -36,7 +36,7 @@ export interface PlanConfig {
   includedFeatures: string[];
 }
 
-// Canonical Paid Tiers only
+// Canonical Paid Tiers as per business model
 export const PLANS: PlanConfig[] = [
   {
     id: 'basic',
@@ -103,6 +103,7 @@ const App: React.FC = () => {
     setViewState('analyzing-free');
     
     setTimeout(() => {
+      // Logic for pre-check verdict
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, 'free');
       setAssessmentResult(result);
       setViewState('free-result-preview');
@@ -113,7 +114,7 @@ const App: React.FC = () => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    // After payment, user continues remaining 40+ questions
+    // After payment, user continues to the Deep Audit
     setViewState('full-check');
   };
 
@@ -122,6 +123,7 @@ const App: React.FC = () => {
     setViewState('analyzing-full');
     
     setTimeout(() => {
+      // Re-run assessment with full data and selected tier
       const result = runAssessment(finalAnswers.visa_route || 'spouse', finalAnswers, paidPlan || 'basic');
       setAssessmentResult(result);
       setViewState('report');
@@ -136,7 +138,10 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
+    // Initial subset for free pre-check
     const freeQuestions = QUESTIONS.filter(q => q.section === 'Initial');
+    
+    // Full data set including deep audit questions
     const fullQuestions = QUESTIONS.filter(q => q.showIf({ 
       tier: paidPlan || 'free', 
       route: answers.visa_route || 'spouse', 
@@ -191,7 +196,7 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={fullQuestions}
               initialAnswers={answers}
-              startStep={freeQuestions.length} // Resume from after the pre-check
+              startStep={freeQuestions.length} // Resume after the initial pre-check questions
             />
           </div>
         );

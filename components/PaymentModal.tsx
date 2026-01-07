@@ -22,16 +22,16 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
   const targetPlan = PLANS.find(p => p.id === selectedTier) || PLANS[0];
   const currentPlan = PLANS.find(p => p.id === paidPlan);
 
-  // BUSINESS MODEL DELTAS
+  // Business model pricing deltas
   const getUpgradePrice = (from: PlanId | null, to: PlanId): number => {
     if (!from) return PLANS.find(p => p.id === to)?.priceGBP || 0;
     
-    // Logic deltas
+    // Hard-coded deltas from the business requirements
     if (from === 'basic' && to === 'full') return 50;
     if (from === 'basic' && to === 'pro_plus') return 70;
     if (from === 'full' && to === 'pro_plus') return 20;
     
-    return 0; // Already owned or invalid
+    return 0; // Invalid or same tier
   };
 
   const paymentAmount = getUpgradePrice(paidPlan, selectedTier);
@@ -84,110 +84,117 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentC
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#07162A]/60 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
-      <div className="relative bg-white w-full max-w-md rounded-[1.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
+      <div className="absolute inset-0 bg-[#041229]/70 backdrop-blur-sm" onClick={status === 'idle' ? resetAndClose : undefined} />
+      <div className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 text-left">
         
         {status === 'idle' && (
-          <div className="px-8 pt-8 pb-2 flex justify-between items-center">
-            <h3 className="text-base font-bold text-[#07162A] uppercase tracking-tight">
+          <div className="px-10 pt-10 pb-2 flex justify-between items-center">
+            <h3 className="text-base font-black text-navy uppercase tracking-tight">
               {step === 'select-route' ? 'Target Visa Route' : (isUpgrade ? 'Upgrade Audit Tier' : 'Secure Checkout')}
             </h3>
-            <button onClick={resetAndClose} className="text-slate-400 hover:text-[#07162A] p-2 rounded-full hover:bg-slate-50 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            <button onClick={resetAndClose} className="text-slate-400 hover:text-navy p-2 rounded-full hover:bg-slate-50 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
         )}
 
-        <div className={`px-8 ${status === 'idle' ? 'pb-8' : 'py-16'}`}>
+        <div className={`px-10 ${status === 'idle' ? 'pb-10' : 'py-20'}`}>
           {status === 'idle' && step === 'select-route' && (
-            <div className="space-y-3">
-              <button onClick={() => handleRouteSelect('Spouse')} className="w-full flex items-center justify-between p-6 rounded-xl border border-slate-200 hover:border-[#07162A] hover:bg-slate-50 transition-all text-left group">
+            <div className="space-y-4 pt-4">
+              <button onClick={() => handleRouteSelect('Spouse')} className="w-full flex items-center justify-between p-7 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
                 <div>
-                  <h4 className="text-sm font-bold text-[#07162A] mb-1">Spouse / Partner</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Appendix FM Compliance</p>
+                  <h4 className="text-base font-black text-navy mb-1 uppercase tracking-tight">Spouse / Partner</h4>
+                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Appendix FM Compliance Audit</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-[#07162A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-5 h-5 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
               </button>
-              <button onClick={() => handleRouteSelect('Skilled Worker')} className="w-full flex items-center justify-between p-6 rounded-xl border border-slate-200 hover:border-[#07162A] hover:bg-slate-50 transition-all text-left group">
+              <button onClick={() => handleRouteSelect('Skilled Worker')} className="w-full flex items-center justify-between p-7 rounded-2xl border-2 border-slate-100 hover:border-accent hover:bg-slate-50 transition-all text-left group">
                 <div>
-                  <h4 className="text-sm font-bold text-[#07162A] mb-1">Skilled Worker</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Salary & Sponsorship Review</p>
+                  <h4 className="text-base font-black text-navy mb-1 uppercase tracking-tight">Skilled Worker</h4>
+                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Salary & Sponsorship Review</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-300 group-hover:text-[#07162A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+                <svg className="w-5 h-5 text-slate-300 group-hover:text-accent transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" /></svg>
               </button>
             </div>
           )}
 
           {status === 'idle' && step === 'payment' && (
-            <form onSubmit={handleMockPayment} className="space-y-6">
-              <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-                <p className="text-[10px] text-slate-400 mb-2 uppercase font-bold tracking-widest leading-none">
-                  {isUpgrade ? `UPGRADING TO ${targetPlan.name}` : targetPlan.name}
+            <form onSubmit={handleMockPayment} className="space-y-8 pt-4">
+              <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200/60 shadow-inner">
+                <p className="text-[10px] text-slate-400 mb-3 uppercase font-black tracking-widest leading-none">
+                  {isUpgrade ? `UPGRADING TO ${targetPlan.name}` : `PLAN: ${targetPlan.name}`}
                 </p>
-                <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-bold text-[#07162A]">{selectedRoute} Route</h4>
-                  <p className="text-lg font-bold text-[#07162A]">£{paymentAmount}</p>
+                <div className="flex justify-between items-baseline mb-4">
+                  <h4 className="text-lg font-black text-navy uppercase tracking-tight">{selectedRoute} Route</h4>
+                  <p className="text-3xl font-black text-navy tracking-tighter">£{paymentAmount}</p>
                 </div>
                 {isUpgrade && (
-                  <p className="text-[9px] text-slate-400 mt-2 italic font-bold">
-                    Upgrade from {currentPlan?.name} – total charged now: £{paymentAmount}
-                  </p>
+                  <div className="pt-4 border-t border-slate-200">
+                    <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                      Upgrade from <span className="text-navy">{currentPlan?.name}</span> to <span className="text-navy">{targetPlan.name}</span>. Total charged now: £{paymentAmount}.
+                    </p>
+                  </div>
                 )}
               </div>
-              <div className="space-y-3">
-                <input required type="text" placeholder="Card number" className="w-full p-4 bg-white border border-slate-200 rounded-lg text-sm outline-none font-semibold focus:border-[#07162A] transition-colors" />
-                <div className="flex gap-3">
-                  <input required type="text" placeholder="MM / YY" className="w-1/2 p-4 bg-white border border-slate-200 rounded-lg text-sm outline-none font-semibold focus:border-[#07162A] transition-colors" />
-                  <input required type="text" placeholder="CVC" className="w-1/2 p-4 bg-white border border-slate-200 rounded-lg text-sm outline-none font-semibold focus:border-[#07162A] transition-colors" />
+              
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-navy uppercase tracking-widest ml-1">Card Details</label>
+                  <input required type="text" placeholder="Card number" className="w-full p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
+                </div>
+                <div className="flex gap-4">
+                  <input required type="text" placeholder="MM / YY" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
+                  <input required type="text" placeholder="CVC" className="w-1/2 p-5 bg-white border-2 border-slate-100 rounded-xl text-sm outline-none font-bold focus:border-navy transition-colors" />
                 </div>
               </div>
-              <div className="space-y-3">
-                <Button type="submit" fullWidth size="lg" variant="navy">Complete Secure Payment</Button>
-                <div className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-                  By proceeding, you agree to our{' '}
-                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline">Terms</button> and{' '}
-                  <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline">Refund Policy</button>.
+
+              <div className="space-y-4 pt-2">
+                <Button type="submit" fullWidth size="lg" variant="navy" className="py-5 shadow-2xl uppercase font-black tracking-widest">
+                  Secure Payment • £{paymentAmount}
+                </Button>
+                <div className="text-[10px] text-center text-slate-400 font-bold leading-tight uppercase tracking-tight">
+                  Secure checkout via Stripe • By proceeding, you agree to our{' '}
+                  <button type="button" onClick={() => onNavigateLegal('terms')} className="underline hover:text-navy">Terms</button> and{' '}
+                  <button type="button" onClick={() => onNavigateLegal('refunds')} className="underline hover:text-navy">Refund Policy</button>.
                 </div>
               </div>
             </form>
           )}
 
           {(status === 'processing' || status === 'success') && (
-            <div className="text-center animate-in fade-in duration-500">
-              <div className="relative w-16 h-16 mx-auto mb-8">
-                <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div className={`absolute inset-0 border-4 border-[#16A34A] rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
-                <div className={`absolute inset-0 flex items-center justify-center text-[#16A34A] text-2xl`}>
-                  {status === 'processing' ? '' : '✓'}
+            <div className="text-center animate-in fade-in duration-700">
+              <div className="relative w-24 h-24 mx-auto mb-10">
+                <div className="absolute inset-0 border-8 border-slate-50 rounded-full"></div>
+                <div className={`absolute inset-0 border-8 border-success rounded-full border-t-transparent ${status === 'processing' ? 'animate-spin' : ''}`}></div>
+                <div className={`absolute inset-0 flex items-center justify-center text-success text-4xl`}>
+                  {status === 'processing' ? '' : <svg className="w-12 h-12" fill="none" stroke="currentColor" strokeWidth={5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                 </div>
               </div>
-              <h4 className={`text-lg font-bold text-[#07162A] uppercase mb-2 tracking-tight`}>
-                {status === 'processing' ? 'Processing Transaction' : 'Payment Success'}
+              <h4 className={`text-xl font-black text-navy uppercase mb-3 tracking-tight`}>
+                {status === 'processing' ? 'Processing Securely' : 'Payment Verified'}
               </h4>
-              <p className="text-sm text-slate-500 font-bold">
+              <p className="text-[13px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
                 {status === 'processing' 
-                  ? 'Encrypting sensitive details...' 
-                  : `Unlocking ${targetPlan.name} features...`}
+                  ? 'Verifying bank details with Stripe...' 
+                  : `Success! Unlocking ${targetPlan.name} audit...`}
               </p>
             </div>
           )}
 
           {status === 'error' && (
             <div className="text-center animate-in fade-in duration-500">
-              <div className="w-24 h-24 mx-auto mb-10 bg-rose-100 rounded-full flex items-center justify-center">
-                <span className="text-rose-600 text-4xl">✕</span>
+              <div className="w-24 h-24 mx-auto mb-10 bg-rose-50 rounded-full flex items-center justify-center">
+                <span className="text-rose-500 text-5xl font-black">✕</span>
               </div>
-              <h4 className="text-h3 text-navy uppercase mb-3 tracking-tight">
-                Payment Failed
-              </h4>
-              <p className="text-body text-slate-600 font-bold mb-8">
-                There was an issue processing your payment. Please check your card details and try again.
+              <h4 className="text-xl font-black text-navy uppercase mb-3 tracking-tight">Transaction Declined</h4>
+              <p className="text-sm text-slate-600 font-bold mb-10 leading-relaxed uppercase tracking-tight px-4">
+                We couldn't process your payment. Please verify your card numbers and funds, then try again.
               </p>
               <button 
                 onClick={() => setStatus('idle')}
-                className="text-small font-bold text-accent uppercase tracking-widest hover:underline"
+                className="text-[11px] font-black text-accent uppercase tracking-widest hover:underline decoration-2 underline-offset-8"
               >
-                Try Again
+                Return to checkout
               </button>
             </div>
           )}
