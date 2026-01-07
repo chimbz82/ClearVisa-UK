@@ -156,14 +156,20 @@ const AppContent: React.FC = () => {
 
   const handlePaymentSuccess = (route: string, tier: string) => {
     const planId = tier as PlanId;
+    const isActuallyAnUpgrade = paidPlan !== null;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
     const routeKey = answers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     setAssessmentResult(runAssessment(routeKey, answers));
     
-    setViewState('report');
-    setIsLoadingReport(true);
-    setTimeout(() => setIsLoadingReport(false), 2000);
+    if (isActuallyAnUpgrade) {
+        // If they upgraded, they might have new questions to answer
+        setViewState('questionnaire');
+    } else {
+        setViewState('report');
+        setIsLoadingReport(true);
+        setTimeout(() => setIsLoadingReport(false), 2000);
+    }
     window.scrollTo(0, 0);
   };
 
@@ -171,7 +177,14 @@ const AppContent: React.FC = () => {
     setAnswers(collectedAnswers);
     const routeKey = collectedAnswers['visa_route'] === 'spouse' ? 'Spouse Visa' : 'Skilled Worker Visa';
     setAssessmentResult(runAssessment(routeKey, collectedAnswers));
-    setViewState('quickVerdict');
+    
+    if (paidPlan) {
+        setViewState('report');
+        setIsLoadingReport(true);
+        setTimeout(() => setIsLoadingReport(false), 1500);
+    } else {
+        setViewState('quickVerdict');
+    }
     window.scrollTo(0, 0);
   };
 
@@ -198,6 +211,7 @@ const AppContent: React.FC = () => {
                 initialAnswers={answers}
                 selectedPlan={selectedPlan || 'full'}
                 visibleQuestionsList={getVisibleQuestions()}
+                isUpgrading={isUpgrading}
               />
             </div>
           </div>
@@ -213,18 +227,18 @@ const AppContent: React.FC = () => {
                 }`}>
                   {assessmentResult?.verdict === 'likely' ? '✓' : assessmentResult?.verdict === 'borderline' ? '!' : '×'}
                 </div>
-                <h2 className="text-h2 mb-2 text-navy">Eligibility Preview</h2>
-                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">Status: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
+                <h2 className="text-h2 mb-2 text-navy uppercase">Eligibility Preview</h2>
+                <p className="text-body text-slate-500 font-bold uppercase tracking-tight">PRE-CHECK VERDICT: <span className={assessmentResult?.verdict === 'likely' ? 'text-emerald-600' : assessmentResult?.verdict === 'borderline' ? 'text-amber-600' : 'text-rose-600'}>{assessmentResult?.verdict?.toUpperCase()}</span></p>
               </div>
-              <p className="text-small text-slate-600 leading-relaxed font-medium mb-8">
-                Based on your professional audit pre-check, you have reached the paywall. Unlock your full report to see critical risk factors and document checklists.
+              <p className="text-small text-slate-600 leading-relaxed font-bold mb-8 text-center uppercase tracking-tight">
+                Unlock your full professional audit to see the critical risk factors identified and get your personalized document checklist.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button onClick={() => { setSelectedPlan('basic'); setViewState('paywall'); }} variant="outline" fullWidth>Basic Pre-Check (£29)</Button>
                  <Button onClick={() => { setSelectedPlan('full'); setViewState('paywall'); }} fullWidth>Professional Audit (£79)</Button>
-                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2">Professional Plus (£99)</Button>
+                 <Button onClick={() => { setSelectedPlan('pro_plus'); setViewState('paywall'); }} variant="primary" fullWidth className="sm:col-span-2 uppercase font-black tracking-widest">Professional Plus (£99)</Button>
               </div>
-              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">Cancel</button>
+              <button onClick={() => setViewState('landing')} className="mt-8 w-full text-center text-[11px] text-slate-400 font-bold hover:text-navy uppercase tracking-widest">Cancel Assessment</button>
             </div>
           </div>
         );
@@ -235,19 +249,19 @@ const AppContent: React.FC = () => {
             <div className="max-w-[600px] w-full app-card border border-slate-200 p-10">
               <div className="text-center mb-8">
                 <span className="text-[11px] text-accent mb-2 block font-black uppercase tracking-widest">{plan.name}</span>
-                <h2 className="text-h2 mb-2 text-navy">Unlock your assessment</h2>
-                <p className="text-body text-slate-600 font-medium">Instant access to your professional immigration audit.</p>
+                <h2 className="text-h2 mb-2 text-navy uppercase tracking-tighter">Unlock Your Audit</h2>
+                <p className="text-body text-slate-600 font-bold uppercase tracking-tight">Instant access to your professional immigration audit report.</p>
               </div>
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                 <ul className="space-y-3">
                   {plan.includedFeatures.map((f, i) => (
                     <li key={i} className="flex gap-3 items-start text-small font-bold text-slate-700 uppercase tracking-tight">
-                      <span className="text-accent">✓</span> {f}
+                      <span className="text-accent font-black">✓</span> {f}
                     </li>
                   ))}
                 </ul>
               </div>
-              <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth>Pay £{plan.priceGBP} & Continue</Button>
+              <Button onClick={() => setIsPaymentModalOpen(true)} variant="primary" size="lg" fullWidth className="uppercase font-black tracking-widest">Pay £{plan.priceGBP} & View Report</Button>
               <button onClick={() => setViewState('quickVerdict')} className="mt-6 w-full text-center text-[11px] text-slate-400 hover:text-navy font-bold uppercase tracking-widest">Go back</button>
             </div>
           </div>
@@ -255,14 +269,14 @@ const AppContent: React.FC = () => {
       case 'report':
         return (
           <div className="bg-slate-100 min-h-screen py-12 px-4 relative">
-            <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-6 app-card shadow-xl">
+            <div className="max-w-[210mm] mx-auto no-print flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 p-8 app-card shadow-2xl">
               <div className="text-left">
-                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Your Audit is Ready</h3>
-                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">Report Level: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
+                <h3 className="text-h3 mb-1 text-navy uppercase tracking-tighter">Audit Generated Successfully</h3>
+                <p className="text-small text-slate-500 font-bold uppercase tracking-widest">TIER: {PLANS.find(p => p.id === paidPlan)?.name.toUpperCase() || 'AUDIT'}</p>
               </div>
               <div className="flex items-center gap-4">
-                <Button onClick={handleExitReport} variant="outline" size="sm">Exit</Button>
-                <Button onClick={triggerReportPdfDownload} variant="navy" size="sm">Download PDF</Button>
+                <Button onClick={handleExitReport} variant="outline" size="sm" className="uppercase font-black">Exit</Button>
+                <Button onClick={triggerReportPdfDownload} variant="navy" size="sm" className="uppercase font-black tracking-widest">Download PDF</Button>
               </div>
             </div>
             <div id="report-print-root">

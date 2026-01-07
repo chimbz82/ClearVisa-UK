@@ -44,8 +44,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   const current = verdictStyles[currentVerdict];
 
   const getCategoryChecklist = () => {
-    const analysis = analyzeEvidenceGaps(answers, visaRoute);
-    return analysis;
+    return analyzeEvidenceGaps(answers, visaRoute);
   };
 
   const renderUpgradeSection = () => {
@@ -65,8 +64,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
     return (
       <section className="mt-12 bg-accent/5 p-8 rounded-[2rem] border-2 border-accent/20 no-print">
-        <h3 className="text-xl font-bold text-navy mb-4 uppercase tracking-tight">Unlock More Depth</h3>
-        <p className="text-sm text-slate-600 mb-6 font-medium">Your current report is at the {tier.toUpperCase()} level. Upgrade to unlock {tier === 'basic' ? 'the Compliance Matrix and Document Checklist' : 'the Strategic Action Plan and Case Remediation guide'}.</p>
+        <h3 className="text-xl font-bold text-navy mb-4 uppercase tracking-tight">Expand Audit Depth</h3>
+        <p className="text-sm text-slate-600 mb-6 font-medium">This report is at the {tier.toUpperCase()} level. Upgrading unlocks deeper analysis, custom remediation steps, and solicitor-style wording.</p>
         <div className="flex flex-wrap gap-4">
           {options.map((opt) => (
             <button 
@@ -83,32 +82,38 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   };
 
   return (
-    <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative overflow-hidden font-sans text-left shadow-lg border border-slate-200 rounded-lg">
+    <div className="bg-white mx-auto p-[10mm] md:p-[15mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative font-sans text-left shadow-lg border border-slate-200 rounded-lg">
       
       {/* HEADER */}
-      <header className="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+      <header className="flex justify-between items-start mb-10 border-b border-slate-100 pb-6">
         <div>
-          <h1 className="text-2xl text-navy font-bold tracking-tight mb-1 uppercase">UK Visa Eligibility Audit</h1>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">ID: {reportId} • Date: {date} • Level: {tier.toUpperCase()}</p>
+          <h1 className="text-2xl text-navy font-extrabold tracking-tight mb-1 uppercase">UK Immigration Audit Report</h1>
+          <div className="flex flex-wrap gap-4 mt-2">
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">REPORT ID: {reportId}</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">DATE: {date}</p>
+            <p className="text-[10px] text-accent font-black uppercase tracking-widest">AUDIT LEVEL: {tier.toUpperCase()}</p>
+          </div>
         </div>
-        <div className={`p-3 rounded-xl text-right border ${current.bg}`}>
-           <span className="text-[8px] text-slate-500 font-bold uppercase block">Verdict</span>
-           <span className="text-lg font-black uppercase" style={{ color: current.color }}>{current.title}</span>
+        <div className={`p-4 rounded-2xl text-right border ${current.bg}`}>
+           <span className="text-[9px] text-slate-500 font-bold uppercase block mb-1">Eligibility Verdict</span>
+           <span className="text-xl font-black uppercase tracking-tight" style={{ color: current.color }}>{current.title}</span>
         </div>
       </header>
 
-      {/* BASIC: SUMMARY & FLAGS */}
-      <section className={`${current.bg} p-6 rounded-2xl border border-slate-200 mb-8`}>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.2em] mb-3 text-slate-400">Assessment Summary</h2>
-        <p className="text-sm font-bold leading-relaxed text-slate-700 mb-4">{assessmentData.summary}</p>
+      {/* EXECUTIVE SUMMARY */}
+      <section className={`${current.bg} p-6 rounded-2xl border border-slate-200 mb-10`}>
+        <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-4 text-slate-400">Executive Assessment</h2>
+        <div className="prose prose-sm max-w-none">
+          <p className="text-sm font-bold leading-relaxed text-slate-700">{assessmentData.summary}</p>
+        </div>
         
         {assessmentData.riskFlags.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-[9px] font-black uppercase tracking-widest text-rose-500">Identified Risk Flags</h3>
+          <div className="mt-6 space-y-3">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500">Critical Risk Indicators</h3>
             {assessmentData.riskFlags.map((flag, i) => (
-              <div key={i} className="flex gap-2 items-start p-3 bg-white/50 border border-slate-200 rounded-xl">
-                <span className="text-rose-500 font-bold text-sm">!</span>
-                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">{flag}</p>
+              <div key={i} className="flex gap-3 items-start p-4 bg-white/60 border border-rose-100 rounded-xl">
+                <span className="text-rose-600 font-black text-sm">!</span>
+                <p className="text-[11px] font-bold text-slate-600 uppercase tracking-tight leading-tight">{flag}</p>
               </div>
             ))}
           </div>
@@ -117,37 +122,37 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       {/* PROFESSIONAL AUDIT: COMPLIANCE MATRIX */}
       {isAudit && (
-        <section className="mb-10">
-          <h3 className="text-[9px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-accent pl-2 mb-4">Compliance Matrix</h3>
-          <div className="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
-            <table className="w-full text-left text-[10px] border-collapse">
+        <section className="mb-12">
+          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-accent pl-3 mb-5">Compliance Audit Matrix</h3>
+          <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm">
+            <table className="w-full text-left text-[11px] border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200">
-                <tr className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                  <th className="px-4 py-2.5">Category</th>
-                  <th className="px-4 py-2.5 text-center">Status</th>
-                  <th className="px-4 py-2.5">Risk Level</th>
-                  <th className="px-4 py-2.5">Detailed Analysis</th>
+                <tr className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-5 py-3">Legal Category</th>
+                  <th className="px-5 py-3 text-center">Status</th>
+                  <th className="px-5 py-3 text-center">Risk Factor</th>
+                  <th className="px-5 py-3">Audit Analysis</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {assessmentData.sectionScores.map((section, i) => (
-                  <tr key={i}>
-                    <td className="px-4 py-2.5 text-navy font-bold">{section.name}</td>
-                    <td className="px-4 py-2.5 text-center">
-                      <span className={`px-2 py-0.5 rounded-full text-[8px] font-black inline-block min-w-[50px] ${
+                  <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-5 py-3 text-navy font-bold">{section.name}</td>
+                    <td className="px-5 py-3 text-center">
+                      <span className={`px-2.5 py-1 rounded-full text-[9px] font-black inline-block min-w-[55px] ${
                         section.status === 'PASS' ? 'bg-emerald-100 text-emerald-700' : 
                         section.status === 'WARN' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'
                       }`}>
                         {section.status}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 text-center">
-                      <span className={`font-black uppercase text-[8px] ${
+                    <td className="px-5 py-3 text-center">
+                      <span className={`font-black uppercase text-[9px] ${
                         section.risk === 'LOW' ? 'text-emerald-500' : 
                         section.risk === 'MEDIUM' ? 'text-amber-500' : 'text-rose-500'
                       }`}>{section.risk}</span>
                     </td>
-                    <td className="px-4 py-2.5 text-slate-500 font-medium">{section.detail}</td>
+                    <td className="px-5 py-3 text-slate-500 font-medium leading-tight">{section.detail}</td>
                   </tr>
                 ))}
               </tbody>
@@ -156,27 +161,30 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* PROFESSIONAL AUDIT: GAP ANALYSIS CHECKLIST */}
+      {/* PROFESSIONAL AUDIT: DETAILED DOCUMENT CHECKLIST */}
       {isAudit && (
-        <section className="mb-10">
-          <h3 className="text-[9px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-accent pl-2 mb-4">Personalised Document Audit</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl">
-              <h4 className="text-[8px] font-black text-rose-500 uppercase tracking-widest mb-3">Identified Missing Evidence (Gaps)</h4>
-              <ul className="space-y-2">
+        <section className="mb-12 page-break-before">
+          <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] border-l-4 border-accent pl-3 mb-5">Personalised Evidence Audit</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl">
+              <h4 className="text-[9px] font-black text-rose-500 uppercase tracking-widest mb-4">Evidence Gap Identification</h4>
+              <ul className="space-y-3">
                 {getCategoryChecklist().gaps.map((gap, i) => (
-                  <li key={i} className="text-[10px] font-bold text-slate-700 flex gap-2">
-                    <span className="text-rose-400">•</span> {gap}
+                  <li key={i} className="text-[11px] font-bold text-slate-700 flex gap-3">
+                    <span className="text-rose-400 font-black">•</span> {gap}
                   </li>
                 ))}
+                {getCategoryChecklist().gaps.length === 0 && (
+                  <li className="text-[11px] font-bold text-slate-400 italic">No specific gaps identified based on your responses.</li>
+                )}
               </ul>
             </div>
-            <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl">
-              <h4 className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-3">Tailored Recommendations</h4>
-              <ul className="space-y-2">
+            <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-2xl">
+              <h4 className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-4">Strength-Building Recommendations</h4>
+              <ul className="space-y-3">
                 {getCategoryChecklist().improvements.map((imp, i) => (
-                  <li key={i} className="text-[10px] font-bold text-slate-700 flex gap-2">
-                    <span className="text-emerald-400">✓</span> {imp}
+                  <li key={i} className="text-[11px] font-bold text-slate-700 flex gap-3">
+                    <span className="text-emerald-500 font-black">✓</span> {imp}
                   </li>
                 ))}
               </ul>
@@ -185,30 +193,37 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* PROFESSIONAL PLUS: STRATEGIC ACTION PLAN */}
+      {/* PROFESSIONAL PLUS: STRATEGIC CASE ACTION PLAN */}
       {isPlus && (
-        <section className="mb-10 bg-navy rounded-2xl p-6 text-white overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <h3 className="text-[9px] font-black text-accent uppercase tracking-[0.2em] mb-4">Strategic Case Remediation Guide</h3>
-          <div className="space-y-5">
+        <section className="mb-12 bg-navy rounded-[2rem] p-8 text-white overflow-hidden relative shadow-2xl">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+          <h3 className="text-[11px] font-black text-accent uppercase tracking-[0.25em] mb-6">Strategic Solicitor-Style Action Plan</h3>
+          <div className="space-y-8">
             <div>
-              <h4 className="text-[8px] text-white/50 font-black uppercase tracking-widest mb-2">Priority Remediation Steps</h4>
-              <div className="space-y-2">
+              <h4 className="text-[9px] text-white/40 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-4 h-px bg-white/20"></span> Priority Case Remediation
+              </h4>
+              <div className="grid grid-cols-1 gap-3">
                 {assessmentData.remediationSteps?.map((step, i) => (
-                  <div key={i} className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                    <p className="text-[9px] font-black text-accent uppercase tracking-tight mb-1">{step.issue}</p>
-                    <p className="text-[11px] font-medium text-white/80 leading-relaxed">{step.resolution}</p>
+                  <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-2xl flex gap-4">
+                    <span className="text-accent font-black text-base">{i + 1}</span>
+                    <div>
+                      <p className="text-[10px] font-black text-accent uppercase tracking-tight mb-1">{step.issue}</p>
+                      <p className="text-xs font-semibold text-white/90 leading-relaxed">{step.resolution}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-[8px] text-white/50 font-black uppercase tracking-widest mb-2">Sample Cover Letter Wording</h4>
-              <div className="space-y-2">
+              <h4 className="text-[9px] text-white/40 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-4 h-px bg-white/20"></span> Professional Cover Letter Templates
+              </h4>
+              <div className="grid grid-cols-1 gap-3">
                 {assessmentData.sampleWording?.map((word, i) => (
-                  <div key={i} className="p-3 bg-white/5 border border-white/10 rounded-xl italic">
-                    <span className="text-[8px] not-italic text-accent font-black block mb-1 uppercase">{word.section}</span>
-                    <p className="text-[10px] font-medium text-white/70">"{word.text}"</p>
+                  <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-2xl relative">
+                    <span className="text-[9px] text-accent font-black uppercase tracking-tight block mb-2">{word.section} Template</span>
+                    <p className="text-[11px] font-medium text-white/70 italic leading-relaxed">"{word.text}"</p>
                   </div>
                 ))}
               </div>
@@ -217,21 +232,28 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* AUDIT HISTORY - ALWAYS INCLUDED */}
-      <section className="pt-8 border-t border-slate-100">
-        <h3 className="text-[9px] font-black text-navy uppercase tracking-[0.2em] mb-4">Full Response Log</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+      {/* AUDIT LOG: FULL QUESTION/ANSWER HISTORY */}
+      <section className="pt-10 border-t border-slate-100 page-break-before">
+        <h3 className="text-[10px] font-black text-navy uppercase tracking-[0.2em] mb-6">Complete Audit Submission History</h3>
+        <p className="text-[10px] text-slate-400 mb-6 font-bold uppercase tracking-tight">The following data was provided by the user and forms the basis of this audit:</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-5">
           {visibleQuestionsList.map((q) => {
             const answer = answers[q.id];
             if (answer === undefined) return null;
-            let displayAnswer = Array.isArray(answer) 
-              ? answer.join(', ') 
-              : answer === true ? 'Yes' : answer === false ? 'No' : String(answer);
+            
+            let displayAnswer = "";
+            if (Array.isArray(answer)) {
+              displayAnswer = answer.map(v => q.options?.find(o => o.value === v)?.label || v).join(', ');
+            } else if (typeof answer === 'boolean') {
+              displayAnswer = answer ? 'Yes' : 'No';
+            } else {
+              displayAnswer = q.options?.find(o => o.value === answer)?.label || answer.toString();
+            }
 
             return (
-              <div key={q.id} className="border-b border-slate-50 pb-2">
-                <p className="text-[7px] text-slate-400 font-bold uppercase mb-0.5">{q.label}</p>
-                <p className="text-[9px] text-navy font-bold">{displayAnswer}</p>
+              <div key={q.id} className="border-b border-slate-50 pb-3 flex flex-col justify-end">
+                <p className="text-[8px] text-slate-400 font-bold uppercase mb-1 leading-tight">{q.label}</p>
+                <p className="text-[11px] text-navy font-extrabold tracking-tight">{displayAnswer}</p>
               </div>
             );
           })}
@@ -240,10 +262,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
 
       {renderUpgradeSection()}
 
-      <footer className="mt-12 pt-6 border-t border-slate-100 text-center">
-        <p className="text-[8px] text-slate-400 font-bold uppercase leading-relaxed max-w-lg mx-auto">
-          ClearVisa UK Audit Report. Not legal advice. Industry-standard pre-check logic based on public UKVI rules. Accuracy limited by user input.
+      <footer className="mt-auto pt-8 border-t border-slate-100 text-center">
+        <p className="text-[9px] text-slate-400 font-bold uppercase leading-relaxed max-w-xl mx-auto">
+          ClearVisa UK Official Audit Report. This document is for informational purposes only and does not constitute legal advice.
+          Accuracy is dependent on user-supplied information. Not affiliated with UKVI or the Home Office.
         </p>
+        <div className="flex justify-center gap-8 mt-4 opacity-30 grayscale">
+          <span className="text-[8px] font-black uppercase tracking-widest">Logic: v2.5.0-PRO</span>
+          <span className="text-[8px] font-black uppercase tracking-widest">Audit Engine: Verified</span>
+        </div>
       </footer>
     </div>
   );

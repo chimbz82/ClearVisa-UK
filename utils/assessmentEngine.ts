@@ -8,16 +8,21 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
   let personalScore = 100;
   let personalStatus: SectionScore['status'] = 'PASS';
   if (answers['previous_refusals'] === true) {
-    flags.push("PREVIOUS REFUSAL - Requires disclosure in all future applications.");
+    flags.push("PREVIOUS REFUSAL - Non-disclosure or poor explanation can lead to a 10-year ban under Paragraph 320(7b).");
     personalScore = 70;
     personalStatus = 'WARN';
+  }
+  if (answers['immigration_breaches'] && answers['immigration_breaches'] !== 'none') {
+    flags.push(`IMMIGRATION BREACH: ${answers['immigration_breaches'].toUpperCase()} - Highly sensitive; caseworker discretion applies.`);
+    personalScore = Math.min(personalScore, 40);
+    personalStatus = 'FAIL';
   }
   sectionScores.push({
     name: 'Identity & History',
     score: personalScore,
     status: personalStatus,
-    risk: personalScore < 80 ? 'MEDIUM' : 'LOW',
-    detail: personalScore === 100 ? 'No adverse immigration history detected.' : 'History of refusals requires careful wording.'
+    risk: personalScore < 50 ? 'HIGH' : personalScore < 85 ? 'MEDIUM' : 'LOW',
+    detail: personalScore === 100 ? 'Clean immigration history verified.' : 'Historical adverse factors detected.'
   });
 
   // --- Category: Financial Requirement ---
@@ -31,18 +36,28 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     if (method === 'employment' && income < 29000) {
       financialScore = 20;
       financialStatus = 'FAIL';
-      flags.push("INCOME BELOW THRESHOLD - Baseline of £29,000 not met.");
+      flags.push("FINANCIAL THRESHOLD - Current £29,000 gross annual requirement not met.");
     } else if (method === 'savings' && savings < 88500) {
       financialScore = 40;
       financialStatus = 'FAIL';
-      flags.push("INSUFFICIENT SAVINGS - £88,500 threshold not met.");
+      flags.push("SAVINGS SHORTFALL - £88,500 required for cash-only savings route.");
+    }
+    if (answers['payslips_available'] === false) {
+      flags.push("DOCUMENTATION GAP - Specified evidence (Appendix FM-SE) is strictly mandatory.");
+      financialScore = Math.min(financialScore, 60);
+      financialStatus = 'WARN';
     }
   } else {
     const salary = Number(answers['sw_salary'] || 0);
     if (salary > 0 && salary < 38700 && answers['shortage_occupation'] !== true) {
       financialScore = 60;
       financialStatus = 'WARN';
-      flags.push("SALARY RISK - Below standard Skilled Worker threshold.");
+      flags.push("SALARY RISK - Below £38,700 standard threshold for Skilled Worker route.");
+    }
+    if (answers['sponsorship_obtained'] === false) {
+      financialScore = 0;
+      financialStatus = 'FAIL';
+      flags.push("MISSING SPONSORSHIP - Valid CoS from licensed sponsor is mandatory.");
     }
   }
   sectionScores.push({
@@ -50,7 +65,7 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     score: financialScore,
     status: financialStatus,
     risk: financialScore < 50 ? 'HIGH' : financialScore < 90 ? 'MEDIUM' : 'LOW',
-    detail: financialStatus === 'PASS' ? 'Income levels align with current rules.' : 'Financial shortfall detected against relevant thresholds.'
+    detail: financialStatus === 'PASS' ? 'Aligns with current financial thresholds.' : 'Critical shortfall against specified income/savings rules.'
   });
 
   // --- Category: Relationship (Spouse only) ---
@@ -60,47 +75,57 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     if (answers['cohabitation_duration'] === 'never') {
       relScore = 60;
       relStatus = 'WARN';
-      flags.push("GENUINENESS RISK - Lack of cohabitation history increases scrutiny.");
+      flags.push("GENUINENESS RISK - 'Never lived together' triggers higher caseworker scrutiny.");
+    }
+    if (answers['wedding_evidence'] === false && answers['marital_status'] === 'married') {
+      relScore = 20;
+      relStatus = 'FAIL';
+      flags.push("LEGAL REQUIREMENT - Missing marriage certificate for a spouse application.");
     }
     sectionScores.push({
       name: 'Relationship Genuineness',
       score: relScore,
       status: relStatus,
       risk: relScore < 70 ? 'MEDIUM' : 'LOW',
-      detail: relStatus === 'PASS' ? 'Standard relationship evidence profile.' : 'Requires stronger proof of subsistence.'
+      detail: relStatus === 'PASS' ? 'Relationship markers meet standard requirements.' : 'Evidence of subsistence and genuineness is currently weak.'
     });
   }
 
   // --- Category: Suitability ---
   let suitScore = 100;
   let suitStatus: SectionScore['status'] = 'PASS';
-  if (answers['criminal_convictions'] === true || answers['nhs_debt'] === true || answers['deception_allegation'] === true) {
-    suitScore = 0;
+  if (answers['criminal_convictions'] === true) {
+    suitScore = 20;
     suitStatus = 'FAIL';
-    flags.push("CRITICAL SUITABILITY ISSUE - High risk of mandatory refusal.");
+    flags.push("SUITABILITY - Criminal history triggers mandatory or discretionary refusal.");
+  }
+  if (answers['nhs_debt'] === true) {
+    suitScore = Math.min(suitScore, 40);
+    suitStatus = 'WARN';
+    flags.push("NHS DEBT - Debts over £500 are standard grounds for refusal.");
   }
   sectionScores.push({
     name: 'Suitability & Character',
     score: suitScore,
     status: suitStatus,
     risk: suitScore < 50 ? 'HIGH' : 'LOW',
-    detail: suitStatus === 'PASS' ? 'No character/conduct issues found.' : 'Mandatory/Discretionary refusal grounds identified.'
+    detail: suitStatus === 'PASS' ? 'No character/conduct issues identified.' : 'Serious suitability barriers found.'
   });
 
   // --- Category: Accommodation ---
   let accScore = 100;
   let accStatus: SectionScore['status'] = 'PASS';
-  if (answers['accommodation_arranged'] === false || answers['exclusive_rooms'] === false) {
+  if (answers['exclusive_rooms'] === false) {
     accScore = 40;
     accStatus = 'WARN';
-    flags.push("ACCOMMODATION RISK - Evidence of overcrowding or lack of exclusive use.");
+    flags.push("ACCOMMODATION RISK - Lack of exclusive room fails the 'overcrowding' test.");
   }
   sectionScores.push({
     name: 'Accommodation',
     score: accScore,
     status: accStatus,
     risk: accScore < 60 ? 'MEDIUM' : 'LOW',
-    detail: accStatus === 'PASS' ? 'Arrangements meet minimum standards.' : 'Possible overcrowding risk.'
+    detail: accStatus === 'PASS' ? 'Accommodation plans appear sufficient.' : 'Potential overcrowding or permission issues.'
   });
 
   // --- Overall Calculations ---
@@ -120,24 +145,26 @@ export function runAssessment(route: string, answers: Record<string, any>): Asse
     verdict,
     riskLevel,
     riskFlags: flags,
-    summary: verdict === 'likely' ? 'Your profile appears to align with core public criteria.' : 
-             verdict === 'borderline' ? 'You meet core criteria, but identified risk flags suggest significant scrutiny.' : 
-             'Critical barriers found. Applying now carries a very high risk of refusal.',
+    summary: verdict === 'likely' ? 'Based on your audit, your profile aligns with core public eligibility criteria.' : 
+             verdict === 'borderline' ? 'You meet several core criteria, but identified risk flags suggest significant caseworker scrutiny.' : 
+             'Significant eligibility barriers were found. Submitting an application now carries a high risk of refusal.',
     nextSteps: [
-      "Gather 6 months of original bank statements.",
-      "Obtain an official employer letter.",
-      "Check TB test requirements.",
-      "Confirm accommodation permission."
+      "Gather 6 months of original bank statements showing salary credit.",
+      "Obtain a formal letter from the sponsor's employer on headed paper.",
+      "Book a TB test if applying from a required territory.",
+      "Prepare a minimum of 10-15 high-quality photos across the relationship duration."
     ],
     sectionScores,
     remediationSteps: [
-      { issue: 'Insufficient Income', resolution: 'Consider using Category D (Cash Savings) to supplement income if held for 6+ months.' },
-      { issue: 'Relationship Proof', resolution: 'Collect flight tickets, hotel bookings, and timestamped photos for all periods spent together.' },
-      { issue: 'Previous Refusal', resolution: 'Draft a witness statement explaining the refusal and how circumstances have changed.' }
+      { issue: 'Refusal History', resolution: 'Submit a Subject Access Request (SAR) to UKVI to get your previous file before drafting your new cover letter.' },
+      { issue: 'Income Shortfall', resolution: 'Investigate combining salary with non-employment income (pensions, dividends) or specific cash savings.' },
+      { issue: 'Cohabitation Evidence', resolution: 'If living separately, ensure you provide evidence of financial support (e.g., bank transfers) and frequent travel to see each other.' },
+      { issue: 'NHS Debt', resolution: 'Pay the debt in full and obtain a clearance letter before submitting the visa application.' }
     ],
     sampleWording: [
-      { section: 'Relationship', text: '“We have maintained a genuine and subsisting relationship through daily communication and regular visits, evidenced by our call logs and travel history attached as Annex A...”' },
-      { section: 'Financial', text: '“My sponsor meets the financial requirement through salaried employment under Category A, having earned above the threshold for more than 6 months with the same employer...”' }
+      { section: 'Cover Letter Opening', text: '“I am writing to support the application of [Applicant Name] for a Spouse Visa. I confirm that I am a British Citizen/Settled person and meet the financial requirements via...”' },
+      { section: 'Relationship Wording', text: '“Despite living in different countries for [Period], we have maintained a subsisting relationship through [Methods], spending over [Number] hours on video calls as evidenced by Annex 3...”' },
+      { section: 'Addressing History', text: '“Regarding the previous refusal in [Year], I wish to clarify that [Reason]. Since then, my circumstances have changed significantly, specifically [Details]...”' }
     ]
   };
 
