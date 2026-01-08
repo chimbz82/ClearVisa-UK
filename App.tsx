@@ -51,7 +51,6 @@ const App: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [paidPlan, setPaidPlan] = useState<PlanId | null>(null);
-  const [selectedRoute, setSelectedRoute] = useState<string>('');
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   useEffect(() => {
@@ -68,11 +67,21 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  const handlePaymentComplete = (route: string, tier: string) => {
+  const handlePaymentComplete = (_route: string, tier: string) => {
     const planId = tier as PlanId;
     setPaidPlan(planId);
     setIsPaymentModalOpen(false);
-    setViewState('report');
+    
+    // Check if user needs to answer more questions for this tier
+    const targetLimit = getQuestionLimit(planId);
+    const answeredCount = Object.keys(answers).filter(k => k !== 'visa_route').length;
+
+    if (answeredCount < targetLimit && planId !== 'basic') {
+      // Transition back to questionnaire to get extra data
+      setViewState('questionnaire');
+    } else {
+      setViewState('report');
+    }
     window.scrollTo(0, 0);
   };
 
@@ -81,13 +90,20 @@ const App: React.FC = () => {
     setViewState('analyzing');
     
     setTimeout(() => {
+      // If user has paid, we show report. If just doing free pre-check, show verdict/upsell.
+      const currentTier = paidPlan || selectedPlan;
       const result = runAssessment(
         finalAnswers.visa_route || 'spouse', 
         finalAnswers, 
-        selectedPlan
+        currentTier
       );
       setAssessmentResult(result);
-      setViewState('verdict');
+      
+      if (paidPlan) {
+        setViewState('report');
+      } else {
+        setViewState('verdict');
+      }
       window.scrollTo(0, 0);
     }, 2500);
   };
@@ -100,12 +116,14 @@ const App: React.FC = () => {
   };
 
   const renderView = () => {
-    const route = answers.visa_route || (selectedRoute.includes('Spouse') ? 'spouse' : 'skilled') || 'spouse';
-    const questionLimit = getQuestionLimit(selectedPlan);
+    const route = answers.visa_route || 'spouse';
+    // Use paidPlan limit if available, otherwise use the selected/initial plan limit (basic)
+    const activeTier = paidPlan || selectedPlan;
+    const questionLimit = getQuestionLimit(activeTier);
     
     const allQuestions = QUESTIONS.filter(q => 
       q.showIf({ 
-        tier: selectedPlan, 
+        tier: activeTier, 
         route: route, 
         answers 
       })
@@ -140,7 +158,7 @@ const App: React.FC = () => {
               onCancel={() => setViewState('landing')}
               visibleQuestionsList={limitedQuestions}
               initialAnswers={answers}
-              paidPlan={selectedPlan}
+              paidPlan={activeTier}
             />
           </div>
         );
@@ -167,7 +185,7 @@ const App: React.FC = () => {
             <div className="max-w-[210mm] mx-auto space-y-8 no-print mb-8">
               <div className="flex justify-between items-center">
                 <Button variant="outline" onClick={() => setViewState('landing')} className="font-bold">
-                  ← Back to Home
+                  ← Back to home
                 </Button>
                 <Button onClick={triggerReportPdfDownload} variant="navy" className="font-bold">
                   Download Full Report (PDF)

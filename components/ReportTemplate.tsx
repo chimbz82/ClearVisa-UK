@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { AssessmentResult, QuestionConfig } from '../types';
 import { analyzeEvidenceGaps } from '../utils/gapAnalysis';
-// Fix: removed non-existent member 'getAvailableUpgrades' and unused 'PLANS', 'isValidUpgrade'
 import { PlanId } from '../config/pricingConfig';
 import { triggerReportPdfDownload } from '../utils/downloadPdf';
 import Button from './Button';
@@ -49,6 +47,20 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   const current = verdictStyles[assessmentData.verdict] || verdictStyles.borderline;
   const gapAnalysis = analyzeEvidenceGaps(answers, visaRoute);
 
+  const getTierLabel = () => {
+    if (isBasic) return "BASIC PRE-CHECK";
+    if (isFull) return "PROFESSIONAL AUDIT";
+    if (isProPlus) return "PRO PLUS";
+    return tier.replace('_', ' ').toUpperCase();
+  };
+
+  const getTierDescription = () => {
+    if (isBasic) return "20 questions completed.";
+    if (isFull) return "40 questions completed.";
+    if (isProPlus) return "46 data points analyzed.";
+    return "";
+  };
+
   return (
     <div className="bg-white mx-auto p-[15mm] md:p-[20mm] text-slate-800 max-w-[210mm] min-h-[297mm] flex flex-col relative font-sans text-left shadow-2xl border border-slate-100 rounded-sm">
       
@@ -82,27 +94,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </div>
       )}
 
-      {/* Question Limit Notice */}
-      {paidPlan !== 'pro_plus' && (
-        <div className="no-print mb-8 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl">
-          <div className="flex items-start gap-4">
-            <div className="text-3xl">ℹ️</div>
-            <div>
-              <h4 className="text-sm font-bold text-navy mb-2 uppercase">
-                {paidPlan === 'basic' ? 'Basic Pre-Check (20 Questions)' : 'Professional Audit (40 Questions)'}
-              </h4>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                You completed a {paidPlan === 'basic' ? 'Basic' : 'Professional'} assessment covering 
-                {visibleQuestionsList.length} key compliance questions. 
-                {paidPlan === 'basic' 
-                  ? ' Upgrade to Professional Audit (40Q) or Professional Plus (full depth) for solicitor-style analysis.'
-                  : ' Upgrade to Professional Plus for complete case deep-dive with all questions and evidence gap analysis.'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 2. AVIATION GRADE HEADER */}
       <header className="flex justify-between items-start mb-16 border-b-4 border-navy pb-12">
         <div className="flex-grow">
@@ -120,7 +111,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
             </div>
             <div className="space-y-1.5">
               <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">AUDIT LEVEL</p>
-              <p className="text-sm font-black text-accent uppercase tracking-widest">{tier.replace('_', ' ')}</p>
+              <p className="text-sm font-black text-accent uppercase tracking-widest">{getTierLabel()}</p>
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{getTierDescription()}</p>
             </div>
             <div className="space-y-1.5">
               <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">VISA ROUTE</p>
@@ -174,16 +166,16 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       </div>
 
       {/* 5. DOCUMENT CHECKLIST - PROFESSIONAL & PRO PLUS */}
-      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+      {(isFull || isProPlus) && (
         <DocumentChecklist 
           answers={answers}
           visaRoute={visaRoute}
-          tier={paidPlan}
+          tier={paidPlan!}
         />
       )}
       
       {/* 6. COMPLIANCE MATRIX - PROFESSIONAL & PRO PLUS */}
-      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+      {(isFull || isProPlus) && (
         <ComplianceMatrix 
           answers={answers}
           visaRoute={visaRoute}
@@ -191,7 +183,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       )}
 
       {/* 7. SECTION SCORES - PROFESSIONAL & PRO PLUS */}
-      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+      {(isFull || isProPlus) && (
         <section className="mt-16 mb-16">
           <h3 className="text-[12px] font-black text-navy uppercase tracking-[0.5em] mb-10 border-b border-slate-100 pb-4">Detailed Criteria breakdown</h3>
           <div className="overflow-hidden border border-slate-200 rounded-3xl shadow-sm">
@@ -224,8 +216,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
         </section>
       )}
 
-      {/* 8. GAPS & ACTIONS - PROFESSIONAL & PRO PLUS */}
-      {(paidPlan === 'full' || paidPlan === 'pro_plus') && (
+      {/* 8. GAPS & ACTIONS - PRO PLUS ONLY (OR PROFESSIONAL PARTIAL) */}
+      {(isProPlus) && (
         <section className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="p-12 border-t-8 border-rose-500 rounded-3xl bg-slate-50 shadow-sm">
@@ -255,7 +247,7 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
       )}
 
       {/* 9. PRO PLUS EXCLUSIVE SECTION */}
-      {paidPlan === 'pro_plus' && (
+      {isProPlus && (
         <div className="mt-12 p-10 bg-gradient-to-br from-accent/5 to-accent/10 rounded-3xl border-2 border-accent/20">
           <div className="flex items-center gap-3 mb-8">
             <span className="text-3xl">⚡</span>
@@ -341,36 +333,6 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
                 </p>
               </div>
             )}
-          </div>
-          
-          {/* Templates */}
-          <div className="bg-white p-8 rounded-2xl shadow-sm text-left">
-            <h4 className="text-[12px] font-black text-navy mb-6 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">
-              Critical Document Templates
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                <p className="text-[11px] font-black text-slate-700 mb-3 uppercase tracking-widest">Employer Letter Guide</p>
-                <div className="space-y-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-tight">
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Employee name and role</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Gross annual salary</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Length of employment</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Date salary last changed</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Official company signature</p>
-                </div>
-              </div>
-              
-              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                <p className="text-[11px] font-black text-slate-700 mb-3 uppercase tracking-widest">Relationship Timeline</p>
-                <div className="space-y-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-tight">
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>First meeting details</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Dates of in-person visits</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Engagement/Wedding dates</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Cohabitation milestones</p>
-                  <p className="flex items-center gap-2"><span className="w-1 h-1 bg-accent rounded-full"></span>Current living arrangements</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       )}

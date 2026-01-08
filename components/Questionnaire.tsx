@@ -61,8 +61,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   const getProgressLabel = () => {
-    if (!paidPlan) return 'PRE-CHECK';
-    if (paidPlan === 'basic') return 'BASIC PRE-CHECK · UP TO 20 QUESTIONS';
+    if (!paidPlan || paidPlan === 'basic') return 'BASIC PRE-CHECK · UP TO 20 QUESTIONS';
     if (paidPlan === 'full') return 'PROFESSIONAL AUDIT · AROUND 20–40 QUESTIONS';
     if (paidPlan === 'pro_plus') return 'PROFESSIONAL PLUS · 40+ QUESTIONS';
     return 'PRE-CHECK';
@@ -116,7 +115,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
         
         <button onClick={onCancel} className="mt-8 w-full text-center text-[10px] text-slate-400 font-black hover:text-navy uppercase tracking-[0.25em] transition-colors py-4">
-          Cancel & Return Home
+          Exit assessment
         </button>
       </div>
     );
@@ -239,7 +238,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <button onClick={onCancel} className="w-full text-center text-[10px] text-slate-400 font-black hover:text-navy uppercase tracking-[0.3em] transition-colors py-4">
-        EXIT ASSESSMENT
+        Exit assessment
       </button>
     </div>
   );

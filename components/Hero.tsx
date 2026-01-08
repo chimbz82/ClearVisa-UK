@@ -25,24 +25,43 @@ const Hero: React.FC<HeroProps> = ({ onStartCheck, onScrollToSection }) => {
             </div>
             
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-navy mb-6 leading-[0.95] uppercase">
-              CHECK YOUR UK VISA <br className="hidden sm:block"/>
-              <span className="text-accent">RISK BEFORE YOU APPLY.</span>
+              Check your UK visa <br className="hidden sm:block"/>
+              <span className="text-accent">eligibility in minutes,</span><br/>
+              before you spend thousands.
             </h1>
             
             <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-xl leading-relaxed font-semibold">
-              Run an automated pre-check for UK Spouse or Skilled Worker visas. Spot refusal risks before you spend thousands on application fees.
+              Answer a few simple questions and get a personalised UK visa pre-check for spouse or skilled worker routes – with a clear verdict, risk flags, and next steps.
             </p>
 
             <div className="flex flex-wrap gap-5 items-center mb-16">
               <Button onClick={onStartCheck} size="lg" className="px-10 py-5 rounded-2xl shadow-2xl shadow-accent/20 hover:scale-105 transition-transform font-black uppercase tracking-widest text-sm">
-                Start Pre-Check Now
+                Start eligibility check
               </Button>
               <button 
                 onClick={() => onScrollToSection('how-it-works')} 
                 className="text-xs font-black text-slate-400 hover:text-navy uppercase tracking-[0.25em] transition-all flex items-center gap-2 group"
               >
-                Learn Process <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                See how it works <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
               </button>
+            </div>
+
+            {/* Human Trust Strip */}
+            <div className="flex items-center gap-6 mt-12 py-8 border-t border-slate-100">
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-200 overflow-hidden shadow-md">
+                    <img 
+                      src={`https://i.pravatar.cc/100?u=visa${i}`} 
+                      alt="User avatar" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-tight">
+                Trusted by applicants from <span className="text-navy font-black">60+ countries</span>
+              </p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-8 border-t border-slate-100">
