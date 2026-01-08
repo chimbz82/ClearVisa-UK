@@ -19,6 +19,7 @@ interface ReportTemplateProps {
   onUpgrade?: (targetTier: PlanId) => void;
   onViewLegal?: (type: 'privacy' | 'terms' | 'refunds' | 'risk-notice') => void;
   visibleQuestionsList: QuestionConfig[];
+  onExit: () => void;
 }
 
 const ReportTemplate: React.FC<ReportTemplateProps> = ({ 
@@ -32,7 +33,8 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
   paidPlan,
   onUpgrade,
   onViewLegal,
-  visibleQuestionsList
+  visibleQuestionsList,
+  onExit
 }) => {
   const isBasic = paidPlan === 'basic' || !paidPlan;
   const isFull = paidPlan === 'full';
@@ -355,6 +357,15 @@ const ReportTemplate: React.FC<ReportTemplateProps> = ({
           })}
         </div>
       </section>
+
+      <div className="no-print mt-12 text-center">
+        <button 
+          onClick={onExit}
+          className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] hover:text-navy transition-colors border-t border-slate-100 pt-8 w-full"
+        >
+          Back to home
+        </button>
+      </div>
 
       <footer className="mt-auto pt-32 text-center">
         <div className="max-w-xl mx-auto space-y-5">

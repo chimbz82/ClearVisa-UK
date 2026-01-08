@@ -62,8 +62,20 @@ const App: React.FC = () => {
   }, [viewState]);
 
   const handleStartCheck = (planId: PlanId = 'basic') => {
+    // Reset state for a clean fresh start
+    setAnswers({});
+    setPaidPlan(null);
+    setAssessmentResult(null);
     setSelectedPlan(planId);
     setViewState('questionnaire');
+    window.scrollTo(0, 0);
+  };
+
+  const handleExit = () => {
+    setAnswers({});
+    setPaidPlan(null);
+    setAssessmentResult(null);
+    setViewState('landing');
     window.scrollTo(0, 0);
   };
 
@@ -76,10 +88,18 @@ const App: React.FC = () => {
     const targetLimit = getQuestionLimit(planId);
     const answeredCount = Object.keys(answers).filter(k => k !== 'visa_route').length;
 
+    // If they just paid for a tier deeper than what they've currently answered,
+    // take them back to questionnaire to complete the flow.
     if (answeredCount < targetLimit && planId !== 'basic') {
-      // Transition back to questionnaire to get extra data
       setViewState('questionnaire');
     } else {
+      // Re-run assessment with the new tier context
+      const result = runAssessment(
+        answers.visa_route || 'spouse', 
+        answers, 
+        planId
+      );
+      setAssessmentResult(result);
       setViewState('report');
     }
     window.scrollTo(0, 0);
@@ -90,12 +110,11 @@ const App: React.FC = () => {
     setViewState('analyzing');
     
     setTimeout(() => {
-      // If user has paid, we show report. If just doing free pre-check, show verdict/upsell.
-      const currentTier = paidPlan || selectedPlan;
+      const activeTier = paidPlan || selectedPlan;
       const result = runAssessment(
         finalAnswers.visa_route || 'spouse', 
         finalAnswers, 
-        currentTier
+        activeTier
       );
       setAssessmentResult(result);
       
@@ -109,15 +128,20 @@ const App: React.FC = () => {
   };
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (viewState !== 'landing') {
+      setViewState('landing');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   const renderView = () => {
     const route = answers.visa_route || 'spouse';
-    // Use paidPlan limit if available, otherwise use the selected/initial plan limit (basic)
     const activeTier = paidPlan || selectedPlan;
     const questionLimit = getQuestionLimit(activeTier);
     
@@ -152,10 +176,10 @@ const App: React.FC = () => {
         
       case 'questionnaire':
         return (
-          <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
+          <div className="pt-24 pb-20 px-6 max-w-4xl mx-auto">
             <Questionnaire 
               onComplete={handleQuestionnaireComplete}
-              onCancel={() => setViewState('landing')}
+              onCancel={handleExit}
               visibleQuestionsList={limitedQuestions}
               initialAnswers={answers}
               paidPlan={activeTier}
@@ -175,7 +199,7 @@ const App: React.FC = () => {
               setIsPaymentModalOpen(true);
             }}
             onNavigateLegal={setViewState}
-            onGoBack={() => setViewState('questionnaire')}
+            onGoBack={handleExit}
           />
         ) : null;
         
@@ -184,7 +208,7 @@ const App: React.FC = () => {
           <div className="pt-24 pb-20 px-6 bg-slate-50 min-h-screen">
             <div className="max-w-[210mm] mx-auto space-y-8 no-print mb-8">
               <div className="flex justify-between items-center">
-                <Button variant="outline" onClick={() => setViewState('landing')} className="font-bold">
+                <Button variant="outline" onClick={handleExit} className="font-bold">
                   ← Back to home
                 </Button>
                 <Button onClick={triggerReportPdfDownload} variant="navy" className="font-bold">
@@ -203,6 +227,7 @@ const App: React.FC = () => {
                 setSelectedPlan(targetPlan);
                 setIsPaymentModalOpen(true);
               }}
+              onExit={handleExit}
             />
           </div>
         ) : null;
@@ -218,13 +243,11 @@ const App: React.FC = () => {
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-white font-sans text-slate-900 antialiased text-left">
-        {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
-          <Header 
-            onStartCheck={() => handleStartCheck('basic')} 
-            onNavigateHome={() => setViewState('landing')}
-            onScrollToSection={scrollToSection}
-          />
-        )}
+        <Header 
+          onStartCheck={() => handleStartCheck('basic')} 
+          onNavigateHome={() => setViewState('landing')}
+          onScrollToSection={scrollToSection}
+        />
         <main>{renderView()}</main>
         {(viewState === 'landing' || ['privacy', 'terms', 'refunds', 'risk-notice'].includes(viewState)) && (
           <Footer 

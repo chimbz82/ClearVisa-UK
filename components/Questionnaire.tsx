@@ -69,23 +69,24 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   if (isReviewing) {
     return (
-      <div className="max-w-3xl mx-auto pt-4 text-left animate-in fade-in duration-500">
-        <div className="mb-10 text-center">
-          <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-2 block">Final Step</span>
+      <div className="max-w-4xl mx-auto pt-4 text-left animate-in fade-in duration-500">
+        <div className="mb-8 text-center">
+          <span className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-1 block">Verification Required</span>
           <h2 className="text-3xl font-black text-navy uppercase tracking-tight mb-2">Review Your Audit Data</h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-tight">
-            Verify {totalQuestions} responses.
+            Confirm your {totalQuestions} responses before locking.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        {/* Compact Review Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
           {visibleQuestionsList.map((q, idx) => (
-            <div key={q.id} className="bg-white p-6 rounded-2xl border-2 border-slate-100 flex justify-between items-center hover:border-navy transition-all group shadow-sm">
-              <div className="flex-grow pr-4">
-                <p className="text-[9px] text-slate-400 mb-1.5 font-black uppercase tracking-widest">
-                  {q.section} • {q.label}
+            <div key={q.id} className="bg-white p-4 rounded-xl border border-slate-100 flex justify-between items-center hover:border-navy transition-all group shadow-sm min-h-[80px]">
+              <div className="flex-grow pr-3">
+                <p className="text-[11px] text-slate-400 mb-1 font-semibold uppercase tracking-tight">
+                  {q.label}
                 </p>
-                <p className="text-[13px] font-black text-navy uppercase tracking-tight leading-tight">
+                <p className="text-[14px] font-bold text-navy uppercase tracking-tight leading-tight">
                   {Array.isArray(answers[q.id]) 
                     ? (answers[q.id] as string[]).map(v => q.options?.find(o => o.value === v)?.label || v).join(', ') 
                     : String(
@@ -100,16 +101,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 className="p-2 text-slate-300 hover:text-accent transition-colors flex-shrink-0"
                 title="Edit Response"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
               </button>
             </div>
           ))}
         </div>
         
-        <div className="bg-navy p-10 rounded-[2.5rem] shadow-2xl text-center border border-white/10">
-          <h3 className="text-xl font-black text-white uppercase tracking-widest mb-4">Confirm & Lock Audit</h3>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-tight mb-8">Ready to see your initial eligibility verdict?</p>
-          <Button onClick={() => onComplete(answers)} fullWidth size="lg" className="py-6 shadow-xl uppercase font-black tracking-[0.2em] text-base bg-success hover:bg-success/90">
+        <div className="bg-navy p-8 rounded-[2rem] shadow-2xl text-center border border-white/10">
+          <h3 className="text-xl font-black text-white uppercase tracking-widest mb-3">Finalize Assessment</h3>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-tight mb-8">Lock answers and generate compliance report.</p>
+          <Button onClick={() => onComplete(answers)} fullWidth size="lg" className="py-5 shadow-xl uppercase font-black tracking-[0.2em] text-base bg-success hover:bg-success/90">
             Show Verdict
           </Button>
         </div>
